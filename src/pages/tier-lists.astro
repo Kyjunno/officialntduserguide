@@ -2,14 +2,14 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const tiers = [
-  { key: "starters", label: "STARTERS" },
-  { key: "midgames", label: "MIDGAMES" },
-  { key: "endgames", label: "ENDGAMES" },
-  { key: "slowers", label: "SLOWERS" },
-  { key: "stunners", label: "STUNNERS" },
-  { key: "bleed", label: "BLEED" },
-  { key: "burn", label: "BURN" },
-  { key: "boosters", label: "BOOSTERS" },
+  { key: "starters", label: "STARTERS", href: "/tier-lists/starters" },
+  { key: "midgames", label: "MIDGAMES", href: "/tier-lists/midgames" },
+  { key: "endgames", label: "ENDGAMES", href: "/tier-lists/endgames" },
+  { key: "slowers", label: "SLOWERS", href: "/tier-lists/slowers" },
+  { key: "stunners", label: "STUNNERS", href: "/tier-lists/stunners" },
+  { key: "bleed", label: "BLEED", href: "/tier-lists/bleed" },
+  { key: "burn", label: "BURN", href: "/tier-lists/burn" },
+  { key: "boosters", label: "BOOSTERS", href: "/tier-lists/boosters" },
 ];
 
 function imgPath(key: string, slot: number) {
@@ -30,7 +30,7 @@ function imgPath(key: string, slot: number) {
 
     <section class="tiers-grid" aria-label="Tier list categories">
       {tiers.map((t) => (
-        <div class="tier-card" aria-label={`${t.label} tier list`}>
+        <a class="tier-card" href={t.href} aria-label={`${t.label} tier list`}>
           <div class="tier-name">{t.label}</div>
 
           <div class="tier-slots">
@@ -48,7 +48,7 @@ function imgPath(key: string, slot: number) {
               </div>
             ))}
           </div>
-        </div>
+        </a>
       ))}
     </section>
   </div>
@@ -106,17 +106,20 @@ function imgPath(key: string, slot: number) {
     }
 
     .tier-card{
+      text-decoration: none;
+      color: inherit;
       border-radius: 22px;
       padding: 18px;
       border: 1px solid rgba(255,255,255,.20);
       background: rgba(0,0,0,.22);
       box-shadow: var(--shadow);
-      transition: transform .14s ease, border-color .14s ease;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease;
     }
 
     .tier-card:hover{
       transform: translateY(-2px);
       border-color: rgba(232,238,252,.6);
+      background: rgba(0,0,0,.26);
     }
 
     .tier-name{
@@ -163,12 +166,10 @@ function imgPath(key: string, slot: number) {
       transition: opacity .12s ease;
     }
 
-    /* Hide ? only after the image actually loads */
     .tier-slot[data-state="loaded"] .tier-missing{
       opacity: 0;
     }
 
-    /* If missing, keep ? visible */
     .tier-slot[data-state="missing"] .tier-missing{
       opacity: 1;
     }
