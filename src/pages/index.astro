@@ -2,86 +2,100 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 <BaseLayout title="Nightshift Tower Defense User Guide">
-  <section class="hero">
-    <div class="hero-overlay"></div>
+  <section class="home-bleed">
+    <div class="home-bg"></div>
+    <div class="home-overlay"></div>
 
-    <div class="hero-content">
-      <div class="hero-card">
-        <div class="hero-kicker">Official community guide</div>
+    <div class="home-inner">
+      <div class="home-card">
+        <div class="home-kicker">Official community guide</div>
 
-        <h1 class="hero-title">Nightshift Tower Defense User Guide</h1>
+        <h1 class="home-title">Nightshift Tower Defense User Guide</h1>
 
-        <p class="hero-text">
-          Hey, I’m <strong>Clancy</strong>. This user guide basically just to help you all understand all the nerdy facts.
+        <p class="home-text">
+          Hey, I’m <strong>Clancy</strong>. This user guide is basically just to help you all understand all the nerdy facts.
           It’s here to make the numbers easy to understand, keep tier lists and unit info in one place, and stay updated as the game changes.
         </p>
 
-        <div class="hero-divider"></div>
+        <div class="home-divider"></div>
 
-        <h2 class="hero-subtitle">Community</h2>
+        <h2 class="home-subtitle">Community</h2>
 
-        <p class="hero-text">
-          Want to help improve the guide, report mistakes, or just hang out with the community?
-          Join us here:
+        <p class="home-text">
+          Want to help improve the guide, report mistakes, or just hang out with the community? Join us here:
         </p>
 
-        <a class="hero-button" href="https://discord.gg/XHXjcVA4cw" target="_blank" rel="noopener">
+        <a class="home-button" href="https://discord.gg/YOUR_INVITE" target="_blank" rel="noopener">
           Join the NTD Discord
         </a>
-
-        <p class="hero-footnote">
-        </p>
       </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .hero{
+  /* Full-bleed section that stretches across the whole page width */
+  .home-bleed{
     position: relative;
+    left: 50%;
+    right: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+    margin-right: -50vw;
+
+    min-height: calc(100vh - 110px); /* leaves room for the sticky top bar */
     overflow: hidden;
-    border: 1px solid var(--border);
-    border-radius: 22px;
-    min-height: 520px;
-    box-shadow: var(--shadow);
+    border-top: 1px solid var(--border);
+  }
+
+  /* Background image layer */
+  .home-bg{
+    position:absolute;
+    inset:0;
     background-image: url("/images/home-bg.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+
+    /* Makes it feel “in the background” */
+    filter: blur(10px) brightness(0.75) saturate(1.05);
+    transform: scale(1.06);
   }
 
-  /* This is the readability magic */
-  .hero-overlay{
+  /* Readability overlay */
+  .home-overlay{
     position:absolute;
     inset:0;
     background:
-      radial-gradient(900px 600px at 20% 20%, rgba(106,168,255,.18), transparent 60%),
-      radial-gradient(900px 700px at 80% 30%, rgba(159,91,255,.10), transparent 55%),
-      linear-gradient(180deg, rgba(11,14,20,.84), rgba(11,14,20,.92));
-    backdrop-filter: blur(6px);
+      radial-gradient(1100px 700px at 18% 20%, rgba(106,168,255,.18), transparent 60%),
+      radial-gradient(900px 700px at 80% 25%, rgba(159,91,255,.12), transparent 55%),
+      linear-gradient(180deg, rgba(11,14,20,.65), rgba(11,14,20,.90));
   }
 
-  .hero-content{
+  /* Centered content area */
+  .home-inner{
     position: relative;
     z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 54px 18px 80px;
     display:flex;
     align-items:center;
     justify-content:center;
-    min-height: 520px;
-    padding: 34px 18px;
   }
 
-  .hero-card{
+  /* The readable card on top */
+  .home-card{
     width: 100%;
     max-width: 860px;
     border: 1px solid var(--border);
     border-radius: 22px;
-    background: rgba(0,0,0,.35);
+    background: rgba(0,0,0,.42);
     box-shadow: var(--shadow);
-    padding: 26px 22px;
+    padding: 28px 24px;
   }
 
-  .hero-kicker{
+  .home-kicker{
     display:inline-block;
     padding: 6px 12px;
     border-radius: 999px;
@@ -94,21 +108,21 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     margin-bottom: 12px;
   }
 
-  .hero-title{
+  .home-title{
     margin: 0;
-    font-size: clamp(30px, 4vw, 48px);
+    font-size: clamp(32px, 4.6vw, 54px);
     line-height: 1.05;
     letter-spacing: -0.02em;
   }
 
-  .hero-subtitle{
+  .home-subtitle{
     margin: 0;
     margin-top: 14px;
     font-size: 18px;
     letter-spacing: -0.01em;
   }
 
-  .hero-text{
+  .home-text{
     margin-top: 14px;
     margin-bottom: 0;
     color: var(--muted);
@@ -116,13 +130,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     font-size: 16px;
   }
 
-  .hero-divider{
+  .home-divider{
     height: 1px;
     background: var(--border);
     margin: 18px 0;
   }
 
-  .hero-button{
+  .home-button{
     display:inline-flex;
     align-items:center;
     justify-content:center;
@@ -135,23 +149,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     font-weight: 800;
   }
 
-  .hero-button:hover{
+  .home-button:hover{
     border-color: rgba(106,168,255,.6);
     background: rgba(106,168,255,.10);
     color: var(--text);
-  }
-
-  .hero-footnote{
-    margin-top: 12px;
-    color: var(--muted);
-    font-size: 12px;
-    line-height: 1.6;
-  }
-
-  code{
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 2px 8px;
-    background: rgba(255,255,255,.03);
   }
 </style>
