@@ -1,236 +1,436 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import units from "../data/units.json";
-import { calcDps, calcLevelStat, fmt, clamp } from "../lib/utils.js";
 
-const q = (Astro.url.searchParams.get("q") || "").trim().toLowerCase();
-function normalize(s){ return String(s || "").trim().toLowerCase(); }
-
-const defaultUnit =
-  units.find(u => normalize(u.name) === q) ||
-  units.find(u => normalize(u.id) === q) ||
-  units.find(u => normalize(u.name).includes(q)) ||
-  units[0];
-
-const selectedId = Astro.url.searchParams.get("id") || defaultUnit?.id || "";
-const level = clamp(Number(Astro.url.searchParams.get("level") || 1), 1, 50);
-const shiny = (Astro.url.searchParams.get("shiny") || "0") === "1";
-const enchant = (Astro.url.searchParams.get("enchant") || "none").toLowerCase();
-
-const unit = units.find(u => u.id === selectedId) || defaultUnit;
-
-const shinyMult = shiny ? (unit?.modifiers?.shiny?.damageMult ?? 1.1) : 1.0;
-const enchantMods = (unit?.modifiers?.enchants && unit.modifiers.enchants[enchant]) || {};
-const enchantDamageMult = enchantMods.damageMult ?? 1.0;
-const enchantCooldownMult = enchantMods.cooldownMult ?? 1.0;
-const enchantRangeAdd = enchantMods.rangeAdd ?? 0;
-
-const baseDamage = unit?.damage ?? 0;
-const baseCooldown = unit?.cooldown ?? 1;
-const baseRange = unit?.range ?? 0;
-const baseCost = unit?.placementPrice ?? 0;
-
-const dmg = calcLevelStat(baseDamage, unit?.leveling?.damage_per_level ?? 0, level) * shinyMult * enchantDamageMult;
-const cd = calcLevelStat(baseCooldown, unit?.leveling?.cooldown_per_level ?? 0, level) * enchantCooldownMult;
-const rng = calcLevelStat(baseRange, unit?.leveling?.range_per_level ?? 0, level) + enchantRangeAdd;
-
-const dps = calcDps(dmg, cd);
-const power = Math.round(dps * 10 + rng * 2);
-const totalDps = dps * (unit?.placements ?? 1);
-
-const unitIndex = units.map(u => ({ id: u.id, name: u.name }));
+// If your site uses a different layout import path, change ONLY this line.
+const pageTitle = "Unit Arcade";
 ---
-<BaseLayout title="Unit Arcade | Official NTD User Guide" description="Search units, view stats, and calculate leveling, shiny, and enchants.">
-  <div class="card">
-    <h1 style="margin-top:0;">Unit Arcade</h1>
-    <p style="color:var(--muted); line-height:1.6;">
-      Search a unit, then choose level, shiny, and enchant to see the calculated stats.
-    </p>
 
-    <div class="card" style="margin-top:14px;">
-      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
-        <div style="flex: 1; min-width: 260px;">
-          <div style="font-weight:800; margin-bottom:8px;">Unit search</div>
-          <input id="unitSearch" placeholder="Type a unit name, then press Enter…" autocomplete="off"
-                 value={unit?.name || ""} style="width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background: rgba(0,0,0,.2); color: var(--text); outline:none;" />
-          <small style="display:block; margin-top:8px; color:var(--muted);">
-            This search redirects to the matching unit.
-          </small>
-        </div>
+<BaseLayout title={pageTitle}>
+  <div class="ua-bg">
+    <div class="ua-overlay">
+      <main class="ua-wrap">
+        <section class="ua-hero">
+          <h1>Unit Arcade</h1>
+          <p>Search a unit, then choose level, shiny, and enchant to see the calculated stats.</p>
+        </section>
 
-        <div style="display:flex; gap:12px; align-items:center;">
-          {unit?.image ? (
-            <img src={unit.image} alt={unit.name} style="width:96px; height:96px; border-radius:18px; border:1px solid var(--border); object-fit:cover; background: rgba(255,255,255,.02);" />
-          ) : (
-            <div style="width:96px; height:96px; border-radius:18px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--muted); background: rgba(255,255,255,.02);">
-              No image
+        <section class="ua-card">
+          <div class="ua-searchRow">
+            <div class="ua-searchLeft">
+              <div class="ua-label">Unit search</div>
+              <input class="ua-input" type="text" placeholder="Type a unit name..." value="Golden Bonnie" />
+              <div class="ua-help">This search redirects to the matching unit.</div>
             </div>
-          )}
-        </div>
-      </div>
-    </div>
 
-    <hr class="sep" />
+            <div class="ua-imageBox">
+              <div class="ua-imageInner">No image</div>
+            </div>
+          </div>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Rarity</th>
-          <th>Attack type</th>
-          <th>Placement price</th>
-          <th>Placements</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{unit?.rarity ?? ""}</td>
-          <td>{unit?.attackType ?? "Not set"}</td>
-          <td>{unit?.placementPrice ?? "Not set"}</td>
-          <td>{unit?.placements ?? "Not set"}</td>
-        </tr>
-      </tbody>
-    </table>
+          <div class="ua-divider"></div>
 
-    <div style="height:14px;"></div>
+          <div class="ua-statsGrid4">
+            <div class="ua-stat">
+              <div class="ua-statLabel">RARITY</div>
+              <div class="ua-statValue">Legendary</div>
+            </div>
 
-    <table class="table">
-      <thead>
-        <tr><th>Obtainability</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            {(unit?.obtainability && unit.obtainability.length)
-              ? unit.obtainability.join(", ")
-              : "Not set yet."}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <div class="ua-stat">
+              <div class="ua-statLabel">ATTACK TYPE</div>
+              <div class="ua-statValue">Not set</div>
+            </div>
 
-    <div style="height:14px;"></div>
+            <div class="ua-stat">
+              <div class="ua-statLabel">PLACEMENT PRICE</div>
+              <div class="ua-statValue">Not set</div>
+            </div>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Ability</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        {(unit?.abilities && unit?.abilities.length) ? unit.abilities.map(a => (
-          <tr>
-            <td>{a.name}</td>
-            <td>{a.description}</td>
-          </tr>
-        )) : (
-          <tr>
-            <td colSpan="2">No abilities listed yet.</td>
-          </tr>
-        )}
-      </tbody>
-    </table>
+            <div class="ua-stat">
+              <div class="ua-statLabel">PLACEMENTS</div>
+              <div class="ua-statValue">2</div>
+            </div>
+          </div>
 
-    <hr class="sep" />
+          <div class="ua-divider"></div>
 
-    <div class="card">
-      <h2 style="margin-top:0;">Calculator</h2>
+          <div class="ua-wideBlock">
+            <div class="ua-wideTitle">OBTAINABILITY</div>
+            <div class="ua-wideText">Not set yet.</div>
+          </div>
 
-      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
-        <div style="min-width:160px;">
-          <div style="color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.06em;">Level</div>
-          <input id="levelInput" type="number" min="1" max="50" value={level}
-                 style="width:160px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background: rgba(0,0,0,.2); color: var(--text); outline:none;" />
-        </div>
+          <div class="ua-divider"></div>
 
-        <div style="min-width:200px;">
-          <div style="color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.06em;">Variant</div>
-          <select id="shinySelect" style="width:200px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background: rgba(0,0,0,.2); color: var(--text); outline:none;">
-            <option value="0" selected={!shiny}>Normal</option>
-            <option value="1" selected={shiny}>Shiny</option>
-          </select>
-        </div>
+          <div class="ua-wideBlock">
+            <div class="ua-wideTitle ua-twoColTitle">
+              <span>ABILITY</span>
+              <span class="ua-rightTitle">DESCRIPTION</span>
+            </div>
+            <div class="ua-wideText">No abilities listed yet.</div>
+          </div>
 
-        <div style="min-width:240px;">
-          <div style="color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.06em;">Enchant</div>
-          <select id="enchantSelect" style="width:240px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background: rgba(0,0,0,.2); color: var(--text); outline:none;">
-            <option value="none" selected={enchant === "none"}>None</option>
-            {(unit?.availableEnchants || []).map(e => (
-              <option value={String(e).toLowerCase()} selected={enchant === String(e).toLowerCase()}>{e}</option>
-            ))}
-          </select>
-        </div>
+          <div class="ua-divider"></div>
 
-        <div style="flex:1;"></div>
+          <section class="ua-calcCard">
+            <div class="ua-calcHeader">
+              <h2>Calculator</h2>
+            </div>
 
-        <button id="applyBtn" class="badge" style="cursor:pointer; padding:10px 14px; border-radius:12px; color:var(--text);">
-          Apply
-        </button>
-      </div>
+            <div class="ua-calcControls">
+              <div class="ua-control">
+                <div class="ua-controlLabel">LEVEL</div>
+                <input class="ua-inputSmall" type="number" min="1" value="1" />
+              </div>
 
-      <div class="card" style="margin-top:14px;">
-        <div class="kv">
-          <div class="item"><div class="label">Level</div><div class="value">{level}</div></div>
-          <div class="item"><div class="label">Cost</div><div class="value">{fmt(baseCost, 0)}</div></div>
-          <div class="item"><div class="label">DPS</div><div class="value">{fmt(dps, 2)}</div></div>
-          <div class="item"><div class="label">Damage</div><div class="value">{fmt(dmg, 2)}</div></div>
-          <div class="item"><div class="label">Cooldown</div><div class="value">{fmt(cd, 3)}s</div></div>
-          <div class="item"><div class="label">Range</div><div class="value">{fmt(rng, 2)}</div></div>
-          <div class="item"><div class="label">Power</div><div class="value">{power}</div></div>
-        </div>
-      </div>
+              <div class="ua-control">
+                <div class="ua-controlLabel">VARIANT</div>
+                <select class="ua-select">
+                  <option>Normal</option>
+                  <option>Shiny</option>
+                </select>
+              </div>
 
-      <div class="card" style="margin-top:14px;">
-        <h3 style="margin-top:0;">Total DPS</h3>
-        <div style="font-size:28px; font-weight:900;">{fmt(totalDps, 2)}</div>
-        <small style="display:block; margin-top:6px;">
-          Currently calculated as DPS × placements.
-        </small>
-      </div>
+              <div class="ua-control">
+                <div class="ua-controlLabel">ENCHANT</div>
+                <select class="ua-select">
+                  <option>None</option>
+                  <option>Critical Strikes</option>
+                  <option>Power</option>
+                  <option>Cooldown</option>
+                  <option>Range</option>
+                </select>
+              </div>
+
+              <button class="ua-applyBtn" type="button">Apply</button>
+            </div>
+
+            <div class="ua-calcGrid">
+              <div class="ua-miniStat">
+                <div class="ua-miniLabel">LEVEL</div>
+                <div class="ua-miniValue">1</div>
+              </div>
+              <div class="ua-miniStat">
+                <div class="ua-miniLabel">COST</div>
+                <div class="ua-miniValue">0</div>
+              </div>
+              <div class="ua-miniStat">
+                <div class="ua-miniLabel">DPS</div>
+                <div class="ua-miniValue">0</div>
+              </div>
+              <div class="ua-miniStat">
+                <div class="ua-miniLabel">DAMAGE</div>
+                <div class="ua-miniValue">0</div>
+              </div>
+              <div class="ua-miniStat">
+                <div class="ua-miniLabel">COOLDOWN</div>
+                <div class="ua-miniValue">0</div>
+              </div>
+              <div class="ua-miniStat">
+                <div class="ua-miniLabel">RANGE</div>
+                <div class="ua-miniValue">0</div>
+              </div>
+              <div class="ua-miniStat">
+                <div class="ua-miniLabel">POWER</div>
+                <div class="ua-miniValue">0</div>
+              </div>
+            </div>
+
+            <div class="ua-totalBox">
+              <div class="ua-totalTitle">TOTAL DPS</div>
+              <div class="ua-totalValue">0</div>
+            </div>
+          </section>
+        </section>
+      </main>
     </div>
   </div>
 
-  <!-- Safe embedded JSON for client-side search -->
-  <script id="unitIndex" type="application/json">{JSON.stringify(unitIndex)}</script>
-
-  <script>
-    const unitIndexEl = document.getElementById("unitIndex");
-    const units = unitIndexEl ? JSON.parse(unitIndexEl.textContent || "[]") : [];
-
-    const input = document.getElementById("unitSearch");
-    const applyBtn = document.getElementById("applyBtn");
-    const levelInput = document.getElementById("levelInput");
-    const shinySelect = document.getElementById("shinySelect");
-    const enchantSelect = document.getElementById("enchantSelect");
-
-    function go(params){
-      const url = new URL(window.location.href);
-      Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
-      window.location.href = url.toString();
+  <style>
+    /* Full page background */
+    .ua-bg {
+      min-height: 100vh;
+      width: 100%;
+      background-image: url("/images/unit-arcade-bg.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
-    function findBestMatch(q){
-      const nq = String(q || "").trim().toLowerCase();
-      if (!nq) return null;
-      return units.find(u => u.name.toLowerCase() === nq)
-        || units.find(u => u.id.toLowerCase() === nq)
-        || units.find(u => u.name.toLowerCase().includes(nq))
-        || null;
+    /* Dark overlay for readability, still visible */
+    .ua-overlay {
+      min-height: 100vh;
+      width: 100%;
+      background: linear-gradient(
+        rgba(5, 10, 20, 0.72),
+        rgba(5, 10, 20, 0.72)
+      );
     }
 
-    if (input) {
-      input.addEventListener("keydown", (e) => {
-        if (e.key !== "Enter") return;
-        const m = findBestMatch(input.value);
-        if (!m) return;
-        go({ id: m.id, q: m.name, level: levelInput.value || "1", shiny: shinySelect.value, enchant: enchantSelect.value });
-      });
+    /* Main page container */
+    .ua-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px 72px;
     }
 
-    if (applyBtn) {
-      applyBtn.addEventListener("click", () => {
-        go({ level: levelInput.value || "1", shiny: shinySelect.value, enchant: enchantSelect.value });
-      });
+    .ua-hero h1 {
+      font-size: 2.2rem;
+      margin: 0 0 8px;
+      letter-spacing: 0.2px;
     }
-  </script>
+
+    .ua-hero p {
+      margin: 0 0 18px;
+      opacity: 0.85;
+    }
+
+    /* Card styling */
+    .ua-card {
+      border-radius: 18px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(10, 15, 25, 0.55);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .ua-divider {
+      height: 1px;
+      background: rgba(180, 210, 255, 0.14);
+      margin: 18px 0;
+    }
+
+    .ua-searchRow {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .ua-searchLeft {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ua-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      opacity: 0.9;
+    }
+
+    .ua-help {
+      font-size: 0.8rem;
+      opacity: 0.65;
+    }
+
+    .ua-input {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(5, 8, 15, 0.55);
+      padding: 12px 14px;
+      outline: none;
+      color: inherit;
+    }
+
+    .ua-imageBox {
+      border-radius: 16px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(5, 8, 15, 0.35);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .ua-imageInner {
+      opacity: 0.7;
+      font-weight: 600;
+    }
+
+    /* Top stats */
+    .ua-statsGrid4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .ua-stat {
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.14);
+      background: rgba(5, 8, 15, 0.35);
+      padding: 12px 12px;
+    }
+
+    .ua-statLabel {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      opacity: 0.75;
+    }
+
+    .ua-statValue {
+      margin-top: 8px;
+      font-weight: 700;
+    }
+
+    /* Wide blocks */
+    .ua-wideBlock {
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.14);
+      background: rgba(5, 8, 15, 0.35);
+      padding: 14px 14px;
+    }
+
+    .ua-wideTitle {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      opacity: 0.75;
+      margin-bottom: 10px;
+    }
+
+    .ua-twoColTitle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .ua-rightTitle {
+      text-align: center;
+      opacity: 0.75;
+    }
+
+    .ua-wideText {
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
+    /* Calculator section */
+    .ua-calcCard {
+      border-radius: 16px;
+      border: 1px solid rgba(180, 210, 255, 0.16);
+      background: rgba(5, 8, 15, 0.28);
+      padding: 18px;
+    }
+
+    .ua-calcHeader h2 {
+      margin: 0 0 14px;
+      font-size: 1.4rem;
+    }
+
+    .ua-calcControls {
+      display: grid;
+      grid-template-columns: 160px 1fr 1fr 120px;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .ua-controlLabel {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      opacity: 0.75;
+      margin-bottom: 8px;
+    }
+
+    .ua-inputSmall {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(5, 8, 15, 0.55);
+      padding: 10px 12px;
+      outline: none;
+      color: inherit;
+    }
+
+    .ua-select {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(5, 8, 15, 0.55);
+      padding: 10px 12px;
+      outline: none;
+      color: inherit;
+    }
+
+    .ua-applyBtn {
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.2);
+      background: rgba(25, 40, 70, 0.35);
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .ua-calcGrid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .ua-miniStat {
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.14);
+      background: rgba(5, 8, 15, 0.35);
+      padding: 12px;
+      min-height: 70px;
+    }
+
+    .ua-miniLabel {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      opacity: 0.75;
+    }
+
+    .ua-miniValue {
+      margin-top: 10px;
+      font-weight: 800;
+      font-size: 1.05rem;
+    }
+
+    .ua-totalBox {
+      margin-top: 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.16);
+      background: rgba(10, 15, 25, 0.55);
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ua-totalTitle {
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      opacity: 0.85;
+    }
+
+    .ua-totalValue {
+      font-size: 1.2rem;
+      font-weight: 900;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .ua-searchRow {
+        grid-template-columns: 1fr;
+      }
+
+      .ua-statsGrid4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .ua-calcControls {
+        grid-template-columns: 1fr;
+      }
+
+      .ua-calcGrid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </BaseLayout>
