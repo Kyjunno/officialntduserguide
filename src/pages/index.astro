@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 <BaseLayout title="Nightshift Tower Defense User Guide">
-  <section class="home-lock">
+  <section class="home-hero">
     <div class="home-bg"></div>
     <div class="home-overlay"></div>
 
@@ -10,9 +10,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <div class="home-card">
         <div class="home-kicker">Official Community Guide</div>
 
-        <h1 class="home-title">
-          Nightshift Tower Defense<br />User Guide
-        </h1>
+        <h1 class="home-title">Nightshift Tower Defense<br />User Guide</h1>
 
         <p class="home-text">
           Hey there, I’m <strong>Clancy</strong>. This user guide is basically here to help you understand all the nerdy facts.
@@ -24,16 +22,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <h2 class="home-subtitle">Community</h2>
 
         <p class="home-text">
-          Want to help improve the guide, report mistakes, or just hang out with the community?
-          Join us here:
+          Want to help improve the guide, report mistakes, or just hang out with the community? Join us here:
         </p>
 
-        <a
-          class="home-button"
-          href="https://discord.gg/XHXjcVA4cw"
-          target="_blank"
-          rel="noopener"
-        >
+        <a class="home-button" href="https://discord.gg/XHXjcVA4cw" target="_blank" rel="noopener">
           Join the NTD Discord
         </a>
       </div>
@@ -42,20 +34,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 </BaseLayout>
 
 <style>
-  /* HARD STOP: this page must never scroll */
-  html, body{
-    height:100%;
-    overflow:hidden;
+  /* Turn OFF the normal page container behavior on the Home page only */
+  :global(main.shell){
+    max-width: none;
+    padding: 0;
   }
 
-  /* Lock the hero to the viewport minus topbar */
-  .home-lock{
+  /* Optional: kill any accidental horizontal overflow site-wide */
+  :global(html), :global(body){
+    overflow-x: hidden;
+  }
+
+  /* Full-bleed hero under the top bar */
+  .home-hero{
     position: relative;
-    width: 100vw;
-    height: calc(100vh - 72px); /* topbar height */
+    width: 100%;
+    height: calc(100vh - 72px); /* height of your sticky topbar */
     overflow: hidden;
-    margin: 0;
-    padding: 0;
   }
 
   .home-bg{
@@ -64,9 +59,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     background-image: url("/images/home-bg.png");
     background-repeat: no-repeat;
     background-size: cover;
-    background-position: 62% 42%;
-    filter: brightness(0.6) saturate(1.05) blur(3px);
-    transform: scale(1.06);
+
+    /* Clean default framing. No wild shift. */
+    background-position: center;
+
+    filter: brightness(0.60) saturate(1.05) blur(3px);
+    transform: scale(1.05);
   }
 
   .home-overlay{
@@ -84,12 +82,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     height: 100%;
     max-width: 1180px;
     margin: 0 auto;
-    padding: 40px 18px;
-    display: flex;
-    align-items: center;
+    padding: 56px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
 
   .home-card{
+    width: 100%;
     max-width: 860px;
     border: 1px solid var(--border);
     border-radius: 22px;
@@ -115,6 +115,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     margin:0;
     font-size: clamp(34px, 4.8vw, 56px);
     line-height: 1.05;
+    letter-spacing: -0.02em;
   }
 
   .home-subtitle{
@@ -125,14 +126,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   .home-text{
     margin-top:14px;
     color: var(--muted);
-    line-height:1.7;
-    font-size:16px;
+    line-height: 1.7;
+    font-size: 16px;
   }
 
   .home-divider{
-    height:1px;
+    height: 1px;
     background: var(--border);
-    margin:20px 0;
+    margin: 20px 0;
   }
 
   .home-button{
@@ -144,7 +145,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     border-radius:14px;
     border:1px solid var(--border);
     background: rgba(255,255,255,.05);
-    font-weight:800;
+    font-weight: 800;
     text-decoration:none;
   }
 
@@ -154,7 +155,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   }
 
   @media (max-width: 900px){
-    .home-bg{ background-position: 58% 40%; }
-    .home-inner{ justify-content: center; }
+    .home-inner{ padding: 44px 16px; }
   }
 </style>
