@@ -37,6 +37,8 @@ const rng = calcLevelStat(baseRange, unit?.leveling?.range_per_level ?? 0, level
 const dps = calcDps(dmg, cd);
 const power = Math.round(dps * 10 + rng * 2);
 const totalDps = dps * (unit?.placements ?? 1);
+
+const unitIndex = units.map(u => ({ id: u.id, name: u.name }));
 ---
 <BaseLayout title="Unit Arcade | Official NTD User Guide" description="Search units, view stats, and calculate leveling, shiny, and enchants.">
   <div class="card">
@@ -116,7 +118,7 @@ const totalDps = dps * (unit?.placements ?? 1);
         </tr>
       </thead>
       <tbody>
-        {(unit?.abilities && unit.abilities.length) ? unit.abilities.map(a => (
+        {(unit?.abilities && unit?.abilities.length) ? unit.abilities.map(a => (
           <tr>
             <td>{a.name}</td>
             <td>{a.description}</td>
@@ -188,8 +190,12 @@ const totalDps = dps * (unit?.placements ?? 1);
     </div>
   </div>
 
+  <!-- Safe embedded JSON for client-side search -->
+  <script id="unitIndex" type="application/json">{JSON.stringify(unitIndex)}</script>
+
   <script>
-    const units = ${JSON.stringify(units.map(u => ({ id: u.id, name: u.name })))};
+    const unitIndexEl = document.getElementById("unitIndex");
+    const units = unitIndexEl ? JSON.parse(unitIndexEl.textContent || "[]") : [];
 
     const input = document.getElementById("unitSearch");
     const applyBtn = document.getElementById("applyBtn");
