@@ -85,13 +85,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
   .home-card{
     width: 100%;
-    max-width: 900px;
+    max-width: 1020px; /* wider so the one-line title has room */
     border: 1px solid var(--border);
     border-radius: 22px;
     background: rgba(0,0,0,.48);
     box-shadow: var(--shadow);
-    padding: 30px 26px;
-    overflow: hidden; /* prevents any accidental spill */
+    padding: 30px 30px;
   }
 
   .home-kicker{
@@ -107,27 +106,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     margin-bottom: 12px;
   }
 
-  /* Title behavior:
-     - Single line on wide screens
-     - Never overflows the card
-     - Wraps cleanly if needed */
+  /* This guarantees:
+     - ONE LINE on desktop
+     - Always stays inside the card
+     - No clipping because card no longer hides overflow */
   .home-title{
     margin: 0;
-    font-size: clamp(28px, 3.4vw, 52px); /* can shrink a bit more when needed */
-    line-height: 1.1;
-    letter-spacing: -0.015em;
+    font-weight: 900;
+    font-size: clamp(26px, 3.1vw, 46px); /* smaller max so it fits cleanly */
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
     max-width: 100%;
-    white-space: normal;      /* allow wrap if it has to */
-    overflow-wrap: anywhere;  /* never spill out */
-    text-wrap: balance;       /* modern browsers: nicer wrapping */
-  }
-
-  /* Force one-line only when there’s clearly enough room */
-  @media (min-width: 1200px){
-    .home-title{
-      white-space: nowrap;
-      overflow-wrap: normal;
-    }
   }
 
   .home-subtitle{
@@ -164,5 +154,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   .home-button:hover{
     border-color: rgba(106,168,255,.7);
     background: rgba(106,168,255,.12);
+  }
+
+  /* On smaller screens, allow wrapping so it never breaks layout */
+  @media (max-width: 900px){
+    .home-card{ max-width: 860px; padding: 28px 22px; }
+    .home-title{ white-space: normal; }
   }
 </style>
