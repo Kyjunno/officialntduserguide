@@ -3,10 +3,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 const pageTitle = "Unit Arcade";
 
-/**
- * Add every unit name here.
- * This drives the dropdown list.
- */
 const UNIT_NAMES = [
   "Bear5",
   "Test Dummy Endo",
@@ -42,31 +38,27 @@ const UNIT_NAMES = [
     <section id="searchScreen" class="ua-centerSearch">
       <div class="ua-centerCard">
         <div class="ua-centerTitle">Unit Arcade</div>
-        <div class="ua-centerSub">
-          Type a unit name and pick from the dropdown.
-        </div>
+        <div class="ua-centerSub">Type a unit name and pick from the dropdown.</div>
 
         <div class="ua-centerInputRow">
-          <input
-            id="unitInput"
-            class="ua-input ua-inputBig"
-            type="text"
-            list="unitList"
-            placeholder="Search units..."
-            autocomplete="off"
-          />
+          <div class="ua-field">
+            <input
+              id="unitInput"
+              class="ua-input ua-inputBig"
+              type="text"
+              placeholder="Search units..."
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <div id="dropdownCenter" class="ua-dropdown ua-hidden" role="listbox" aria-label="Unit results"></div>
+          </div>
+
           <button id="goBtn" class="ua-goBtn" type="button" aria-label="Open unit">
             Open
           </button>
         </div>
 
-        <datalist id="unitList">
-          {UNIT_NAMES.map((name) => <option value={name} />)}
-        </datalist>
-
-        <div id="hint" class="ua-hint">
-          Start typing to see all units.
-        </div>
+        <div id="hint" class="ua-hint">Start typing to see units.</div>
       </div>
     </section>
 
@@ -81,14 +73,19 @@ const UNIT_NAMES = [
         <div class="ua-searchRow">
           <div class="ua-searchLeft">
             <div class="ua-label">Unit search</div>
-            <input
-              id="unitInputTop"
-              class="ua-input"
-              type="text"
-              list="unitList"
-              placeholder="Search units..."
-              autocomplete="off"
-            />
+
+            <div class="ua-field">
+              <input
+                id="unitInputTop"
+                class="ua-input"
+                type="text"
+                placeholder="Search units..."
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <div id="dropdownTop" class="ua-dropdown ua-hidden" role="listbox" aria-label="Unit results"></div>
+            </div>
+
             <div class="ua-help">Choose a unit from the dropdown to load details.</div>
           </div>
 
@@ -214,8 +211,8 @@ const UNIT_NAMES = [
   </main>
 
   <script is:inline>
-    // Basic dataset for now.
-    // Later we’ll replace this with your full unit JSON + real images.
+    const UNIT_NAMES = JSON.parse(document.getElementById("ua-unit-names").textContent);
+
     const UNIT_DATA = {
       "Golden Bonnie": {
         rarity: "Mythic",
@@ -239,7 +236,10 @@ const UNIT_NAMES = [
     const infoScreen = document.getElementById("infoScreen");
 
     const unitInput = document.getElementById("unitInput");
+    const dropdownCenter = document.getElementById("dropdownCenter");
     const unitInputTop = document.getElementById("unitInputTop");
+    const dropdownTop = document.getElementById("dropdownTop");
+
     const goBtn = document.getElementById("goBtn");
     const hint = document.getElementById("hint");
 
@@ -258,31 +258,109 @@ const UNIT_NAMES = [
       return (s || "").trim();
     }
 
-    function unitExists(name) {
-      const list = document.getElementById("unitList");
-      const options = Array.from(list.options).map(o => o.value);
-      return options.includes(name);
+    function lockScroll() {
+      document.body.classList.add("ua-lockScroll");
+    }
+
+    function unlockScroll() {
+      document.body.classList.remove("ua-lockScroll");
+    }
+
+    function matches(query, name) {
+      const q = query.toLowerCase();
+      const n = name.toLowerCase();
+      return n.includes(q);
+    }
+
+    function renderDropdown(menuEl, items, onPick) {
+      menuEl.innerHTML = "";
+
+      if (!items.length) {
+        const empty = document.createElement("div");
+        empty.className = "ua-ddItem ua-ddEmpty";
+        empty.textContent = "No matches";
+        menuEl.appendChild(empty);
+        return;
+      }
+
+      items.forEach((name) => {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "ua-ddItem";
+        row.textContent = name;
+        row.addEventListener("click", () => onPick(name));
+        menuEl.appendChild(row);
+      });
+    }
+
+    function showMenu(menuEl) {
+      menuEl.classList.remove("ua-hidden");
+    }
+
+    function hideMenu(menuEl) {
+      menuEl.classList.add("ua-hidden");
+    }
+
+    function attachAutocomplete(inputEl, menuEl, onPick) {
+      function update() {
+        const q = normalize(inputEl.value);
+        if (!q) {
+          hideMenu(menuEl);
+          return;
+        }
+
+        const filtered = UNIT_NAMES.filter((n) => matches(q, n)).slice(0, 10);
+        renderDropdown(menuEl, filtered, (name) => {
+          inputEl.value = name;
+          hideMenu(menuEl);
+          onPick(name);
+        });
+        showMenu(menuEl);
+      }
+
+      inputEl.addEventListener("input", update);
+
+      inputEl.addEventListener("focus", () => {
+        if (normalize(inputEl.value)) update();
+      });
+
+      inputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          hideMenu(menuEl);
+        }
+        if (e.key === "Enter") {
+          const val = normalize(inputEl.value);
+          const exists = UNIT_NAMES.includes(val);
+          if (!exists) return;
+          hideMenu(menuEl);
+          onPick(val);
+        }
+      });
+
+      document.addEventListener("click", (e) => {
+        const target = e.target;
+        const wrapper = inputEl.closest(".ua-field");
+        if (!wrapper) return;
+        if (!wrapper.contains(target)) hideMenu(menuEl);
+      });
     }
 
     function loadUnit(name) {
       const unitName = normalize(name);
-      if (!unitExists(unitName)) {
+      if (!UNIT_NAMES.includes(unitName)) {
         hint.textContent = "Pick a unit from the dropdown list.";
         return;
       }
 
-      // Reveal info screen
       searchScreen.classList.add("ua-hidden");
       infoScreen.classList.remove("ua-hidden");
+      unlockScroll();
 
-      // Sync top input
-      unitInputTop.value = unitName;
-
-      // Set title
       unitTitle.textContent = unitName;
       unitSubtitle.textContent = "Choose level, shiny, and enchant to see calculated stats.";
 
-      // Pull data
+      unitInputTop.value = unitName;
+
       const data = UNIT_DATA[unitName] || null;
 
       rarityVal.textContent = data?.rarity ?? "Not set";
@@ -292,7 +370,6 @@ const UNIT_NAMES = [
       obtainVal.textContent = data?.obtainability ?? "Not set yet.";
       abilityVal.textContent = data?.ability ?? "No abilities listed yet.";
 
-      // Image placeholder for now
       unitImageLabel.textContent = "No image";
     }
 
@@ -301,29 +378,25 @@ const UNIT_NAMES = [
       loadUnit(val);
     }
 
-    function openFromTop() {
-      const val = normalize(unitInputTop.value);
-      loadUnit(val);
-    }
-
-    // Center search actions
     goBtn.addEventListener("click", openFromCenter);
-    unitInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") openFromCenter();
-    });
+
     unitInput.addEventListener("input", () => {
-      hint.textContent = "Start typing to see all units.";
+      hint.textContent = "Start typing to see units.";
     });
 
-    // Top search actions
-    unitInputTop.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") openFromTop();
-    });
-    unitInputTop.addEventListener("change", openFromTop);
+    // Start locked (no page scroll) until a unit is selected
+    lockScroll();
+
+    attachAutocomplete(unitInput, dropdownCenter, loadUnit);
+    attachAutocomplete(unitInputTop, dropdownTop, loadUnit);
+  </script>
+
+  <!-- embed unit names as JSON so the inline script can read them safely -->
+  <script id="ua-unit-names" type="application/json" is:inline>
+    {JSON.stringify(UNIT_NAMES)}
   </script>
 
   <style>
-    /* Full background like your other pages */
     :global(body) {
       background: transparent !important;
     }
@@ -345,8 +418,14 @@ const UNIT_NAMES = [
       position: fixed;
       inset: 0;
       z-index: -1;
-      background: linear-gradient(rgba(5, 10, 20, 0.60), rgba(5, 10, 20, 0.60));
+      background: linear-gradient(rgba(5, 10, 20, 0.55), rgba(5, 10, 20, 0.55));
       pointer-events: none;
+    }
+
+    /* This kills the page scrollbar until we show the info screen */
+    :global(body.ua-lockScroll) {
+      overflow: hidden !important;
+      height: 100vh;
     }
 
     .ua-wrap {
@@ -359,7 +438,6 @@ const UNIT_NAMES = [
       display: none !important;
     }
 
-    /* Center search screen */
     .ua-centerSearch {
       min-height: calc(100vh - 140px);
       display: grid;
@@ -393,8 +471,14 @@ const UNIT_NAMES = [
       display: grid;
       grid-template-columns: 1fr 110px;
       gap: 10px;
-      align-items: center;
+      align-items: start;
       margin: 0 auto;
+    }
+
+    /* wrapper so dropdown can align perfectly with input */
+    .ua-field {
+      position: relative;
+      width: 100%;
     }
 
     .ua-inputBig {
@@ -410,6 +494,7 @@ const UNIT_NAMES = [
       padding: 14px 14px;
       cursor: pointer;
       font-weight: 900;
+      height: 50px;
     }
 
     .ua-hint {
@@ -418,7 +503,6 @@ const UNIT_NAMES = [
       opacity: 0.7;
     }
 
-    /* Info screen */
     .ua-hero h1 {
       font-size: 2.2rem;
       margin: 0 0 6px;
@@ -480,6 +564,51 @@ const UNIT_NAMES = [
       padding: 12px 14px;
       outline: none;
       color: inherit;
+    }
+
+    /* Custom dropdown */
+    .ua-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(5, 8, 15, 0.92);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      z-index: 50;
+
+      /* 10 items max visible, then internal scroll */
+      max-height: 360px;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .ua-ddItem {
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      font-weight: 700;
+      opacity: 0.92;
+    }
+
+    .ua-ddItem:hover {
+      background: rgba(180, 210, 255, 0.10);
+      opacity: 1;
+    }
+
+    .ua-ddEmpty {
+      cursor: default;
+      opacity: 0.65;
+    }
+
+    .ua-ddEmpty:hover {
+      background: transparent;
     }
 
     .ua-imageBox {
@@ -662,6 +791,9 @@ const UNIT_NAMES = [
     @media (max-width: 900px) {
       .ua-centerInputRow {
         grid-template-columns: 1fr;
+      }
+      .ua-goBtn {
+        width: 100%;
       }
       .ua-searchRow {
         grid-template-columns: 1fr;
