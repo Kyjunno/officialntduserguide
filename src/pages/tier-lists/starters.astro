@@ -1,153 +1,171 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
-type UnitEntry = {
-  name: string;
+type Unit = {
   rank: number;
-  cost: number;
+  name: string;
+  image: string;
+  cost: string;
   rarity: string;
   maxDps: string;
   attackType: string;
   placements: string;
-  stats: {
-    damage: string;
-    cooldown: string;
-    range: string;
-  };
+  dmg: string;
+  rng: string;
+  cd: string;
   reasoning: string;
-  image: string;
 };
 
-const units: UnitEntry[] = [
+const units: Unit[] = [
   {
-    name: "Bear5",
     rank: 1,
-    cost: 555,
+    name: "Bear5",
+    image: "/images/tierlists/starters/bear5.png",
+    cost: "$555",
     rarity: "Other",
     maxDps: "1,110",
     attackType: "AOE",
     placements: "1",
-    stats: { damage: "555", cooldown: "0.5", range: "20" },
+    dmg: "555",
+    rng: "20",
+    cd: "0.5",
     reasoning:
-      "While TECHNICALLY he’s a late game unit, his placement price is $555. So he is basically a starter unit with late game potential. His ability “Mimic” is quite possibly the strongest passive in the game.",
-    image: "/images/units/starters/bear5.png",
+      "While TECHNICALLY hes a late game unit, his placement price is $555. so he is basically a starter unit with late game potentional. His ability \"Mimic\" is quite possibly the strongest passive in the game",
   },
   {
-    name: "Test Dummy Endo",
     rank: 2,
-    cost: 0,
+    name: "Test Dummy Endo",
+    image: "/images/tierlists/starters/test-dummy-endo.png",
+    cost: "$800",
     rarity: "Mythic",
     maxDps: "200",
     attackType: "Single",
     placements: "2",
-    stats: { damage: "100", cooldown: "1", range: "25" },
+    dmg: "100",
+    rng: "25",
+    cd: "1",
     reasoning:
-      "His DPS is comparable to some midgame units. He outright out DPS’ almost all of the other starters. His passive “Double Trouble” makes him able to attack anywhere on the map basically.",
-    image: "/images/units/starters/test-dummy-endo.png",
+      "His dps is comparable to some midgame units. He outright out dps' almost all of the other starters. His passive \"Double Trouble\" makes him able to attack anywhere on the map basically",
   },
   {
-    name: "Nightguard",
     rank: 3,
-    cost: 0,
+    name: "Nightguard",
+    image: "/images/tierlists/starters/nightguard.png",
+    cost: "$800",
     rarity: "Legendary",
     maxDps: "225",
     attackType: "Cone AOE (50%)",
     placements: "3",
-    stats: { damage: "7.5", cooldown: "0.1", range: "22" },
+    dmg: "7.5",
+    rng: "22",
+    cd: "0.1",
     reasoning:
-      "In terms of sheer crowd control, Nightguard is top tier. A continuous Cone AOE unit with Burn, Slow AND Reveal? Throw a Critical Strikes chip on him and you have a constant stunning Cone AOE unit.",
-    image: "/images/units/starters/nightguard.png",
+      "In terms of sheer crowd control, nightguard is top tier. A continuous Cone AOE unit with Burn, Slow AND Reveal? throw a Critical Strikes chip on him and you have a constant stunning Cone AOE unit",
   },
   {
-    name: "Chicken7",
     rank: 4,
-    cost: 0,
+    name: "Chicken7",
+    image: "/images/tierlists/starters/chicken7.png",
+    cost: "$800",
     rarity: "Epic",
     maxDps: "150",
     attackType: "Beam + Dual",
     placements: "3",
-    stats: { damage: "5", cooldown: "0.1", range: "22" },
+    dmg: "5",
+    rng: "22",
+    cd: "0.1",
     reasoning:
-      "Chicken 7 has a HOT amount of DPS when you take into account what dual attacks do. Combine that with the +15% income and you have a solid starter that’ll transition you into late game very fast.",
-    image: "/images/units/starters/chicken7.png",
+      "Chicken 7 has a HOT amount of dps when you take into account what dual attacks do. Combine that with the +15% income and you have a solid starter thatll transition you into late game very fast",
   },
   {
-    name: "Fan",
     rank: 5,
-    cost: 0,
+    name: "Fan",
+    image: "/images/tierlists/starters/fan.png",
+    cost: "$800",
     rarity: "Epic",
     maxDps: "160",
     attackType: "Cone AOE (50%)",
     placements: "4",
-    stats: { damage: "10", cooldown: "0.25", range: "24" },
+    dmg: "10",
+    rng: "24",
+    cd: "0.25",
     reasoning:
-      "Fan is overlooked quite a bit, but Fan is the HIGHEST slowing in the game. For a starter, having that much slowing with cone AOE is insanely good.",
-    image: "/images/units/starters/fan.png",
+      "Fan is overlooked quite a bit, but fan is the HIGHEST slowing in the game. For a starter, having that much slowing with cone AOE is insanely good",
   },
   {
-    name: "Bonnie",
     rank: 6,
-    cost: 0,
+    name: "Bonnie",
+    image: "/images/tierlists/starters/bonnie.png",
+    cost: "$800",
     rarity: "Common",
     maxDps: "32",
     attackType: "Cone AOE (25%)",
     placements: "2",
-    stats: { damage: "8", cooldown: "0.5", range: "12" },
+    dmg: "8",
+    rng: "12",
+    cd: "0.5",
     reasoning:
-      "While not as heavy damage as Carl the Cupcake or Freddy, Bonnie makes up for this by being a cone AOE. Being cheap, wide spread, and fast attacking makes Bonnie generate a ton of money to transition into midgame.",
-    image: "/images/units/starters/bonnie.png",
+      "While not as heavy damage as carl the cupcake or freddy, bonnie makes up for this by being a cone AOE. Being cheap, wide spread, and fast attacking makes bonnie generate a ton of money to transition into midgame",
   },
   {
-    name: "Carl The Cupcake",
     rank: 7,
-    cost: 0,
+    name: "Carl The Cupcake",
+    image: "/images/tierlists/starters/carl-the-cupcake.png",
+    cost: "$800",
     rarity: "Rare",
     maxDps: "86.4",
     attackType: "Splash + Burn",
     placements: "2",
-    stats: { damage: "54", cooldown: "1.25", range: "20" },
+    dmg: "54",
+    rng: "20",
+    cd: "1.25",
     reasoning:
-      "Having splash means more enemies hit which means more money gain per attack. Having burn is just huge, but there are already better burn on better units. His biggest weakness is the cooldown, but the high damage makes up for it.",
-    image: "/images/units/starters/carl-the-cupcake.png",
+      "Having splash means more enemies hit which means more money gain per attack. Having burn is just huge, but there already better burn on better units. His biggest weakness is the cooldown, but the high damage makes up for it",
   },
   {
-    name: "Freddy",
     rank: 8,
-    cost: 0,
+    name: "Freddy",
+    image: "/images/tierlists/starters/freddy.png",
+    cost: "$800",
     rarity: "Common",
     maxDps: "90",
     attackType: "Single",
     placements: "3",
-    stats: { damage: "30", cooldown: "1", range: "20" },
+    dmg: "30",
+    rng: "20",
+    cd: "1",
     reasoning:
-      "Good old fashioned Freddy. His biggest issue is being a single target. Still, that single target makes him dish out solid damage overall. Being the cheapest unit in the game makes him super valuable.",
-    image: "/images/units/starters/freddy.png",
+      "Good old fashioned freddy. His biggest issue is being a single target. Still, that single target makes him dish out solid damage overall. Being the cheapest unit in the game makes him super valuable",
   },
   {
-    name: "Foxy",
     rank: 9,
-    cost: 0,
+    name: "Foxy",
+    image: "/images/tierlists/starters/foxy.png",
+    cost: "$800",
     rarity: "Rare",
     maxDps: "93.75",
     attackType: "Single + Bleed",
     placements: "2",
-    stats: { damage: "30", cooldown: "0.8", range: "20" },
+    dmg: "30",
+    rng: "20",
+    cd: "0.8",
     reasoning:
-      "In terms of total output, he’s above Freddy. HOWEVER, starters’ purpose is to have a starting unit that can transition you to mid/late game the fastest. Foxy’s output includes his bleed, but you want to kill enemies as fast as possible for the most amount of money as possible.",
-    image: "/images/units/starters/foxy.png",
+      "In terms of total output, hes above freddy. HOWEVER, starters purpose is to have a starting unit that can transition you to mid/late game the fastest. Foxy's output includes his bleed, but you want to kill enemies as fast as possible for the most amount of money as possible",
   },
   {
-    name: "Chica",
     rank: 10,
-    cost: 0,
+    name: "Chica",
+    image: "/images/tierlists/starters/chica.png",
+    cost: "$800",
     rarity: "Common",
     maxDps: "38.4",
     attackType: "Dual",
     placements: "3",
-    stats: { damage: "16", cooldown: "1.25", range: "18" },
+    dmg: "16",
+    rng: "18",
+    cd: "1.25",
     reasoning:
-      "While Chica has better single target DPS than Bonnie, the cooldown really just hurts Chica. While dual basically doubles the DPS to 76.8, that’s still not enough to justify putting Chica higher.",
-    image: "/images/units/starters/chica.png",
+      "While chica has better single target dps then bonnie, the cooldown really just hurts chica. While dual basically doubles the dps to 76.8, thats still not enough to justify putting chica higher",
   },
 ];
 ---
@@ -173,10 +191,19 @@ const units: UnitEntry[] = [
           {units.map((u) => (
             <article class="row" aria-label={`${u.name} rank ${u.rank}`}>
               <div class="imgWrap">
-                <img class="img" src={u.image} alt={u.name} loading="lazy" decoding="async" />
+                <img
+                  class="img"
+                  src={u.image}
+                  alt={u.name}
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.style.display='none'; this.parentElement.querySelector('.imgFallback')?.classList.add('show')"
+                />
+                <div class="imgFallback">IMG</div>
+
                 <div class="tag name">{u.name}</div>
                 <div class="tag rank">#{u.rank}</div>
-                <div class="tag cost">{u.cost ? `$${u.cost}` : "$—"}</div>
+                <div class="tag cost">{u.cost}</div>
               </div>
 
               <div class="info">
@@ -198,15 +225,15 @@ const units: UnitEntry[] = [
                 <div class="miniGrid statsLine">
                   <div class="miniBox">
                     <div class="k">DMG</div>
-                    <div class="v">{u.stats.damage}</div>
+                    <div class="v">{u.dmg}</div>
                   </div>
                   <div class="miniBox">
                     <div class="k">CD</div>
-                    <div class="v">{u.stats.cooldown}</div>
+                    <div class="v">{u.cd}</div>
                   </div>
                   <div class="miniBox">
                     <div class="k">RNG</div>
-                    <div class="v">{u.stats.range}</div>
+                    <div class="v">{u.rng}</div>
                   </div>
                   <div class="miniBox">
                     <div class="k">Rarity</div>
@@ -365,6 +392,19 @@ const units: UnitEntry[] = [
       display: block;
     }
 
+    .imgFallback{
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: 1000;
+      letter-spacing: 0.12em;
+      color: rgba(232,238,252,.75);
+      background: rgba(0,0,0,.20);
+    }
+    .imgFallback.show{ display: flex; }
+
     .tag{
       position: absolute;
       padding: 6px 8px;
@@ -515,21 +555,13 @@ const units: UnitEntry[] = [
     }
 
     @media (max-width: 1050px){
-      .layout{
-        grid-template-columns: 1fr;
-      }
+      .layout{ grid-template-columns: 1fr; }
     }
 
     @media (max-width: 520px){
-      .row{
-        grid-template-columns: 1fr;
-      }
-      .topLine{
-        grid-template-columns: 1fr;
-      }
-      .statsLine{
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .row{ grid-template-columns: 1fr; }
+      .topLine{ grid-template-columns: 1fr; }
+      .statsLine{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
   </style>
 </BaseLayout>
