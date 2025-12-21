@@ -2,145 +2,328 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const pageTitle = "Unit Arcade";
+
+/**
+ * Add every unit name here.
+ * This drives the dropdown list.
+ */
+const UNIT_NAMES = [
+  "Bear5",
+  "Test Dummy Endo",
+  "Nightguard",
+  "Chicken7",
+  "Fan",
+  "Bonnie",
+  "Carl The Cupcake",
+  "Freddy",
+  "Foxy",
+  "Chica",
+  "Big Band Bonnie",
+  "Golden Bonnie",
+  "Bunny6",
+  "Sparky The Dog",
+  "Endo 01",
+  "Bort Bunny",
+  "Stuffed Freddy",
+  "Phone Guy",
+  "Golden Freddy",
+  "Fox4",
+  "The Amalgamation",
+  "Shadow Freddy",
+  "Endo Plush",
+  "Crying Soul",
+  "Lamp"
+];
 ---
 
 <BaseLayout title={pageTitle}>
   <main class="ua-wrap">
-    <section class="ua-hero">
-      <h1>Unit Arcade</h1>
-      <p>Search a unit, then choose level, shiny, and enchant to see the calculated stats.</p>
+    <!-- SEARCH ONLY SCREEN -->
+    <section id="searchScreen" class="ua-centerSearch">
+      <div class="ua-centerCard">
+        <div class="ua-centerTitle">Unit Arcade</div>
+        <div class="ua-centerSub">
+          Type a unit name and pick from the dropdown.
+        </div>
+
+        <div class="ua-centerInputRow">
+          <input
+            id="unitInput"
+            class="ua-input ua-inputBig"
+            type="text"
+            list="unitList"
+            placeholder="Search units..."
+            autocomplete="off"
+          />
+          <button id="goBtn" class="ua-goBtn" type="button" aria-label="Open unit">
+            Open
+          </button>
+        </div>
+
+        <datalist id="unitList">
+          {UNIT_NAMES.map((name) => <option value={name} />)}
+        </datalist>
+
+        <div id="hint" class="ua-hint">
+          Start typing to see all units.
+        </div>
+      </div>
     </section>
 
-    <section class="ua-card">
-      <div class="ua-searchRow">
-        <div class="ua-searchLeft">
-          <div class="ua-label">Unit search</div>
-          <input class="ua-input" type="text" placeholder="Type a unit name..." value="Golden Bonnie" />
-          <div class="ua-help">This search redirects to the matching unit.</div>
-        </div>
+    <!-- FULL INFO SCREEN (hidden until selection) -->
+    <section id="infoScreen" class="ua-infoScreen ua-hidden">
+      <header class="ua-hero">
+        <h1 id="unitTitle">Unit Arcade</h1>
+        <p id="unitSubtitle">Pick a unit to see details.</p>
+      </header>
 
-        <div class="ua-imageBox">
-          <div class="ua-imageInner">No image</div>
-        </div>
-      </div>
-
-      <div class="ua-divider"></div>
-
-      <div class="ua-statsGrid4">
-        <div class="ua-stat">
-          <div class="ua-statLabel">RARITY</div>
-          <div class="ua-statValue">Legendary</div>
-        </div>
-
-        <div class="ua-stat">
-          <div class="ua-statLabel">ATTACK TYPE</div>
-          <div class="ua-statValue">Not set</div>
-        </div>
-
-        <div class="ua-stat">
-          <div class="ua-statLabel">PLACEMENT PRICE</div>
-          <div class="ua-statValue">Not set</div>
-        </div>
-
-        <div class="ua-stat">
-          <div class="ua-statLabel">PLACEMENTS</div>
-          <div class="ua-statValue">2</div>
-        </div>
-      </div>
-
-      <div class="ua-divider"></div>
-
-      <div class="ua-wideBlock">
-        <div class="ua-wideTitle">OBTAINABILITY</div>
-        <div class="ua-wideText">Not set yet.</div>
-      </div>
-
-      <div class="ua-divider"></div>
-
-      <div class="ua-wideBlock">
-        <div class="ua-wideTitle ua-twoColTitle">
-          <span>ABILITY</span>
-          <span class="ua-rightTitle">DESCRIPTION</span>
-        </div>
-        <div class="ua-wideText">No abilities listed yet.</div>
-      </div>
-
-      <div class="ua-divider"></div>
-
-      <section class="ua-calcCard">
-        <div class="ua-calcHeader">
-          <h2>Calculator</h2>
-        </div>
-
-        <div class="ua-calcControls">
-          <div class="ua-control">
-            <div class="ua-controlLabel">LEVEL</div>
-            <input class="ua-inputSmall" type="number" min="1" value="1" />
+      <section class="ua-card">
+        <div class="ua-searchRow">
+          <div class="ua-searchLeft">
+            <div class="ua-label">Unit search</div>
+            <input
+              id="unitInputTop"
+              class="ua-input"
+              type="text"
+              list="unitList"
+              placeholder="Search units..."
+              autocomplete="off"
+            />
+            <div class="ua-help">Choose a unit from the dropdown to load details.</div>
           </div>
 
-          <div class="ua-control">
-            <div class="ua-controlLabel">VARIANT</div>
-            <select class="ua-select">
-              <option>Normal</option>
-              <option>Shiny</option>
-            </select>
-          </div>
-
-          <div class="ua-control">
-            <div class="ua-controlLabel">ENCHANT</div>
-            <select class="ua-select">
-              <option>None</option>
-              <option>Critical Strikes</option>
-              <option>Power</option>
-              <option>Cooldown</option>
-              <option>Range</option>
-            </select>
-          </div>
-
-          <button class="ua-applyBtn" type="button">Apply</button>
-        </div>
-
-        <div class="ua-calcGrid">
-          <div class="ua-miniStat">
-            <div class="ua-miniLabel">LEVEL</div>
-            <div class="ua-miniValue">1</div>
-          </div>
-          <div class="ua-miniStat">
-            <div class="ua-miniLabel">COST</div>
-            <div class="ua-miniValue">0</div>
-          </div>
-          <div class="ua-miniStat">
-            <div class="ua-miniLabel">DPS</div>
-            <div class="ua-miniValue">0</div>
-          </div>
-          <div class="ua-miniStat">
-            <div class="ua-miniLabel">DAMAGE</div>
-            <div class="ua-miniValue">0</div>
-          </div>
-          <div class="ua-miniStat">
-            <div class="ua-miniLabel">COOLDOWN</div>
-            <div class="ua-miniValue">0</div>
-          </div>
-          <div class="ua-miniStat">
-            <div class="ua-miniLabel">RANGE</div>
-            <div class="ua-miniValue">0</div>
-          </div>
-          <div class="ua-miniStat">
-            <div class="ua-miniLabel">POWER</div>
-            <div class="ua-miniValue">0</div>
+          <div class="ua-imageBox">
+            <div id="unitImageLabel" class="ua-imageInner">No image</div>
           </div>
         </div>
 
-        <div class="ua-totalBox">
-          <div class="ua-totalTitle">TOTAL DPS</div>
-          <div class="ua-totalValue">0</div>
+        <div class="ua-divider"></div>
+
+        <div class="ua-statsGrid4">
+          <div class="ua-stat">
+            <div class="ua-statLabel">RARITY</div>
+            <div id="rarityVal" class="ua-statValue">Not set</div>
+          </div>
+
+          <div class="ua-stat">
+            <div class="ua-statLabel">ATTACK TYPE</div>
+            <div id="attackVal" class="ua-statValue">Not set</div>
+          </div>
+
+          <div class="ua-stat">
+            <div class="ua-statLabel">PLACEMENT PRICE</div>
+            <div id="priceVal" class="ua-statValue">Not set</div>
+          </div>
+
+          <div class="ua-stat">
+            <div class="ua-statLabel">PLACEMENTS</div>
+            <div id="placementsVal" class="ua-statValue">Not set</div>
+          </div>
         </div>
+
+        <div class="ua-divider"></div>
+
+        <div class="ua-wideBlock">
+          <div class="ua-wideTitle">OBTAINABILITY</div>
+          <div id="obtainVal" class="ua-wideText">Not set yet.</div>
+        </div>
+
+        <div class="ua-divider"></div>
+
+        <div class="ua-wideBlock">
+          <div class="ua-wideTitle ua-twoColTitle">
+            <span>ABILITY</span>
+            <span class="ua-rightTitle">DESCRIPTION</span>
+          </div>
+          <div id="abilityVal" class="ua-wideText">No abilities listed yet.</div>
+        </div>
+
+        <div class="ua-divider"></div>
+
+        <section class="ua-calcCard">
+          <div class="ua-calcHeader">
+            <h2>Calculator</h2>
+          </div>
+
+          <div class="ua-calcControls">
+            <div class="ua-control">
+              <div class="ua-controlLabel">LEVEL</div>
+              <input id="lvlInput" class="ua-inputSmall" type="number" min="1" value="1" />
+            </div>
+
+            <div class="ua-control">
+              <div class="ua-controlLabel">VARIANT</div>
+              <select id="variantInput" class="ua-select">
+                <option value="Normal">Normal</option>
+                <option value="Shiny">Shiny</option>
+              </select>
+            </div>
+
+            <div class="ua-control">
+              <div class="ua-controlLabel">ENCHANT</div>
+              <select id="enchantInput" class="ua-select">
+                <option value="None">None</option>
+                <option value="Critical Strikes">Critical Strikes</option>
+                <option value="Power">Power</option>
+                <option value="Cooldown">Cooldown</option>
+                <option value="Range">Range</option>
+              </select>
+            </div>
+
+            <button class="ua-applyBtn" type="button">Apply</button>
+          </div>
+
+          <div class="ua-calcGrid">
+            <div class="ua-miniStat">
+              <div class="ua-miniLabel">LEVEL</div>
+              <div id="outLevel" class="ua-miniValue">1</div>
+            </div>
+            <div class="ua-miniStat">
+              <div class="ua-miniLabel">COST</div>
+              <div id="outCost" class="ua-miniValue">0</div>
+            </div>
+            <div class="ua-miniStat">
+              <div class="ua-miniLabel">DPS</div>
+              <div id="outDps" class="ua-miniValue">0</div>
+            </div>
+            <div class="ua-miniStat">
+              <div class="ua-miniLabel">DAMAGE</div>
+              <div id="outDmg" class="ua-miniValue">0</div>
+            </div>
+            <div class="ua-miniStat">
+              <div class="ua-miniLabel">COOLDOWN</div>
+              <div id="outCd" class="ua-miniValue">0</div>
+            </div>
+            <div class="ua-miniStat">
+              <div class="ua-miniLabel">RANGE</div>
+              <div id="outRng" class="ua-miniValue">0</div>
+            </div>
+            <div class="ua-miniStat">
+              <div class="ua-miniLabel">POWER</div>
+              <div id="outPow" class="ua-miniValue">0</div>
+            </div>
+          </div>
+
+          <div class="ua-totalBox">
+            <div class="ua-totalTitle">TOTAL DPS</div>
+            <div id="outTotal" class="ua-totalValue">0</div>
+          </div>
+        </section>
       </section>
     </section>
   </main>
 
+  <script is:inline>
+    // Basic dataset for now.
+    // Later we’ll replace this with your full unit JSON + real images.
+    const UNIT_DATA = {
+      "Golden Bonnie": {
+        rarity: "Mythic",
+        attackType: "Pierce + Poison",
+        placementPrice: "$4,500",
+        placements: "2",
+        obtainability: "Not set yet.",
+        ability: "Not set yet."
+      },
+      "Bonnie": {
+        rarity: "Common",
+        attackType: "Cone AOE (25%)",
+        placementPrice: "$150",
+        placements: "2",
+        obtainability: "Not set yet.",
+        ability: "Not set yet."
+      }
+    };
+
+    const searchScreen = document.getElementById("searchScreen");
+    const infoScreen = document.getElementById("infoScreen");
+
+    const unitInput = document.getElementById("unitInput");
+    const unitInputTop = document.getElementById("unitInputTop");
+    const goBtn = document.getElementById("goBtn");
+    const hint = document.getElementById("hint");
+
+    const unitTitle = document.getElementById("unitTitle");
+    const unitSubtitle = document.getElementById("unitSubtitle");
+    const unitImageLabel = document.getElementById("unitImageLabel");
+
+    const rarityVal = document.getElementById("rarityVal");
+    const attackVal = document.getElementById("attackVal");
+    const priceVal = document.getElementById("priceVal");
+    const placementsVal = document.getElementById("placementsVal");
+    const obtainVal = document.getElementById("obtainVal");
+    const abilityVal = document.getElementById("abilityVal");
+
+    function normalize(s) {
+      return (s || "").trim();
+    }
+
+    function unitExists(name) {
+      const list = document.getElementById("unitList");
+      const options = Array.from(list.options).map(o => o.value);
+      return options.includes(name);
+    }
+
+    function loadUnit(name) {
+      const unitName = normalize(name);
+      if (!unitExists(unitName)) {
+        hint.textContent = "Pick a unit from the dropdown list.";
+        return;
+      }
+
+      // Reveal info screen
+      searchScreen.classList.add("ua-hidden");
+      infoScreen.classList.remove("ua-hidden");
+
+      // Sync top input
+      unitInputTop.value = unitName;
+
+      // Set title
+      unitTitle.textContent = unitName;
+      unitSubtitle.textContent = "Choose level, shiny, and enchant to see calculated stats.";
+
+      // Pull data
+      const data = UNIT_DATA[unitName] || null;
+
+      rarityVal.textContent = data?.rarity ?? "Not set";
+      attackVal.textContent = data?.attackType ?? "Not set";
+      priceVal.textContent = data?.placementPrice ?? "Not set";
+      placementsVal.textContent = data?.placements ?? "Not set";
+      obtainVal.textContent = data?.obtainability ?? "Not set yet.";
+      abilityVal.textContent = data?.ability ?? "No abilities listed yet.";
+
+      // Image placeholder for now
+      unitImageLabel.textContent = "No image";
+    }
+
+    function openFromCenter() {
+      const val = normalize(unitInput.value);
+      loadUnit(val);
+    }
+
+    function openFromTop() {
+      const val = normalize(unitInputTop.value);
+      loadUnit(val);
+    }
+
+    // Center search actions
+    goBtn.addEventListener("click", openFromCenter);
+    unitInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") openFromCenter();
+    });
+    unitInput.addEventListener("input", () => {
+      hint.textContent = "Start typing to see all units.";
+    });
+
+    // Top search actions
+    unitInputTop.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") openFromTop();
+    });
+    unitInputTop.addEventListener("change", openFromTop);
+  </script>
+
   <style>
-    /* IMPORTANT: This forces a true full-viewport background behind the entire site shell */
+    /* Full background like your other pages */
     :global(body) {
       background: transparent !important;
     }
@@ -162,29 +345,93 @@ const pageTitle = "Unit Arcade";
       position: fixed;
       inset: 0;
       z-index: -1;
-      background: linear-gradient(rgba(5, 10, 20, 0.65), rgba(5, 10, 20, 0.65));
+      background: linear-gradient(rgba(5, 10, 20, 0.60), rgba(5, 10, 20, 0.60));
       pointer-events: none;
     }
 
-    /* Page container */
     .ua-wrap {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 32px 24px 72px;
+      padding: 24px 24px 72px;
     }
 
+    .ua-hidden {
+      display: none !important;
+    }
+
+    /* Center search screen */
+    .ua-centerSearch {
+      min-height: calc(100vh - 140px);
+      display: grid;
+      place-items: center;
+      padding: 20px 0;
+    }
+
+    .ua-centerCard {
+      width: min(720px, 100%);
+      border-radius: 18px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(10, 15, 25, 0.55);
+      backdrop-filter: blur(10px);
+      padding: 22px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+      text-align: center;
+    }
+
+    .ua-centerTitle {
+      font-size: 2.2rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .ua-centerSub {
+      opacity: 0.85;
+      margin-bottom: 16px;
+    }
+
+    .ua-centerInputRow {
+      display: grid;
+      grid-template-columns: 1fr 110px;
+      gap: 10px;
+      align-items: center;
+      margin: 0 auto;
+    }
+
+    .ua-inputBig {
+      padding: 14px 14px;
+      border-radius: 14px;
+      font-size: 1rem;
+    }
+
+    .ua-goBtn {
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.20);
+      background: rgba(25, 40, 70, 0.35);
+      padding: 14px 14px;
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .ua-hint {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+
+    /* Info screen */
     .ua-hero h1 {
       font-size: 2.2rem;
-      margin: 0 0 8px;
+      margin: 0 0 6px;
       letter-spacing: 0.2px;
+      text-align: left;
     }
 
     .ua-hero p {
       margin: 0 0 18px;
       opacity: 0.85;
+      text-align: left;
     }
 
-    /* Card styling */
     .ua-card {
       border-radius: 18px;
       border: 1px solid rgba(180, 210, 255, 0.18);
@@ -249,7 +496,6 @@ const pageTitle = "Unit Arcade";
       font-weight: 600;
     }
 
-    /* Top stats */
     .ua-statsGrid4 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -275,7 +521,6 @@ const pageTitle = "Unit Arcade";
       font-weight: 700;
     }
 
-    /* Wide blocks */
     .ua-wideBlock {
       border-radius: 14px;
       border: 1px solid rgba(180, 210, 255, 0.14);
@@ -307,7 +552,6 @@ const pageTitle = "Unit Arcade";
       opacity: 0.9;
     }
 
-    /* Calculator section */
     .ua-calcCard {
       border-radius: 16px;
       border: 1px solid rgba(180, 210, 255, 0.16);
@@ -415,20 +659,19 @@ const pageTitle = "Unit Arcade";
       font-weight: 900;
     }
 
-    /* Responsive */
     @media (max-width: 900px) {
+      .ua-centerInputRow {
+        grid-template-columns: 1fr;
+      }
       .ua-searchRow {
         grid-template-columns: 1fr;
       }
-
       .ua-statsGrid4 {
         grid-template-columns: repeat(2, 1fr);
       }
-
       .ua-calcControls {
         grid-template-columns: 1fr;
       }
-
       .ua-calcGrid {
         grid-template-columns: 1fr;
       }
