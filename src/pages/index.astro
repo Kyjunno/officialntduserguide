@@ -10,7 +10,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <div class="home-card">
         <div class="home-kicker">Official Community Guide</div>
 
-        <h1 class="home-title">Nightshift Tower Defense<br />User Guide</h1>
+        <h1 class="home-title">
+          Nightshift Tower Defense User Guide
+        </h1>
 
         <p class="home-text">
           Hey there, I’m <strong>Clancy</strong>. This user guide is basically here to help you understand all the nerdy facts.
@@ -22,10 +24,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <h2 class="home-subtitle">Community</h2>
 
         <p class="home-text">
-          Want to help improve the guide, report mistakes, or just hang out with the community? Join us here:
+          Want to help improve the guide, report mistakes, or just hang out with the community?
+          Join us here:
         </p>
 
-        <a class="home-button" href="https://discord.gg/XHXjcVA4cw" target="_blank" rel="noopener">
+        <a
+          class="home-button"
+          href="https://discord.gg/XHXjcVA4cw"
+          target="_blank"
+          rel="noopener"
+        >
           Join the NTD Discord
         </a>
       </div>
@@ -34,22 +42,19 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 </BaseLayout>
 
 <style>
-  /* Turn OFF the normal page container behavior on the Home page only */
   :global(main.shell){
     max-width: none;
     padding: 0;
   }
 
-  /* Optional: kill any accidental horizontal overflow site-wide */
   :global(html), :global(body){
     overflow-x: hidden;
   }
 
-  /* Full-bleed hero under the top bar */
   .home-hero{
     position: relative;
     width: 100%;
-    height: calc(100vh - 72px); /* height of your sticky topbar */
+    height: calc(100vh - 72px);
     overflow: hidden;
   }
 
@@ -59,10 +64,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     background-image: url("/images/home-bg.png");
     background-repeat: no-repeat;
     background-size: cover;
-
-    /* Clean default framing. No wild shift. */
     background-position: center;
-
     filter: brightness(0.60) saturate(1.05) blur(3px);
     transform: scale(1.05);
   }
@@ -90,7 +92,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
   .home-card{
     width: 100%;
-    max-width: 860px;
+    max-width: 900px; /* slightly wider so the title fits cleanly */
     border: 1px solid var(--border);
     border-radius: 22px;
     background: rgba(0,0,0,.48);
@@ -112,10 +114,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   }
 
   .home-title{
-    margin:0;
-    font-size: clamp(34px, 4.8vw, 56px);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    margin: 0;
+    font-size: clamp(32px, 3.6vw, 52px);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    white-space: nowrap; /* THIS is what keeps it on one smooth line */
   }
 
   .home-subtitle{
@@ -155,6 +158,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   }
 
   @media (max-width: 900px){
-    .home-inner{ padding: 44px 16px; }
+    .home-title{
+      white-space: normal; /* allow wrap on small screens */
+    }
   }
 </style>
