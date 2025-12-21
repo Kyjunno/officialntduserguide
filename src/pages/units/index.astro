@@ -1,0 +1,51 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import units from "../../data/units.json";
+import { calcDps, fmt } from "../../lib/utils.js";
+
+const enriched = units.map(u => ({
+  ...u,
+  dps: calcDps(u.damage, u.cooldown)
+})).sort((a,b) => b.dps - a.dps);
+---
+<BaseLayout title="Unit Guide | Units" description="Browse all units.">
+  <div class="card">
+    <h1 style="margin-top:0;">Units</h1>
+    <p style="color:var(--muted); line-height:1.6;">
+      Click a unit to open its dedicated page. This list sorts by base DPS (damage ÷ cooldown).
+    </p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Unit</th>
+          <th>Rarity</th>
+          <th>Placements</th>
+          <th>Damage</th>
+          <th>Cooldown</th>
+          <th>Range</th>
+          <th>Base DPS</th>
+          <th>Effects</th>
+        </tr>
+      </thead>
+      <tbody>
+        {enriched.map(u => (
+          <tr>
+            <td><a href={`/units/${u.id}/`}>{u.name}</a></td>
+            <td>{u.rarity}</td>
+            <td>{u.placements}</td>
+            <td>{u.damage}</td>
+            <td>{u.cooldown}</td>
+            <td>{u.range}</td>
+            <td>{fmt(u.dps, 2)}</td>
+            <td>
+              {(u.effects || []).map(e => <span class="badge">{e.type}</span>)}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <small style="display:block; margin-top:12px;">
+      Source data lives in <code>src/data/units.json</code>.
+    </small>
+  </div>
+</BaseLayout>

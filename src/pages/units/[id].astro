@@ -1,0 +1,128 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import units from "../../data/units.json";
+import { calcDps, calcLevelStat, fmt, clamp } from "../../lib/utils.js";
+
+export function getStaticPaths() {
+  return units.map(u => ({ params: { id: u.id } }));
+}
+
+const { id } = Astro.params;
+const unit = units.find(u => u.id === id);
+
+const level = clamp(Number(Astro.url.searchParams.get("level") || 1), 1, 50);
+const dmg = calcLevelStat(unit.damage, unit.leveling?.damage_per_level, level);
+const cd = calcLevelStat(unit.cooldown, unit.leveling?.cooldown_per_level, level);
+const rng = calcLevelStat(unit.range, unit.leveling?.range_per_level, level);
+
+const baseDps = calcDps(unit.damage, unit.cooldown);
+const levelDps = calcDps(dmg, cd);
+
+function effectLine(e){
+  if (e.type === "stun") return `Stun: ${fmt(e.duration_sec, 3)}s`;
+  if (e.type === "poison") return `Poison: ${e.total_damage} total`;
+  if (e.type === "burn") return `Burn: ${e.percent}% (scales with enemy HP)`;
+  if (e.type === "slow") return `Slow: ${e.percent}%`;
+  return `${e.type}`;
+}
+---
+<BaseLayout title={`Unit Guide | ${unit.name}`} description={`Stats and leveling for ${unit.name}.`}>
+  <div class="card">
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+      <div>
+        <h1 style="margin:0;">{unit.name}</h1>
+        <div style="margin-top:8px;">
+          <span class="badge">{unit.rarity}</span>
+          <span class="badge">{unit.placements} placements</span>
+          {(unit.effects || []).map(e => <span class="badge">{e.type}</span>)}
+        </div>
+      </div>
+      <div style="min-width:260px;">
+        <div class="kv">
+          <div class="item">
+            <div class="label">Base DPS</div>
+            <div class="value">{fmt(baseDps, 2)}</div>
+          </div>
+          <div class="item">
+            <div class="label">DPS at level {level}</div>
+            <div class="value">{fmt(levelDps, 2)}</div>
+          </div>
+        </div>
+        <small style="display:block; margin-top:10px; color:var(--muted); line-height:1.5;">
+          Change level by adding <code>?level=10</code> to the URL.
+        </small>
+      </div>
+    </div>
+
+    <hr class="sep" />
+
+    <h2 style="margin-top:0;">Stats</h2>
+    <div class="kv">
+      <div class="item">
+        <div class="label">Damage</div>
+        <div class="value">{fmt(dmg, 2)} <small>(base {unit.damage})</small></div>
+      </div>
+      <div class="item">
+        <div class="label">Cooldown</div>
+        <div class="value">{fmt(cd, 3)}s <small>(base {unit.cooldown})</small></div>
+      </div>
+      <div class="item">
+        <div class="label">Range</div>
+        <div class="value">{fmt(rng, 2)} <small>(base {unit.range})</small></div>
+      </div>
+      <div class="item">
+        <div class="label">Placements</div>
+        <div class="value">{unit.placements}</div>
+      </div>
+    </div>
+
+    <hr class="sep" />
+
+    <h2 style="margin-top:0;">Level scaling</h2>
+    <p style="color:var(--muted); line-height:1.6;">
+      These are per-level gains. Level 1 uses the base stats.
+    </p>
+    <div class="kv">
+      <div class="item">
+        <div class="label">Damage per level</div>
+        <div class="value">{fmt(unit.leveling?.damage_per_level || 0, 3)}</div>
+      </div>
+      <div class="item">
+        <div class="label">Cooldown per level</div>
+        <div class="value">{fmt(unit.leveling?.cooldown_per_level || 0, 3)}</div>
+      </div>
+      <div class="item">
+        <div class="label">Range per level</div>
+        <div class="value">{fmt(unit.leveling?.range_per_level || 0, 3)}</div>
+      </div>
+      <div class="item">
+        <div class="label">Max level supported</div>
+        <div class="value">50 <small>(editable)</small></div>
+      </div>
+    </div>
+
+    <hr class="sep" />
+
+    <h2 style="margin-top:0;">Effects</h2>
+    {(unit.effects && unit.effects.length > 0) ? (
+      <div>
+        {unit.effects.map(e => (
+          <div class="card" style="margin-top:10px;">
+            <div style="font-weight:700; text-transform:capitalize;">{e.type}</div>
+            <div style="color:var(--muted); margin-top:6px;">{effectLine(e)}</div>
+            {e.notes && <small style="display:block; margin-top:8px;">{e.notes}</small>}
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p style="color:var(--muted);">No effects listed.</p>
+    )}
+
+    <hr class="sep" />
+
+    <h2 style="margin-top:0;">Notes</h2>
+    <p style="color:var(--muted); line-height:1.6;">{unit.notes || "No notes yet."}</p>
+
+    <p style="margin-top:18px;"><a href="/units">← Back to Units</a></p>
+  </div>
+</BaseLayout>

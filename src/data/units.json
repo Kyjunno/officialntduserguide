@@ -1,0 +1,67 @@
+[
+  {
+    "id": "golden-bonnie",
+    "name": "Golden Bonnie",
+    "rarity": "Legendary",
+    "placements": 2,
+    "damage": 300,
+    "cooldown": 2.5,
+    "range": 25,
+    "leveling": {
+      "damage_per_level": 6,
+      "cooldown_per_level": 0.0,
+      "range_per_level": 0.0
+    },
+    "effects": [
+      {
+        "type": "poison",
+        "total_damage": 681,
+        "duration_sec": 0,
+        "notes": "If poison duration is unknown, treat as total DoT per hit."
+      }
+    ],
+    "notes": "Sample unit. Replace with your real stats."
+  },
+  {
+    "id": "phone-guy",
+    "name": "Phone Guy",
+    "rarity": "Rare",
+    "placements": 2,
+    "damage": 30,
+    "cooldown": 0.25,
+    "range": 23,
+    "leveling": {
+      "damage_per_level": 0.6,
+      "cooldown_per_level": 0.0,
+      "range_per_level": 0.0
+    },
+    "effects": [
+      {
+        "type": "stun",
+        "duration_sec": 0.05
+      }
+    ],
+    "notes": "Sample unit."
+  },
+  {
+    "id": "golden-freddy",
+    "name": "Golden Freddy",
+    "rarity": "Legendary",
+    "placements": 2,
+    "damage": 325,
+    "cooldown": 3,
+    "range": 25,
+    "leveling": {
+      "damage_per_level": 6.5,
+      "cooldown_per_level": 0.0,
+      "range_per_level": 0.0
+    },
+    "effects": [
+      {
+        "type": "stun",
+        "duration_sec": 1
+      }
+    ],
+    "notes": "Sample unit."
+  }
+]

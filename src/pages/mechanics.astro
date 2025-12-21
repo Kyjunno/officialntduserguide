@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Unit Guide | Mechanics" description="Canonical formulas and assumptions.">
+  <div class="card">
+    <h1 style="margin-top:0;">Mechanics and formulas</h1>
+    <p style="color:var(--muted); line-height:1.6;">
+      This page is the canon for how the site calculates derived stats.
+      The goal is consistency across every chart, not perfection in every edge case.
+    </p>
+
+    <hr class="sep" />
+
+    <h2 style="margin-top:0;">Base DPS</h2>
+    <p style="color:var(--muted); line-height:1.6;">
+      Base DPS is calculated from base stats as damage divided by cooldown.
+      If a unit has multi-hit, splash, chain, summons, or ramping, you can add an additional “Effective DPS” rule later,
+      but the base DPS stays the simplest common denominator.
+    </p>
+
+    <hr class="sep" />
+
+    <h2 style="margin-top:0;">Level scaling</h2>
+    <p style="color:var(--muted); line-height:1.6;">
+      Level 1 uses the listed base stats. Level N uses base + (N - 1) × per-level gain.
+      The unit pages let you preview the resulting stats by appending <code>?level=</code>.
+    </p>
+
+    <hr class="sep" />
+
+    <h2 style="margin-top:0;">Status effects</h2>
+    <p style="color:var(--muted); line-height:1.6;">
+      Stun is displayed as duration per hit. “Stun uptime” is not currently computed.
+      Poison is displayed as total damage per application when duration is unknown.
+      Burn that scales with enemy HP should be documented as a percent and optionally given an example HP target.
+    </p>
+
+    <hr class="sep" />
+
+    <h2 style="margin-top:0;">Versioning</h2>
+    <p style="color:var(--muted); line-height:1.6;">
+      Every update should include a date and the game version on the Patch notes page.
+      If an assumption changes, update this page first, then regenerate charts.
+    </p>
+  </div>
+</BaseLayout>

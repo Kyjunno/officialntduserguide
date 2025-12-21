@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import units from "../data/units.json";
+import { calcDps, fmt } from "../lib/utils.js";
+
+const rows = units.map(u => ({
+  name: u.name,
+  id: u.id,
+  dps: calcDps(u.damage, u.cooldown),
+  range: u.range,
+  cooldown: u.cooldown,
+  damage: u.damage,
+  placements: u.placements,
+  effects: (u.effects || []).map(e => e.type).join(", ")
+})).sort((a,b)=> b.dps - a.dps);
+---
+<BaseLayout title="Unit Guide | Charts" description="Sortable, copy-friendly charts.">
+  <div class="card">
+    <h1 style="margin-top:0;">Charts</h1>
+    <p style="color:var(--muted); line-height:1.6;">
+      This page is intentionally simple. It exists so you can screenshot, copy, and argue politely.
+      Everything here follows the formulas on the Mechanics page.
+    </p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Unit</th>
+          <th>Base DPS</th>
+          <th>Damage</th>
+          <th>Cooldown</th>
+          <th>Range</th>
+          <th>Placements</th>
+          <th>Effects</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r, idx) => (
+          <tr>
+            <td>{idx + 1}</td>
+            <td><a href={`/units/${r.id}/`}>{r.name}</a></td>
+            <td>{fmt(r.dps, 2)}</td>
+            <td>{r.damage}</td>
+            <td>{r.cooldown}</td>
+            <td>{r.range}</td>
+            <td>{r.placements}</td>
+            <td>{r.effects || ""}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</BaseLayout>

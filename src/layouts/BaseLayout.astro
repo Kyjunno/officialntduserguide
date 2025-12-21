@@ -1,0 +1,106 @@
+---
+import "../styles/global.css";
+const { title = "Unit Guide", description = "" } = Astro.props;
+
+const pathname = Astro.url.pathname;
+function isActive(href){
+  return pathname === href || (href !== "/" && pathname.startsWith(href));
+}
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+  </head>
+  <body>
+    <div class="container">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="dot"></div>
+          <div>
+            <div style="font-weight:700; line-height:1.2;">Unit Guide</div>
+            <small>Community reference, always updating</small>
+          </div>
+        </div>
+
+        <div class="searchbox">
+          <input id="search" placeholder="Search units and pages…" autocomplete="off" />
+          <div id="results" style="margin-top:10px; display:none;"></div>
+          <small style="display:block; margin-top:8px;">
+            Search works after you run <code>npm run build</code>.
+          </small>
+        </div>
+
+        <div class="section-title">Navigation</div>
+        <nav class="nav">
+          <a class={isActive("/") ? "active" : ""} href="/">Home</a>
+          <a class={isActive("/units") ? "active" : ""} href="/units">Units</a>
+          <a class={isActive("/charts") ? "active" : ""} href="/charts">Charts</a>
+          <a class={isActive("/mechanics") ? "active" : ""} href="/mechanics">Mechanics</a>
+          <a class={isActive("/patch-notes") ? "active" : ""} href="/patch-notes">Patch notes</a>
+        </nav>
+
+        <div class="section-title">Community</div>
+        <nav class="nav">
+          <a href="/contribute">Submit a correction</a>
+        </nav>
+
+        <small style="display:block; padding:10px; color:var(--muted);">
+          Tip: make one Google Sheet your source of truth, then export to JSON and drop it in <code>src/data/units.json</code>.
+        </small>
+      </aside>
+
+      <main class="main">
+        <slot />
+      </main>
+    </div>
+
+    <script>
+      // Optional Pagefind search. It only exists after `npm run build`.
+      (async () => {
+        const input = document.getElementById('search');
+        const results = document.getElementById('results');
+        let pagefind = null;
+
+        async function ensure(){
+          if (pagefind) return pagefind;
+          try {
+            pagefind = await import('/pagefind/pagefind.js');
+            await pagefind.options({ ranking: { termFrequency: 1.0 } });
+            return pagefind;
+          } catch {
+            return null;
+          }
+        }
+
+        function clear(){
+          results.style.display = 'none';
+          results.innerHTML = '';
+        }
+
+        input.addEventListener('input', async (e) => {
+          const q = e.target.value.trim();
+          if (!q) return clear();
+          const pf = await ensure();
+          if (!pf) return;
+          const search = await pf.search(q);
+          const data = await Promise.all(search.results.slice(0, 8).map(r => r.data()));
+          results.style.display = 'block';
+          results.innerHTML = data.map(d => {
+            return `<div style="padding:8px 10px; border:1px solid var(--border); border-radius:12px; margin-top:6px; background: rgba(255,255,255,.02);">
+              <a style="text-decoration:none; font-weight:600;" href="${d.url}">${d.meta.title || d.url}</a>
+              <div style="color:var(--muted); font-size:12px; margin-top:4px;">${(d.excerpt || '').slice(0, 120)}${d.excerpt && d.excerpt.length > 120 ? '…' : ''}</div>
+            </div>`;
+          }).join('');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!results.contains(e.target) && e.target !== input) clear();
+        });
+      })();
+    </script>
+  </body>
+</html>
