@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 <BaseLayout title="Tier Lists | Nightshift Tower Defense User Guide">
-  <div class="tiers-wrap">
+  <div class="tiers-page">
     <header class="tiers-hero">
       <h1 class="tiers-title">Tier Lists</h1>
       <p class="tiers-sub">
@@ -10,10 +10,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </p>
     </header>
 
-    <section class="tiers-grid">
+    <section class="tiers-grid" aria-label="Tier list categories">
       <!-- Starters -->
-      <a class="tier-card" href="#starters" aria-label="Go to Starters tier list">
-        <div class="tier-card-title">Starters</div>
+      <a class="tier-card" href="#" aria-label="Starters tier list (coming soon)">
+        <div class="tier-name">STARTERS</div>
         <div class="tier-slots">
           <div class="tier-slot">
             <img src="/images/tierlists/starters/slot-1.png" alt="Starter unit 1" />
@@ -25,8 +25,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Midgame -->
-      <a class="tier-card" href="#midgame" aria-label="Go to Midgame tier list">
-        <div class="tier-card-title">Midgame</div>
+      <a class="tier-card" href="#" aria-label="Midgame tier list (coming soon)">
+        <div class="tier-name">MIDGAMES</div>
         <div class="tier-slots">
           <div class="tier-slot tier-slot-empty">?</div>
           <div class="tier-slot tier-slot-empty">?</div>
@@ -34,8 +34,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Endgame -->
-      <a class="tier-card" href="#endgame" aria-label="Go to Endgame tier list">
-        <div class="tier-card-title">Endgame</div>
+      <a class="tier-card" href="#" aria-label="Endgame tier list (coming soon)">
+        <div class="tier-name">ENDGAMES</div>
         <div class="tier-slots">
           <div class="tier-slot tier-slot-empty">?</div>
           <div class="tier-slot tier-slot-empty">?</div>
@@ -43,8 +43,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Slowers -->
-      <a class="tier-card" href="#slowers" aria-label="Go to Slowers tier list">
-        <div class="tier-card-title">Slowers</div>
+      <a class="tier-card" href="#" aria-label="Slowers tier list (coming soon)">
+        <div class="tier-name">SLOWERS</div>
         <div class="tier-slots">
           <div class="tier-slot tier-slot-empty">?</div>
           <div class="tier-slot tier-slot-empty">?</div>
@@ -52,8 +52,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Stunners -->
-      <a class="tier-card" href="#stunners" aria-label="Go to Stunners tier list">
-        <div class="tier-card-title">Stunners</div>
+      <a class="tier-card" href="#" aria-label="Stunners tier list (coming soon)">
+        <div class="tier-name">STUNNERS</div>
         <div class="tier-slots">
           <div class="tier-slot tier-slot-empty">?</div>
           <div class="tier-slot tier-slot-empty">?</div>
@@ -61,8 +61,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Bleed -->
-      <a class="tier-card" href="#bleed" aria-label="Go to Bleed tier list">
-        <div class="tier-card-title">Bleed</div>
+      <a class="tier-card" href="#" aria-label="Bleed tier list (coming soon)">
+        <div class="tier-name">BLEED</div>
         <div class="tier-slots">
           <div class="tier-slot tier-slot-empty">?</div>
           <div class="tier-slot tier-slot-empty">?</div>
@@ -70,8 +70,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Burn -->
-      <a class="tier-card" href="#burn" aria-label="Go to Burn tier list">
-        <div class="tier-card-title">Burn</div>
+      <a class="tier-card" href="#" aria-label="Burn tier list (coming soon)">
+        <div class="tier-name">BURN</div>
         <div class="tier-slots">
           <div class="tier-slot tier-slot-empty">?</div>
           <div class="tier-slot tier-slot-empty">?</div>
@@ -79,96 +79,82 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Boosters -->
-      <a class="tier-card" href="#boosters" aria-label="Go to Boosters tier list">
-        <div class="tier-card-title">Boosters</div>
+      <a class="tier-card" href="#" aria-label="Boosters tier list (coming soon)">
+        <div class="tier-name">BOOSTERS</div>
         <div class="tier-slots">
           <div class="tier-slot tier-slot-empty">?</div>
           <div class="tier-slot tier-slot-empty">?</div>
         </div>
       </a>
     </section>
-
-    <!-- Optional: the anchors these jump to (kept simple for now) -->
-    <div class="anchors">
-      <div id="starters" class="anchor-spacer"></div>
-      <div id="midgame" class="anchor-spacer"></div>
-      <div id="endgame" class="anchor-spacer"></div>
-      <div id="slowers" class="anchor-spacer"></div>
-      <div id="stunners" class="anchor-spacer"></div>
-      <div id="bleed" class="anchor-spacer"></div>
-      <div id="burn" class="anchor-spacer"></div>
-      <div id="boosters" class="anchor-spacer"></div>
-    </div>
   </div>
 
   <style>
-    .tiers-wrap{
+    .tiers-page{
       max-width: 1100px;
       margin: 0 auto;
       padding: 22px 0 80px;
-      text-align: center; /* centers your hero text like you asked */
-    }
-
-    .tiers-hero{
-      margin-top: 4px;
+      text-align: center;
     }
 
     .tiers-title{
       margin: 0;
-      font-size: clamp(40px, 5vw, 64px);
+      font-size: clamp(42px, 5vw, 66px);
       line-height: 1.02;
       letter-spacing: -0.02em;
     }
 
     .tiers-sub{
       margin: 14px auto 0;
-      max-width: 80ch;
+      max-width: 82ch;
       color: var(--muted);
       line-height: 1.7;
       font-size: 16px;
     }
 
     .tiers-grid{
-      margin-top: 22px;
+      margin-top: 24px;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
-      justify-items: center;
+      gap: 22px;
     }
 
-    /* The big clickable box */
+    /* Big FN-style card */
     .tier-card{
-      width: 100%;
       text-decoration: none;
-      border: 1px solid rgba(255,255,255,.14);
+      display: block;
       border-radius: 22px;
-      padding: 18px 16px 16px;
+      padding: 18px 18px 20px;
+
+      /* No “extra boxes” look. Just one clean card. */
+      border: 1px solid rgba(255,255,255,.18);
       background:
-        radial-gradient(900px 650px at 20% 10%, rgba(106,168,255,.08), transparent 60%),
-        radial-gradient(900px 650px at 80% 20%, rgba(159,91,255,.07), transparent 55%),
+        radial-gradient(900px 650px at 10% 10%, rgba(106,168,255,.10), transparent 60%),
+        radial-gradient(900px 650px at 80% 20%, rgba(159,91,255,.10), transparent 55%),
         rgba(0,0,0,.22);
+
       box-shadow: var(--shadow);
       transition: transform .14s ease, border-color .14s ease, background .14s ease;
     }
 
     .tier-card:hover{
       transform: translateY(-2px);
-      border-color: rgba(106,168,255,.55);
+      border-color: rgba(232,238,252,.55);
       background:
-        radial-gradient(900px 650px at 20% 10%, rgba(106,168,255,.12), transparent 60%),
-        radial-gradient(900px 650px at 80% 20%, rgba(159,91,255,.10), transparent 55%),
+        radial-gradient(900px 650px at 10% 10%, rgba(106,168,255,.14), transparent 60%),
+        radial-gradient(900px 650px at 80% 20%, rgba(159,91,255,.14), transparent 55%),
         rgba(0,0,0,.26);
     }
 
-    .tier-card-title{
-      font-weight: 900;
+    .tier-name{
+      font-weight: 1000;
+      letter-spacing: 0.08em;
       font-size: 22px;
-      letter-spacing: -0.01em;
-      margin-bottom: 14px;
+      margin: 6px 0 18px;
       text-align: center;
     }
 
-    /* Two small rounded slots inside */
+    /* Two small inner slots */
     .tier-slots{
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -180,9 +166,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       width: 100%;
       aspect-ratio: 1 / 1;
       border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.28);
+      border: 2px solid rgba(232,238,252,.70);
+      background: rgba(0,0,0,.25);
       overflow: hidden;
+
       display: flex;
       align-items: center;
       justify-content: center;
@@ -191,27 +178,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     .tier-slot img{
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: contain; /* IMPORTANT: prevents the “big stretched image” look */
+      padding: 12px;
       display: block;
-      padding: 10px;
-      filter: drop-shadow(0 10px 20px rgba(0,0,0,.35));
+      filter: drop-shadow(0 10px 22px rgba(0,0,0,.35));
     }
 
     .tier-slot-empty{
-      color: rgba(232,238,252,.65);
-      font-weight: 900;
-      font-size: 40px;
-      letter-spacing: .02em;
-    }
-
-    /* Anchor helpers so jumps feel nice */
-    .anchors{
-      margin-top: 40px;
-    }
-
-    .anchor-spacer{
-      scroll-margin-top: 96px;
-      height: 1px;
+      color: rgba(232,238,252,.75);
+      font-weight: 1000;
+      font-size: 44px;
     }
 
     @media (max-width: 1000px){
