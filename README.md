@@ -21,7 +21,7 @@ Open the local URL Astro prints.
 Run:
    npm run build
 
-This builds the site and generates the search index.
+This builds the site and generates the search index
 
 ## Free hosting on GitHub Pages
 1) Create a GitHub repo, for example: `your-game-guide`
