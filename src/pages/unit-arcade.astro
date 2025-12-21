@@ -1,0 +1,230 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import units from "../data/units.json";
+import { calcDps, calcLevelStat, fmt, clamp } from "../lib/utils.js";
+
+const q = (Astro.url.searchParams.get("q") || "").trim().toLowerCase();
+function normalize(s){ return String(s || "").trim().toLowerCase(); }
+
+const defaultUnit =
+  units.find(u => normalize(u.name) === q) ||
+  units.find(u => normalize(u.id) === q) ||
+  units.find(u => normalize(u.name).includes(q)) ||
+  units[0];
+
+const selectedId = Astro.url.searchParams.get("id") || defaultUnit?.id || "";
+const level = clamp(Number(Astro.url.searchParams.get("level") || 1), 1, 50);
+const shiny = (Astro.url.searchParams.get("shiny") || "0") === "1";
+const enchant = (Astro.url.searchParams.get("enchant") || "none").toLowerCase();
+
+const unit = units.find(u => u.id === selectedId) || defaultUnit;
+
+const shinyMult = shiny ? (unit?.modifiers?.shiny?.damageMult ?? 1.1) : 1.0;
+const enchantMods = (unit?.modifiers?.enchants && unit.modifiers.enchants[enchant]) || {};
+const enchantDamageMult = enchantMods.damageMult ?? 1.0;
+const enchantCooldownMult = enchantMods.cooldownMult ?? 1.0;
+const enchantRangeAdd = enchantMods.rangeAdd ?? 0;
+
+const baseDamage = unit?.damage ?? 0;
+const baseCooldown = unit?.cooldown ?? 1;
+const baseRange = unit?.range ?? 0;
+const baseCost = unit?.placementPrice ?? 0;
+
+const dmg = calcLevelStat(baseDamage, unit?.leveling?.damage_per_level ?? 0, level) * shinyMult * enchantDamageMult;
+const cd = calcLevelStat(baseCooldown, unit?.leveling?.cooldown_per_level ?? 0, level) * enchantCooldownMult;
+const rng = calcLevelStat(baseRange, unit?.leveling?.range_per_level ?? 0, level) + enchantRangeAdd;
+
+const dps = calcDps(dmg, cd);
+const power = Math.round(dps * 10 + rng * 2);
+const totalDps = dps * (unit?.placements ?? 1);
+---
+<BaseLayout title="Unit Arcade | Official NTD User Guide" description="Search units, view stats, and calculate leveling, shiny, and enchants.">
+  <div class="card">
+    <h1 style="margin-top:0;">Unit Arcade</h1>
+    <p style="color:var(--muted); line-height:1.6;">
+      Search a unit, then choose level, shiny, and enchant to see the calculated stats.
+    </p>
+
+    <div class="card" style="margin-top:14px;">
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
+        <div style="flex: 1; min-width: 260px;">
+          <div style="font-weight:800; margin-bottom:8px;">Unit search</div>
+          <input id="unitSearch" placeholder="Type a unit name, then press Enter…" autocomplete="off"
+                 value={unit?.name || ""} style="width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background: rgba(0,0,0,.2); color: var(--text); outline:none;" />
+          <small style="display:block; margin-top:8px; color:var(--muted);">
+            This search redirects to the matching unit.
+          </small>
+        </div>
+
+        <div style="display:flex; gap:12px; align-items:center;">
+          {unit?.image ? (
+            <img src={unit.image} alt={unit.name} style="width:96px; height:96px; border-radius:18px; border:1px solid var(--border); object-fit:cover; background: rgba(255,255,255,.02);" />
+          ) : (
+            <div style="width:96px; height:96px; border-radius:18px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--muted); background: rgba(255,255,255,.02);">
+              No image
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <hr class="sep" />
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Rarity</th>
+          <th>Attack type</th>
+          <th>Placement price</th>
+          <th>Placements</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{unit?.rarity ?? ""}</td>
+          <td>{unit?.attackType ?? "Not set"}</td>
+          <td>{unit?.placementPrice ?? "Not set"}</td>
+          <td>{unit?.placements ?? "Not set"}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="height:14px;"></div>
+
+    <table class="table">
+      <thead>
+        <tr><th>Obtainability</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            {(unit?.obtainability && unit.obtainability.length)
+              ? unit.obtainability.join(", ")
+              : "Not set yet."}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="height:14px;"></div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Ability</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {(unit?.abilities && unit.abilities.length) ? unit.abilities.map(a => (
+          <tr>
+            <td>{a.name}</td>
+            <td>{a.description}</td>
+          </tr>
+        )) : (
+          <tr>
+            <td colSpan="2">No abilities listed yet.</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+
+    <hr class="sep" />
+
+    <div class="card">
+      <h2 style="margin-top:0;">Calculator</h2>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+        <div style="min-width:160px;">
+          <div style="color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.06em;">Level</div>
+          <input id="levelInput" type="number" min="1" max="50" value={level}
+                 style="width:160px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background: rgba(0,0,0,.2); color: var(--text); outline:none;" />
+        </div>
+
+        <div style="min-width:200px;">
+          <div style="color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.06em;">Variant</div>
+          <select id="shinySelect" style="width:200px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background: rgba(0,0,0,.2); color: var(--text); outline:none;">
+            <option value="0" selected={!shiny}>Normal</option>
+            <option value="1" selected={shiny}>Shiny</option>
+          </select>
+        </div>
+
+        <div style="min-width:240px;">
+          <div style="color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.06em;">Enchant</div>
+          <select id="enchantSelect" style="width:240px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background: rgba(0,0,0,.2); color: var(--text); outline:none;">
+            <option value="none" selected={enchant === "none"}>None</option>
+            {(unit?.availableEnchants || []).map(e => (
+              <option value={String(e).toLowerCase()} selected={enchant === String(e).toLowerCase()}>{e}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style="flex:1;"></div>
+
+        <button id="applyBtn" class="badge" style="cursor:pointer; padding:10px 14px; border-radius:12px; color:var(--text);">
+          Apply
+        </button>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <div class="kv">
+          <div class="item"><div class="label">Level</div><div class="value">{level}</div></div>
+          <div class="item"><div class="label">Cost</div><div class="value">{fmt(baseCost, 0)}</div></div>
+          <div class="item"><div class="label">DPS</div><div class="value">{fmt(dps, 2)}</div></div>
+          <div class="item"><div class="label">Damage</div><div class="value">{fmt(dmg, 2)}</div></div>
+          <div class="item"><div class="label">Cooldown</div><div class="value">{fmt(cd, 3)}s</div></div>
+          <div class="item"><div class="label">Range</div><div class="value">{fmt(rng, 2)}</div></div>
+          <div class="item"><div class="label">Power</div><div class="value">{power}</div></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h3 style="margin-top:0;">Total DPS</h3>
+        <div style="font-size:28px; font-weight:900;">{fmt(totalDps, 2)}</div>
+        <small style="display:block; margin-top:6px;">
+          Currently calculated as DPS × placements.
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const units = ${JSON.stringify(units.map(u => ({ id: u.id, name: u.name })))};
+
+    const input = document.getElementById("unitSearch");
+    const applyBtn = document.getElementById("applyBtn");
+    const levelInput = document.getElementById("levelInput");
+    const shinySelect = document.getElementById("shinySelect");
+    const enchantSelect = document.getElementById("enchantSelect");
+
+    function go(params){
+      const url = new URL(window.location.href);
+      Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+      window.location.href = url.toString();
+    }
+
+    function findBestMatch(q){
+      const nq = String(q || "").trim().toLowerCase();
+      if (!nq) return null;
+      return units.find(u => u.name.toLowerCase() === nq)
+        || units.find(u => u.id.toLowerCase() === nq)
+        || units.find(u => u.name.toLowerCase().includes(nq))
+        || null;
+    }
+
+    if (input) {
+      input.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter") return;
+        const m = findBestMatch(input.value);
+        if (!m) return;
+        go({ id: m.id, q: m.name, level: levelInput.value || "1", shiny: shinySelect.value, enchant: enchantSelect.value });
+      });
+    }
+
+    if (applyBtn) {
+      applyBtn.addEventListener("click", () => {
+        go({ level: levelInput.value || "1", shiny: shinySelect.value, enchant: enchantSelect.value });
+      });
+    }
+  </script>
+</BaseLayout>
