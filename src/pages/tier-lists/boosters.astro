@@ -1,22 +1,11 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
-type Unit = {
-  rank: number;
-  name: string;
-  image: string;
-  cost?: string;
-  rarity: string;
-  maxDps: string;
-  attackType: string;
-  placements: string;
-  dmg: string;
-  rng: string;
-  cd: string;
-  reasoning: string;
-};
+const pageTitle = "Boosters Tier List";
+const pageSubtitle = "These are judged by power boost";
+const pageNote = "Reminder that this is made with my opinion in mind.";
 
-const units: Unit[] = [
+const units = [
   {
     rank: 1,
     name: "Endo Plush",
@@ -44,8 +33,7 @@ const units: Unit[] = [
     dmg: "0",
     rng: "18",
     cd: "1",
-    reasoning:
-      "While crying soul gives the same amount of power as endo plush, crying soul doesn't reveal",
+    reasoning: "While crying soul gives the same amount of power as endo plush, crying soul doesn't reveal",
   },
   {
     rank: 3,
@@ -80,64 +68,66 @@ const units: Unit[] = [
 ];
 ---
 
-<BaseLayout title="Boosters Tier List | Nightshift Tower Defense User Guide">
+<BaseLayout title={`${pageTitle} | Nightshift Tower Defense User Guide`}>
+  <!-- Full-page background (matches your other tier pages) -->
   <div class="tierpage-bg"></div>
   <div class="tierpage-bg-overlay"></div>
 
-  <div class="page">
-    <header class="hero">
-      <h1 class="title">Boosters Tier List</h1>
-      <div class="sub">These are judged by power boost</div>
-      <div class="note">Reminder that this is made with my opinion in mind.</div>
+  <div class="tierpage">
+    <header class="tierhero">
+      <h1>{pageTitle}</h1>
+      <p class="sub">{pageSubtitle}</p>
+      <p class="note">{pageNote}</p>
     </header>
 
-    <div class="layout">
-      <section class="leftPanel">
-        <div class="leftHeader">
-          <div class="leftTitle">Best Boosters</div>
-          <div class="leftSub">Ranked by boost effectiveness</div>
+    <div class="tiergrid">
+      <!-- LEFT: Top units panel -->
+      <section class="tierpanel left">
+        <div class="panelhead">
+          <div class="paneltitle">Best Boosters</div>
+          <div class="panelsub">Ranked by boost effectiveness</div>
         </div>
 
-        <div class="rows">
+        <div class="unitlist">
           {units.map((u) => (
-            <article class="row">
-              <div class="imgWrap">
+            <article class="unitrow">
+              <div class="unitimg">
                 <img src={u.image} alt={u.name} loading="lazy" />
                 <div class="tag name">{u.name}</div>
                 <div class="tag rank">#{u.rank}</div>
-                {u.cost && <div class="tag cost">{u.cost}</div>}
+                <div class="tag cost">{u.cost}</div>
               </div>
 
-              <div class="info">
-                <div class="miniGrid topLine">
-                  <div class="miniBox">
+              <div class="unitmeta">
+                <div class="metagrid top">
+                  <div class="metabox">
                     <div class="k">Max DPS</div>
                     <div class="v">{u.maxDps}</div>
                   </div>
-                  <div class="miniBox">
+                  <div class="metabox">
                     <div class="k">Attack Type</div>
                     <div class="v">{u.attackType}</div>
                   </div>
-                  <div class="miniBox">
+                  <div class="metabox">
                     <div class="k">Placements</div>
                     <div class="v">{u.placements}</div>
                   </div>
                 </div>
 
-                <div class="miniGrid statsLine">
-                  <div class="miniBox">
+                <div class="metagrid bottom">
+                  <div class="metabox">
                     <div class="k">DMG</div>
                     <div class="v">{u.dmg}</div>
                   </div>
-                  <div class="miniBox">
+                  <div class="metabox">
                     <div class="k">CD</div>
                     <div class="v">{u.cd}</div>
                   </div>
-                  <div class="miniBox">
+                  <div class="metabox">
                     <div class="k">RNG</div>
                     <div class="v">{u.rng}</div>
                   </div>
-                  <div class="miniBox">
+                  <div class="metabox">
                     <div class="k">Rarity</div>
                     <div class="v">{u.rarity}</div>
                   </div>
@@ -148,20 +138,21 @@ const units: Unit[] = [
         </div>
       </section>
 
-      <aside class="rightPanel">
-        <div class="rightHeader">
-          <div class="rightTitle">Why these rankings?</div>
-          <div class="rightSub">Per-unit reasoning</div>
+      <!-- RIGHT: Why these rankings -->
+      <aside class="tierpanel right">
+        <div class="panelhead">
+          <div class="paneltitle">Why these rankings?</div>
+          <div class="panelsub">Per-unit reasoning</div>
         </div>
 
-        <div class="rightBody">
+        <div class="reasonlist">
           {units.map((u) => (
-            <div class="noteCard">
-              <div class="noteHead">
-                <div class="noteName">{u.name}</div>
-                <div class="noteRank">#{u.rank}</div>
+            <div class="reasoncard">
+              <div class="reasonhead">
+                <div class="rname">{u.name}</div>
+                <div class="rrank">#{u.rank}</div>
               </div>
-              <div class="noteText">{u.reasoning}</div>
+              <div class="rtext">{u.reasoning}</div>
             </div>
           ))}
         </div>
@@ -170,6 +161,7 @@ const units: Unit[] = [
   </div>
 
   <style>
+    /* Full-page background */
     .tierpage-bg {
       position: fixed;
       inset: 0;
@@ -180,8 +172,219 @@ const units: Unit[] = [
     .tierpage-bg-overlay {
       position: fixed;
       inset: 0;
-      background: linear-gradient(180deg, rgba(0,0,0,.3), rgba(0,0,0,.6));
+      background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.60));
       z-index: -1;
+    }
+
+    /* Page layout (this is what your screenshot is missing) */
+    .tierpage {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    .tierhero {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .tierhero h1 {
+      font-size: clamp(34px, 4.2vw, 56px);
+      line-height: 1.05;
+      margin: 0 0 10px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .tierhero .sub {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 16px;
+    }
+    .tierhero .note {
+      margin: 6px 0 0;
+      opacity: 0.75;
+      font-size: 14px;
+    }
+
+    .tiergrid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .tierpanel {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(10,14,22,0.55);
+      border-radius: 18px;
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .panelhead {
+      padding: 4px 6px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      margin-bottom: 14px;
+    }
+    .paneltitle {
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 13px;
+      opacity: 0.95;
+    }
+    .panelsub {
+      font-size: 13px;
+      opacity: 0.75;
+      margin-top: 4px;
+    }
+
+    .unitlist {
+      display: grid;
+      gap: 12px;
+    }
+
+    .unitrow {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.20);
+    }
+
+    .unitimg {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.35);
+      height: 150px;
+    }
+
+    .unitimg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .tag {
+      position: absolute;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
+    }
+    .tag.name { top: 10px; left: 10px; max-width: 78%; overflow: hidden; text-overflow: ellipsis; }
+    .tag.rank { top: 10px; right: 10px; }
+    .tag.cost { bottom: 10px; left: 10px; }
+
+    .unitmeta {
+      display: grid;
+      gap: 10px;
+      align-content: center;
+    }
+
+    .metagrid {
+      display: grid;
+      gap: 10px;
+    }
+    .metagrid.top {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .metagrid.bottom {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .metabox {
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.22);
+      border-radius: 12px;
+      padding: 10px 10px;
+      min-height: 54px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+    }
+    .metabox .k {
+      font-size: 11px;
+      opacity: 0.72;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+    }
+    .metabox .v {
+      font-size: 13px;
+      font-weight: 800;
+      opacity: 0.95;
+    }
+
+    .reasonlist {
+      display: grid;
+      gap: 12px;
+    }
+
+    .reasoncard {
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.18);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .reasonhead {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .rname {
+      font-weight: 900;
+      font-size: 14px;
+    }
+    .rrank {
+      font-weight: 900;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .rtext {
+      font-size: 13px;
+      line-height: 1.45;
+      opacity: 0.92;
+    }
+
+    @media (max-width: 980px) {
+      .tiergrid {
+        grid-template-columns: 1fr;
+      }
+      .unitrow {
+        grid-template-columns: 140px 1fr;
+      }
+      .unitimg {
+        height: 140px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .unitrow {
+        grid-template-columns: 1fr;
+      }
+      .unitimg {
+        height: 210px;
+      }
+      .metagrid.top {
+        grid-template-columns: 1fr;
+      }
+      .metagrid.bottom {
+        grid-template-columns: 1fr 1fr;
+      }
     }
   </style>
 </BaseLayout>
