@@ -1,171 +1,172 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-// If your site uses a different layout import path, change ONLY this line.
 const pageTitle = "Unit Arcade";
 ---
 
 <BaseLayout title={pageTitle}>
-  <div class="ua-bg">
-    <div class="ua-overlay">
-      <main class="ua-wrap">
-        <section class="ua-hero">
-          <h1>Unit Arcade</h1>
-          <p>Search a unit, then choose level, shiny, and enchant to see the calculated stats.</p>
-        </section>
+  <main class="ua-wrap">
+    <section class="ua-hero">
+      <h1>Unit Arcade</h1>
+      <p>Search a unit, then choose level, shiny, and enchant to see the calculated stats.</p>
+    </section>
 
-        <section class="ua-card">
-          <div class="ua-searchRow">
-            <div class="ua-searchLeft">
-              <div class="ua-label">Unit search</div>
-              <input class="ua-input" type="text" placeholder="Type a unit name..." value="Golden Bonnie" />
-              <div class="ua-help">This search redirects to the matching unit.</div>
-            </div>
+    <section class="ua-card">
+      <div class="ua-searchRow">
+        <div class="ua-searchLeft">
+          <div class="ua-label">Unit search</div>
+          <input class="ua-input" type="text" placeholder="Type a unit name..." value="Golden Bonnie" />
+          <div class="ua-help">This search redirects to the matching unit.</div>
+        </div>
 
-            <div class="ua-imageBox">
-              <div class="ua-imageInner">No image</div>
-            </div>
+        <div class="ua-imageBox">
+          <div class="ua-imageInner">No image</div>
+        </div>
+      </div>
+
+      <div class="ua-divider"></div>
+
+      <div class="ua-statsGrid4">
+        <div class="ua-stat">
+          <div class="ua-statLabel">RARITY</div>
+          <div class="ua-statValue">Legendary</div>
+        </div>
+
+        <div class="ua-stat">
+          <div class="ua-statLabel">ATTACK TYPE</div>
+          <div class="ua-statValue">Not set</div>
+        </div>
+
+        <div class="ua-stat">
+          <div class="ua-statLabel">PLACEMENT PRICE</div>
+          <div class="ua-statValue">Not set</div>
+        </div>
+
+        <div class="ua-stat">
+          <div class="ua-statLabel">PLACEMENTS</div>
+          <div class="ua-statValue">2</div>
+        </div>
+      </div>
+
+      <div class="ua-divider"></div>
+
+      <div class="ua-wideBlock">
+        <div class="ua-wideTitle">OBTAINABILITY</div>
+        <div class="ua-wideText">Not set yet.</div>
+      </div>
+
+      <div class="ua-divider"></div>
+
+      <div class="ua-wideBlock">
+        <div class="ua-wideTitle ua-twoColTitle">
+          <span>ABILITY</span>
+          <span class="ua-rightTitle">DESCRIPTION</span>
+        </div>
+        <div class="ua-wideText">No abilities listed yet.</div>
+      </div>
+
+      <div class="ua-divider"></div>
+
+      <section class="ua-calcCard">
+        <div class="ua-calcHeader">
+          <h2>Calculator</h2>
+        </div>
+
+        <div class="ua-calcControls">
+          <div class="ua-control">
+            <div class="ua-controlLabel">LEVEL</div>
+            <input class="ua-inputSmall" type="number" min="1" value="1" />
           </div>
 
-          <div class="ua-divider"></div>
-
-          <div class="ua-statsGrid4">
-            <div class="ua-stat">
-              <div class="ua-statLabel">RARITY</div>
-              <div class="ua-statValue">Legendary</div>
-            </div>
-
-            <div class="ua-stat">
-              <div class="ua-statLabel">ATTACK TYPE</div>
-              <div class="ua-statValue">Not set</div>
-            </div>
-
-            <div class="ua-stat">
-              <div class="ua-statLabel">PLACEMENT PRICE</div>
-              <div class="ua-statValue">Not set</div>
-            </div>
-
-            <div class="ua-stat">
-              <div class="ua-statLabel">PLACEMENTS</div>
-              <div class="ua-statValue">2</div>
-            </div>
+          <div class="ua-control">
+            <div class="ua-controlLabel">VARIANT</div>
+            <select class="ua-select">
+              <option>Normal</option>
+              <option>Shiny</option>
+            </select>
           </div>
 
-          <div class="ua-divider"></div>
-
-          <div class="ua-wideBlock">
-            <div class="ua-wideTitle">OBTAINABILITY</div>
-            <div class="ua-wideText">Not set yet.</div>
+          <div class="ua-control">
+            <div class="ua-controlLabel">ENCHANT</div>
+            <select class="ua-select">
+              <option>None</option>
+              <option>Critical Strikes</option>
+              <option>Power</option>
+              <option>Cooldown</option>
+              <option>Range</option>
+            </select>
           </div>
 
-          <div class="ua-divider"></div>
+          <button class="ua-applyBtn" type="button">Apply</button>
+        </div>
 
-          <div class="ua-wideBlock">
-            <div class="ua-wideTitle ua-twoColTitle">
-              <span>ABILITY</span>
-              <span class="ua-rightTitle">DESCRIPTION</span>
-            </div>
-            <div class="ua-wideText">No abilities listed yet.</div>
+        <div class="ua-calcGrid">
+          <div class="ua-miniStat">
+            <div class="ua-miniLabel">LEVEL</div>
+            <div class="ua-miniValue">1</div>
           </div>
+          <div class="ua-miniStat">
+            <div class="ua-miniLabel">COST</div>
+            <div class="ua-miniValue">0</div>
+          </div>
+          <div class="ua-miniStat">
+            <div class="ua-miniLabel">DPS</div>
+            <div class="ua-miniValue">0</div>
+          </div>
+          <div class="ua-miniStat">
+            <div class="ua-miniLabel">DAMAGE</div>
+            <div class="ua-miniValue">0</div>
+          </div>
+          <div class="ua-miniStat">
+            <div class="ua-miniLabel">COOLDOWN</div>
+            <div class="ua-miniValue">0</div>
+          </div>
+          <div class="ua-miniStat">
+            <div class="ua-miniLabel">RANGE</div>
+            <div class="ua-miniValue">0</div>
+          </div>
+          <div class="ua-miniStat">
+            <div class="ua-miniLabel">POWER</div>
+            <div class="ua-miniValue">0</div>
+          </div>
+        </div>
 
-          <div class="ua-divider"></div>
-
-          <section class="ua-calcCard">
-            <div class="ua-calcHeader">
-              <h2>Calculator</h2>
-            </div>
-
-            <div class="ua-calcControls">
-              <div class="ua-control">
-                <div class="ua-controlLabel">LEVEL</div>
-                <input class="ua-inputSmall" type="number" min="1" value="1" />
-              </div>
-
-              <div class="ua-control">
-                <div class="ua-controlLabel">VARIANT</div>
-                <select class="ua-select">
-                  <option>Normal</option>
-                  <option>Shiny</option>
-                </select>
-              </div>
-
-              <div class="ua-control">
-                <div class="ua-controlLabel">ENCHANT</div>
-                <select class="ua-select">
-                  <option>None</option>
-                  <option>Critical Strikes</option>
-                  <option>Power</option>
-                  <option>Cooldown</option>
-                  <option>Range</option>
-                </select>
-              </div>
-
-              <button class="ua-applyBtn" type="button">Apply</button>
-            </div>
-
-            <div class="ua-calcGrid">
-              <div class="ua-miniStat">
-                <div class="ua-miniLabel">LEVEL</div>
-                <div class="ua-miniValue">1</div>
-              </div>
-              <div class="ua-miniStat">
-                <div class="ua-miniLabel">COST</div>
-                <div class="ua-miniValue">0</div>
-              </div>
-              <div class="ua-miniStat">
-                <div class="ua-miniLabel">DPS</div>
-                <div class="ua-miniValue">0</div>
-              </div>
-              <div class="ua-miniStat">
-                <div class="ua-miniLabel">DAMAGE</div>
-                <div class="ua-miniValue">0</div>
-              </div>
-              <div class="ua-miniStat">
-                <div class="ua-miniLabel">COOLDOWN</div>
-                <div class="ua-miniValue">0</div>
-              </div>
-              <div class="ua-miniStat">
-                <div class="ua-miniLabel">RANGE</div>
-                <div class="ua-miniValue">0</div>
-              </div>
-              <div class="ua-miniStat">
-                <div class="ua-miniLabel">POWER</div>
-                <div class="ua-miniValue">0</div>
-              </div>
-            </div>
-
-            <div class="ua-totalBox">
-              <div class="ua-totalTitle">TOTAL DPS</div>
-              <div class="ua-totalValue">0</div>
-            </div>
-          </section>
-        </section>
-      </main>
-    </div>
-  </div>
+        <div class="ua-totalBox">
+          <div class="ua-totalTitle">TOTAL DPS</div>
+          <div class="ua-totalValue">0</div>
+        </div>
+      </section>
+    </section>
+  </main>
 
   <style>
-    /* Full page background */
-    .ua-bg {
-      min-height: 100vh;
-      width: 100%;
+    /* IMPORTANT: This forces a true full-viewport background behind the entire site shell */
+    :global(body) {
+      background: transparent !important;
+    }
+
+    :global(body::before) {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
       background-image: url("/images/unit-arcade-bg.png");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      transform: translateZ(0);
     }
 
-    /* Dark overlay for readability, still visible */
-    .ua-overlay {
-      min-height: 100vh;
-      width: 100%;
-      background: linear-gradient(
-        rgba(5, 10, 20, 0.72),
-        rgba(5, 10, 20, 0.72)
-      );
+    :global(body::after) {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(rgba(5, 10, 20, 0.65), rgba(5, 10, 20, 0.65));
+      pointer-events: none;
     }
 
-    /* Main page container */
+    /* Page container */
     .ua-wrap {
       max-width: 1200px;
       margin: 0 auto;
