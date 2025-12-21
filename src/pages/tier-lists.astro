@@ -1,16 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-/**
- * We "probe" whether an image exists by just referencing it.
- * If it's missing, the browser shows a broken image icon, which is ugly.
- * So we render a "?" slot unless you confirm it's present.
- *
- * Since this is a static site and you don’t want to edit code every time,
- * we’ll do it the simple way: always render <img>, but hide it if it fails.
- *
- * This lets you upload files later without touching code.
- */
 const tiers = [
   { key: "starters", label: "STARTERS" },
   { key: "midgames", label: "MIDGAMES" },
@@ -22,12 +12,11 @@ const tiers = [
   { key: "boosters", label: "BOOSTERS" },
 ];
 
-function imgPath(key, slot) {
+function imgPath(key: string, slot: number) {
   return `/images/tierlists/${key}/slot-${slot}.png`;
 }
 ---
 <BaseLayout title="Tier Lists | Nightshift Tower Defense User Guide">
-  <!-- FULL PAGE BACKGROUND -->
   <div class="tierpage-bg" aria-hidden="true"></div>
   <div class="tierpage-bg-overlay" aria-hidden="true"></div>
 
@@ -46,12 +35,14 @@ function imgPath(key, slot) {
 
           <div class="tier-slots">
             {[1, 2].map((slot) => (
-              <div class="tier-slot">
+              <div class="tier-slot" data-state="loading">
                 <img
                   src={imgPath(t.key, slot)}
                   alt={`${t.label} unit ${slot}`}
                   loading="lazy"
-                  onerror="this.style.display='none'; this.parentElement.classList.add('tier-slot-missing');"
+                  decoding="async"
+                  onload="this.closest('.tier-slot')?.setAttribute('data-state','loaded')"
+                  onerror="this.style.display='none'; this.closest('.tier-slot')?.setAttribute('data-state','missing')"
                 />
                 <div class="tier-missing">?</div>
               </div>
@@ -63,7 +54,6 @@ function imgPath(key, slot) {
   </div>
 
   <style>
-    /* BACKGROUND */
     .tierpage-bg{
       position: fixed;
       inset: 0;
@@ -86,7 +76,6 @@ function imgPath(key, slot) {
         linear-gradient(180deg, rgba(10,12,18,.30), rgba(10,12,18,.55));
     }
 
-    /* PAGE */
     .tiers-page{
       max-width: 1100px;
       margin: 0 auto;
@@ -116,7 +105,6 @@ function imgPath(key, slot) {
       gap: 22px;
     }
 
-    /* CARD */
     .tier-card{
       border-radius: 22px;
       padding: 18px;
@@ -138,7 +126,6 @@ function imgPath(key, slot) {
       margin: 6px 0 18px;
     }
 
-    /* SLOTS */
     .tier-slots{
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -154,7 +141,6 @@ function imgPath(key, slot) {
       overflow: hidden;
     }
 
-    /* Image is “flush”: it fills and crops at the border */
     .tier-slot img{
       width: 100%;
       height: 100%;
@@ -163,7 +149,6 @@ function imgPath(key, slot) {
       display: block;
     }
 
-    /* "?" is present by default, hidden once image loads */
     .tier-missing{
       position: absolute;
       inset: 0;
@@ -174,15 +159,17 @@ function imgPath(key, slot) {
       font-weight: 1000;
       color: rgba(232,238,252,.75);
       pointer-events: none;
+      opacity: 1;
+      transition: opacity .12s ease;
     }
 
-    /* If image exists and loads, hide the "?" */
-    .tier-slot img:not([style*="display: none"]) + .tier-missing{
+    /* Hide ? only after the image actually loads */
+    .tier-slot[data-state="loaded"] .tier-missing{
       opacity: 0;
     }
 
-    /* If the image errors and gets hidden, show the "?" clearly */
-    .tier-slot-missing .tier-missing{
+    /* If missing, keep ? visible */
+    .tier-slot[data-state="missing"] .tier-missing{
       opacity: 1;
     }
 
