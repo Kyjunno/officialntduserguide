@@ -58,49 +58,6 @@ function isActive(href){
       </main>
     </div>
 
-    <script>
-      // Optional Pagefind search. It only exists after `npm run build`.
-      (async () => {
-        const input = document.getElementById('search');
-        const results = document.getElementById('results');
-        let pagefind = null;
-
-        async function ensure(){
-          if (pagefind) return pagefind;
-          try {
-            pagefind = await import('/pagefind/pagefind.js');
-            await pagefind.options({ ranking: { termFrequency: 1.0 } });
-            return pagefind;
-          } catch {
-            return null;
-          }
-        }
-
-        function clear(){
-          results.style.display = 'none';
-          results.innerHTML = '';
-        }
-
-        input.addEventListener('input', async (e) => {
-          const q = e.target.value.trim();
-          if (!q) return clear();
-          const pf = await ensure();
-          if (!pf) return;
-          const search = await pf.search(q);
-          const data = await Promise.all(search.results.slice(0, 8).map(r => r.data()));
-          results.style.display = 'block';
-          results.innerHTML = data.map(d => {
-            return `<div style="padding:8px 10px; border:1px solid var(--border); border-radius:12px; margin-top:6px; background: rgba(255,255,255,.02);">
-              <a style="text-decoration:none; font-weight:600;" href="${d.url}">${d.meta.title || d.url}</a>
-              <div style="color:var(--muted); font-size:12px; margin-top:4px;">${(d.excerpt || '').slice(0, 120)}${d.excerpt && d.excerpt.length > 120 ? '…' : ''}</div>
-            </div>`;
-          }).join('');
-        });
-
-        document.addEventListener('click', (e) => {
-          if (!results.contains(e.target) && e.target !== input) clear();
-        });
-      })();
-    </script>
+   
   </body>
 </html>
