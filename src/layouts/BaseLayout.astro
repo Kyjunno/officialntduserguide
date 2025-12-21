@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-const { title = "Unit Guide", description = "" } = Astro.props;
+const { title = "Official NTD User Guide", description = "" } = Astro.props;
 
 const pathname = Astro.url.pathname;
 function isActive(href){
@@ -16,46 +16,45 @@ function isActive(href){
     {description && <meta name="description" content={description} />}
   </head>
   <body>
-    <div class="container">
-      <aside class="sidebar">
-        <div class="brand">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brandline">
           <div class="dot"></div>
           <div>
-            <div style="font-weight:700; line-height:1.2;">Unit Guide</div>
-            <small>Community reference, always updating</small>
+            <div style="font-weight:900; line-height:1.1;">Official NTD User Guide</div>
+            <small>Numbers, tiers, and mechanics in one place</small>
           </div>
         </div>
 
-        <div class="searchbox">
-          <input id="search" placeholder="Search (coming soon)…" autocomplete="off" disabled />
-          <div id="results" style="margin-top:10px; display:none;"></div>
-          <small style="display:block; margin-top:8px;">
-            Search will be enabled after the site is fully deployed.
-          </small>
-        </div>
-
-        <div class="section-title">Navigation</div>
-        <nav class="nav">
+        <nav class="topnav" aria-label="Primary">
           <a class={isActive("/") ? "active" : ""} href="/">Home</a>
-          <a class={isActive("/units") ? "active" : ""} href="/units">Units</a>
-          <a class={isActive("/charts") ? "active" : ""} href="/charts">Charts</a>
-          <a class={isActive("/mechanics") ? "active" : ""} href="/mechanics">Mechanics</a>
-          <a class={isActive("/patch-notes") ? "active" : ""} href="/patch-notes">Patch notes</a>
+          <a class={isActive("/tier-lists") ? "active" : ""} href="/tier-lists">Tier Lists</a>
+          <a class={isActive("/unit-machine") ? "active" : ""} href="/unit-machine">Unit Machine</a>
+          <a class={isActive("/guides") ? "active" : ""} href="/guides">Info &amp; Guides</a>
+          <a class={isActive("/faq") ? "active" : ""} href="/faq">FAQ</a>
         </nav>
 
-        <div class="section-title">Community</div>
-        <nav class="nav">
-          <a href="/contribute">Submit a correction</a>
-        </nav>
+        <div class="topsearch">
+          <input id="globalSearch" placeholder="Search units…" autocomplete="off" />
+        </div>
+      </div>
+    </header>
 
-        <small style="display:block; padding:10px; color:var(--muted);">
-          Tip: keep one source of truth (like <code>src/data/units.json</code>), then update it when your game updates.
-        </small>
-      </aside>
+    <main class="shell">
+      <slot />
+    </main>
 
-      <main class="main">
-        <slot />
-      </main>
-    </div>
+    <script>
+      // Global search sends you to the Unit Machine.
+      const input = document.getElementById("globalSearch");
+      if (input) {
+        input.addEventListener("keydown", (e) => {
+          if (e.key !== "Enter") return;
+          const q = input.value.trim();
+          if (!q) return;
+          window.location.href = `/unit-machine?q=${encodeURIComponent(q)}`;
+        });
+      }
+    </script>
   </body>
 </html>
