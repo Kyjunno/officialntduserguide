@@ -1,30 +1,158 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="Unit Guide | Home" description="A community-made unit stat guide.">
-  <div class="card">
-    <h1 style="margin-top:0;">Welcome</h1>
-    <p style="color:var(--muted); line-height:1.6;">
-      This is a fast, wiki-style reference for unit stats, leveling, and mechanics.
-      Everything is driven by a single data file so updates take minutes, not hours.
-    </p>
-    <hr class="sep" />
-    <div class="grid">
-      <div class="card" style="grid-column: span 6;">
-        <h2 style="margin-top:0;">Start here</h2>
-        <p style="color:var(--muted); line-height:1.6;">
-          Go to the Units page to browse every unit, then click one to see a dedicated page with base stats,
-          per-level gains, and derived DPS.
+<BaseLayout title="Nightshift Tower Defense User Guide">
+  <section class="hero">
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <div class="hero-card">
+        <div class="hero-kicker">Official community guide</div>
+
+        <h1 class="hero-title">Nightshift Tower Defense User Guide</h1>
+
+        <p class="hero-text">
+          Hey, I’m <strong>Clancy</strong> on Discord. This user guide is a community-built reference for Nightshift Tower Defense.
+          It’s here to make the numbers easy to understand, keep tier lists and unit info in one place, and stay updated as the game changes.
         </p>
-        <p><a href="/units">Open the Unit Directory →</a></p>
-      </div>
-      <div class="card" style="grid-column: span 6;">
-        <h2 style="margin-top:0;">Prevent Discord wars</h2>
-        <p style="color:var(--muted); line-height:1.6;">
-          The Mechanics page defines how numbers are calculated so every chart uses the same rules.
+
+        <div class="hero-divider"></div>
+
+        <h2 class="hero-subtitle">Community</h2>
+
+        <p class="hero-text">
+          Want to help improve the guide, report mistakes, or just hang out with the community?
+          Join us here:
         </p>
-        <p><a href="/mechanics">Read the Mechanics rules →</a></p>
+
+        <a class="hero-button" href="https://discord.gg/YOUR_INVITE" target="_blank" rel="noopener">
+          Join the NTD Discord
+        </a>
+
+        <p class="hero-footnote">
+          Replace the Discord link in <code>src/pages/index.astro</code> with your real invite.
+        </p>
       </div>
     </div>
-  </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .hero{
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    min-height: 520px;
+    box-shadow: var(--shadow);
+    background-image: url("/images/home-bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* This is the readability magic */
+  .hero-overlay{
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(900px 600px at 20% 20%, rgba(106,168,255,.18), transparent 60%),
+      radial-gradient(900px 700px at 80% 30%, rgba(159,91,255,.10), transparent 55%),
+      linear-gradient(180deg, rgba(11,14,20,.84), rgba(11,14,20,.92));
+    backdrop-filter: blur(6px);
+  }
+
+  .hero-content{
+    position: relative;
+    z-index: 1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height: 520px;
+    padding: 34px 18px;
+  }
+
+  .hero-card{
+    width: 100%;
+    max-width: 860px;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: rgba(0,0,0,.35);
+    box-shadow: var(--shadow);
+    padding: 26px 22px;
+  }
+
+  .hero-kicker{
+    display:inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.04);
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .hero-title{
+    margin: 0;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-subtitle{
+    margin: 0;
+    margin-top: 14px;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-text{
+    margin-top: 14px;
+    margin-bottom: 0;
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  .hero-divider{
+    height: 1px;
+    background: var(--border);
+    margin: 18px 0;
+  }
+
+  .hero-button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.04);
+    text-decoration:none;
+    font-weight: 800;
+  }
+
+  .hero-button:hover{
+    border-color: rgba(106,168,255,.6);
+    background: rgba(106,168,255,.10);
+    color: var(--text);
+  }
+
+  .hero-footnote{
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  code{
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2px 8px;
+    background: rgba(255,255,255,.03);
+  }
+</style>
