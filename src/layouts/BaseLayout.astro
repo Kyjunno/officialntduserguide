@@ -29,7 +29,7 @@ function isActive(href){
         <nav class="topnav" aria-label="Primary">
           <a class={isActive("/") ? "active" : ""} href="/">Home</a>
           <a class={isActive("/tier-lists") ? "active" : ""} href="/tier-lists">Tier Lists</a>
-          <a class={isActive("/unit-machine") ? "active" : ""} href="/unit-machine">Unit Machine</a>
+          <a class={isActive("/unit-arcade") ? "active" : ""} href="/unit-arcade">Unit Arcade</a>
           <a class={isActive("/guides") ? "active" : ""} href="/guides">Info &amp; Guides</a>
           <a class={isActive("/faq") ? "active" : ""} href="/faq">FAQ</a>
         </nav>
@@ -45,14 +45,14 @@ function isActive(href){
     </main>
 
     <script>
-      // Global search sends you to the Unit Machine.
+      // Global search sends you to Unit Arcade.
       const input = document.getElementById("globalSearch");
       if (input) {
         input.addEventListener("keydown", (e) => {
           if (e.key !== "Enter") return;
           const q = input.value.trim();
           if (!q) return;
-          window.location.href = `/unit-machine?q=${encodeURIComponent(q)}`;
+          window.location.href = `/unit-arcade?q=${encodeURIComponent(q)}`;
         });
       }
     </script>
