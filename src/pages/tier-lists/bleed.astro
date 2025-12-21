@@ -1,0 +1,195 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+type Unit = {
+  rank: number;
+  name: string;
+  image: string;
+  cost?: string;
+  rarity: string;
+  maxDps: string;
+  attackType: string;
+  placements: string;
+  dmg: string;
+  rng: string;
+  cd: string;
+  reasoning: string;
+};
+
+const units: Unit[] = [
+  {
+    rank: 1,
+    name: "Bunny6",
+    image: "/images/tierlists/bleed/bunny6.png",
+    cost: "$6,666",
+    rarity: "Vengeful",
+    maxDps: "1,363.63",
+    attackType: "Single + Bleed",
+    placements: "2",
+    dmg: "1250",
+    rng: "20",
+    cd: "2.75",
+    reasoning:
+      "Bunny6’s bleed is incredible. The single highest bleed in the game at 50%. While yes, Bunny6 is a single target unit, his DPS output combined with bleed makes him a remarkable tank shredder.",
+  },
+  {
+    rank: 2,
+    name: "Sparky The Dog",
+    image: "/images/tierlists/bleed/sparky-the-dog.png",
+    cost: "$2,750",
+    rarity: "Mythic",
+    maxDps: "480",
+    attackType: "Pierce + Bleed",
+    placements: "2",
+    dmg: "400",
+    rng: "25",
+    cd: "2",
+    reasoning:
+      "While he can very easily have a higher DPS output than Bunny6 thanks to being a pierce unit, Bunny6 just straight up outdoes Sparky. That’s not to say Sparky is weak, however.",
+  },
+  {
+    rank: 3,
+    name: "Foxy",
+    image: "/images/tierlists/bleed/foxy.png",
+    rarity: "Rare",
+    maxDps: "93.75",
+    attackType: "Single + Bleed",
+    placements: "2",
+    dmg: "30",
+    rng: "20",
+    cd: "0.8",
+    reasoning:
+      "Obviously the rare unit is going to be the weakest bleed unit. Crazy enough, he does have a higher bleed percentage than Sparky, but that alone does not make him better.",
+  },
+];
+---
+
+<BaseLayout title="Bleed Tier List | Nightshift Tower Defense User Guide">
+  <div class="tierpage-bg"></div>
+  <div class="tierpage-bg-overlay"></div>
+
+  <div class="page">
+    <header class="hero">
+      <h1 class="title">Bleed Tier List</h1>
+      <div class="sub">These are judged by best bleed</div>
+      <div class="note">Reminder that this is made with my opinion in mind.</div>
+    </header>
+
+    <div class="layout">
+      <section class="leftPanel">
+        <div class="leftHeader">
+          <div class="leftTitle">Best Bleed Units</div>
+          <div class="leftSub">Ranked by bleed effectiveness</div>
+        </div>
+
+        <div class="rows">
+          {units.map((u) => (
+            <article class="row">
+              <div class="imgWrap">
+                <img class="img" src={u.image} alt={u.name} />
+
+                <div class="tag name">{u.name}</div>
+                <div class="tag rank">#{u.rank}</div>
+                {u.cost && <div class="tag cost">{u.cost}</div>}
+              </div>
+
+              <div class="info">
+                <div class="miniGrid topLine">
+                  <div class="miniBox">
+                    <div class="k">Max DPS</div>
+                    <div class="v">{u.maxDps}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">Attack Type</div>
+                    <div class="v">{u.attackType}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">Placements</div>
+                    <div class="v">{u.placements}</div>
+                  </div>
+                </div>
+
+                <div class="miniGrid statsLine">
+                  <div class="miniBox">
+                    <div class="k">DMG</div>
+                    <div class="v">{u.dmg}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">CD</div>
+                    <div class="v">{u.cd}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">RNG</div>
+                    <div class="v">{u.rng}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">Rarity</div>
+                    <div class="v">{u.rarity}</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <aside class="rightPanel">
+        <div class="rightHeader">
+          <div class="rightTitle">Why these rankings?</div>
+          <div class="rightSub">Per-unit reasoning</div>
+        </div>
+
+        <div class="rightBody">
+          {units.map((u) => (
+            <div class="noteCard">
+              <div class="noteHead">
+                <div class="noteName">{u.name}</div>
+                <div class="noteRank">#{u.rank}</div>
+              </div>
+              <div class="noteText">{u.reasoning}</div>
+            </div>
+          ))}
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <style>
+    .tierpage-bg{
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: url("/images/tierlist-bg.png") center / cover no-repeat;
+      filter: brightness(0.85) saturate(1.15);
+    }
+    .tierpage-bg-overlay{
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(180deg, rgba(10,12,18,.25), rgba(10,12,18,.6));
+    }
+    .page{max-width:1200px;margin:auto;padding:26px 18px 80px}
+    .hero{text-align:center;margin-bottom:18px}
+    .title{font-size:clamp(42px,5vw,66px)}
+    .sub{margin-top:8px;font-weight:900}
+    .note{margin-top:6px;font-size:13px;opacity:.75}
+    .layout{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+    .leftPanel,.rightPanel{border-radius:22px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.22)}
+    .rows{padding:12px;display:grid;gap:10px}
+    .row{display:grid;grid-template-columns:140px 1fr;gap:10px;padding:10px;border-radius:18px;border:1px solid rgba(255,255,255,.14)}
+    .imgWrap{position:relative;aspect-ratio:1;border-radius:16px;overflow:hidden;border:2px solid rgba(255,255,255,.7)}
+    .img{width:100%;height:100%;object-fit:cover}
+    .tag{position:absolute;padding:6px 8px;font-size:11px;font-weight:900;background:rgba(0,0,0,.6);border-radius:12px}
+    .tag.name{top:8px;left:8px}
+    .tag.rank{top:8px;right:8px}
+    .tag.cost{bottom:8px;left:8px}
+    .miniGrid{display:grid;gap:8px}
+    .topLine{grid-template-columns:repeat(3,1fr)}
+    .statsLine{grid-template-columns:repeat(4,1fr)}
+    .miniBox{padding:8px;border-radius:14px;border:1px solid rgba(255,255,255,.12)}
+    .k{font-size:10px;opacity:.7}
+    .v{font-size:12px;font-weight:900}
+    .noteCard{padding:12px;border-radius:18px;border:1px solid rgba(255,255,255,.14);margin-bottom:10px}
+    @media(max-width:1050px){.layout{grid-template-columns:1fr}}
+  </style>
+</BaseLayout>
