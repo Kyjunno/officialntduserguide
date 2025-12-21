@@ -1,11 +1,265 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="Tier Lists | Official NTD User Guide">
-  <div class="card">
-    <h1 style="margin-top:0;">Tier Lists</h1>
-    <p style="color:var(--muted); line-height:1.6;">
-      This is where your tier lists live. We can build separate lists for different modes, rarities, enchants, and patch versions.
-    </p>
+<BaseLayout title="Tier Lists | Nightshift Tower Defense User Guide">
+  <div class="tier-page">
+    <header class="tier-hero">
+      <h1 class="tier-title">Tier Lists</h1>
+      <p class="tier-sub">
+        These are the best units in each category. Keep in mind that they’re all just my opinion,
+        you should not take it as fact.
+      </p>
+    </header>
+
+    <section class="jump-area">
+      <a class="jump-card" href="#starters">
+        <div class="jump-name">Starters</div>
+        <div class="jump-desc">Starting units</div>
+      </a>
+
+      <a class="jump-card" href="#midgame">
+        <div class="jump-name">Midgame</div>
+        <div class="jump-desc">Midgame units</div>
+      </a>
+
+      <a class="jump-card" href="#endgame">
+        <div class="jump-name">Endgame</div>
+        <div class="jump-desc">Endgame units</div>
+      </a>
+
+      <a class="jump-card" href="#slowers">
+        <div class="jump-name">Slowers</div>
+        <div class="jump-desc">Best slow units</div>
+      </a>
+
+      <a class="jump-card" href="#stunners">
+        <div class="jump-name">Stunners</div>
+        <div class="jump-desc">Best stun units</div>
+      </a>
+
+      <a class="jump-card" href="#bleed">
+        <div class="jump-name">Bleed</div>
+        <div class="jump-desc">Best bleed units</div>
+      </a>
+
+      <a class="jump-card" href="#burn">
+        <div class="jump-name">Burn</div>
+        <div class="jump-desc">Best burn units</div>
+      </a>
+
+      <a class="jump-card" href="#boosters">
+        <div class="jump-name">Boosters</div>
+        <div class="jump-desc">Best support boosters</div>
+      </a>
+    </section>
+
+    <section id="starters" class="tier-section">
+      <div class="tier-section-head">
+        <h2 class="tier-h2">Starters</h2>
+        <div class="tier-tag">Starting units</div>
+      </div>
+
+      <div class="tier-box">
+        <div class="starter-grid">
+          <div class="img-card">
+            <img src="/images/tierlists/starter-1.png" alt="Starter tier list image 1" />
+          </div>
+
+          <div class="img-card">
+            <img src="/images/tierlists/starter-2.png" alt="Starter tier list image 2" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="midgame" class="tier-section">
+      <div class="tier-section-head">
+        <h2 class="tier-h2">Midgame</h2>
+        <div class="tier-tag">Midgame units</div>
+      </div>
+      <div class="tier-box tier-placeholder">Coming soon.</div>
+    </section>
+
+    <section id="endgame" class="tier-section">
+      <div class="tier-section-head">
+        <h2 class="tier-h2">Endgame</h2>
+        <div class="tier-tag">Endgame units</div>
+      </div>
+      <div class="tier-box tier-placeholder">Coming soon.</div>
+    </section>
+
+    <section id="slowers" class="tier-section">
+      <div class="tier-section-head">
+        <h2 class="tier-h2">Slowers</h2>
+        <div class="tier-tag">Best slow units</div>
+      </div>
+      <div class="tier-box tier-placeholder">Coming soon.</div>
+    </section>
+
+    <section id="stunners" class="tier-section">
+      <div class="tier-section-head">
+        <h2 class="tier-h2">Stunners</h2>
+        <div class="tier-tag">Best stun units</div>
+      </div>
+      <div class="tier-box tier-placeholder">Coming soon.</div>
+    </section>
+
+    <section id="bleed" class="tier-section">
+      <div class="tier-section-head">
+        <h2 class="tier-h2">Bleed</h2>
+        <div class="tier-tag">Best bleed units</div>
+      </div>
+      <div class="tier-box tier-placeholder">Coming soon.</div>
+    </section>
+
+    <section id="burn" class="tier-section">
+      <div class="tier-section-head">
+        <h2 class="tier-h2">Burn</h2>
+        <div class="tier-tag">Best burn units</div>
+      </div>
+      <div class="tier-box tier-placeholder">Coming soon.</div>
+    </section>
+
+    <section id="boosters" class="tier-section">
+      <div class="tier-section-head">
+        <h2 class="tier-h2">Boosters</h2>
+        <div class="tier-tag">Best boosters</div>
+      </div>
+      <div class="tier-box tier-placeholder">Coming soon.</div>
+    </section>
   </div>
+
+  <style>
+    .tier-page{
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 10px 0 80px;
+    }
+
+    .tier-hero{
+      padding: 16px 0 8px;
+    }
+
+    .tier-title{
+      margin: 0;
+      font-size: clamp(34px, 4vw, 54px);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    .tier-sub{
+      margin-top: 12px;
+      margin-bottom: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 78ch;
+    }
+
+    .jump-area{
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .jump-card{
+      display: block;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 14px;
+      background: rgba(255,255,255,.02);
+      box-shadow: var(--shadow);
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      min-height: 74px;
+    }
+
+    .jump-card:hover{
+      transform: translateY(-1px);
+      border-color: rgba(106,168,255,.55);
+      background: rgba(106,168,255,.06);
+    }
+
+    .jump-name{
+      font-weight: 900;
+      font-size: 16px;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .jump-desc{
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .tier-section{
+      margin-top: 26px;
+      scroll-margin-top: 96px;
+    }
+
+    .tier-section-head{
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .tier-h2{
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.01em;
+    }
+
+    .tier-tag{
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: rgba(255,255,255,.03);
+    }
+
+    .tier-box{
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(0,0,0,.18);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .starter-grid{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .img-card{
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.02);
+      overflow: hidden;
+    }
+
+    .img-card img{
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .tier-placeholder{
+      color: var(--muted);
+      padding: 22px;
+      text-align: center;
+    }
+
+    @media (max-width: 980px){
+      .jump-area{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 700px){
+      .starter-grid{ grid-template-columns: 1fr; }
+    }
+  </style>
 </BaseLayout>
