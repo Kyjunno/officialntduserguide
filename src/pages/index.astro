@@ -3,24 +3,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 <BaseLayout title="Nightshift Tower Defense User Guide">
   <section class="home-bleed">
-    <!-- Background layers -->
-    <div class="home-bg-blur"></div>
-    <div class="home-bg-contain"></div>
+    <div class="home-bg"></div>
     <div class="home-overlay"></div>
 
-    <!-- Content -->
     <div class="home-inner">
       <div class="home-card">
         <div class="home-kicker">Official Community Guide</div>
 
-        <h1 class="home-title">
-          Nightshift Tower Defense<br />User Guide
-        </h1>
+        <h1 class="home-title">Nightshift Tower Defense<br />User Guide</h1>
 
         <p class="home-text">
-          Hey, I’m <strong>Clancy</strong>. This user guide is basically here to help you understand
-          all the nerdy facts. It keeps unit info, tier lists, and mechanics in one place,
-          and stays updated as the game changes.
+          Hey, I’m <strong>Clancy</strong>. This user guide is basically here to help you understand all the nerdy facts.
+          It keeps unit info, tier lists, and mechanics in one place, and stays updated as the game changes.
         </p>
 
         <div class="home-divider"></div>
@@ -28,16 +22,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <h2 class="home-subtitle">Community</h2>
 
         <p class="home-text">
-          Want to help improve the guide, report mistakes, or just hang out with the community?
-          Join us here:
+          Want to help improve the guide, report mistakes, or just hang out with the community? Join us here:
         </p>
 
-        <a
-          class="home-button"
-          href="https://discord.gg/YOUR_INVITE"
-          target="_blank"
-          rel="noopener"
-        >
+        <a class="home-button" href="https://discord.gg/YOUR_INVITE" target="_blank" rel="noopener">
           Join the NTD Discord
         </a>
       </div>
@@ -46,7 +34,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 </BaseLayout>
 
 <style>
-  /* FULL WIDTH SECTION */
   .home-bleed{
     position: relative;
     width: 100vw;
@@ -54,64 +41,59 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
+
     min-height: calc(100vh - 110px);
     overflow: hidden;
     border-top: 1px solid var(--border);
   }
 
-  /* BLURRED FILL LAYER (never crops badly) */
-  .home-bg-blur{
+  /* The fix: COVER, but with a tuned camera position + subtle cinematic grading */
+  .home-bg{
     position:absolute;
     inset:0;
+
     background-image: url("/images/home-bg.png");
+    background-repeat: no-repeat;
     background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: blur(18px) brightness(0.65) saturate(1.05);
-    transform: scale(1.1);
+
+    /* CAMERA POSITION
+       This is the “make it fit” knob. It controls what part gets preserved when cropping happens. */
+    background-position: 62% 42%;
+
+    /* This makes text readable without killing the image */
+    filter: brightness(0.62) saturate(1.05) blur(3px);
+    transform: scale(1.06);
   }
 
-  /* FULL IMAGE LAYER (no cropping, always visible) */
-  .home-bg-contain{
-    position:absolute;
-    inset:0;
-    background-image: url("/images/home-bg.png");
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: brightness(0.85);
-    opacity: 0.95;
-  }
-
-  /* READABILITY OVERLAY */
+  /* Readability overlay + vignette so edges darken naturally */
   .home-overlay{
     position:absolute;
     inset:0;
     background:
-      radial-gradient(1100px 700px at 20% 20%, rgba(106,168,255,.18), transparent 60%),
-      radial-gradient(900px 700px at 80% 30%, rgba(159,91,255,.14), transparent 55%),
-      linear-gradient(180deg, rgba(11,14,20,.60), rgba(11,14,20,.92));
+      radial-gradient(900px 650px at 22% 30%, rgba(106,168,255,.18), transparent 60%),
+      radial-gradient(900px 700px at 78% 30%, rgba(159,91,255,.14), transparent 55%),
+      radial-gradient(1400px 900px at 50% 65%, rgba(0,0,0,.10), rgba(0,0,0,.55)),
+      linear-gradient(180deg, rgba(11,14,20,.55), rgba(11,14,20,.92));
   }
 
-  /* CONTENT WRAPPER */
   .home-inner{
     position: relative;
     z-index: 1;
     max-width: 1180px;
     margin: 0 auto;
     padding: 60px 18px 90px;
+
     display:flex;
-    align-items:center;
-    justify-content:center;
+    align-items:flex-start;
+    justify-content:flex-start;
   }
 
-  /* TEXT CARD */
   .home-card{
-    width:100%;
+    width: 100%;
     max-width: 860px;
     border: 1px solid var(--border);
     border-radius: 22px;
-    background: rgba(0,0,0,.45);
+    background: rgba(0,0,0,.48);
     box-shadow: var(--shadow);
     padding: 30px 26px;
   }
@@ -132,8 +114,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   .home-title{
     margin:0;
     font-size: clamp(34px, 4.8vw, 56px);
-    line-height:1.05;
-    letter-spacing:-0.02em;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
   }
 
   .home-subtitle{
@@ -144,14 +126,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   .home-text{
     margin-top:14px;
     color: var(--muted);
-    line-height:1.7;
-    font-size:16px;
+    line-height: 1.7;
+    font-size: 16px;
   }
 
   .home-divider{
-    height:1px;
+    height: 1px;
     background: var(--border);
-    margin:20px 0;
+    margin: 20px 0;
   }
 
   .home-button{
@@ -163,12 +145,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     border-radius:14px;
     border:1px solid var(--border);
     background: rgba(255,255,255,.05);
-    font-weight:800;
+    font-weight: 800;
     text-decoration:none;
   }
 
   .home-button:hover{
     border-color: rgba(106,168,255,.7);
     background: rgba(106,168,255,.12);
+  }
+
+  /* Responsive camera adjustments so the crop stays flattering */
+  @media (max-width: 900px){
+    .home-bg{ background-position: 58% 40%; }
+    .home-inner{ justify-content:center; }
+  }
+
+  @media (max-width: 520px){
+    .home-bg{ background-position: 55% 32%; filter: brightness(0.60) saturate(1.05) blur(2px); }
+    .home-card{ padding: 22px 18px; }
   }
 </style>
