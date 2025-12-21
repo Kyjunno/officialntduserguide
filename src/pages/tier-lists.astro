@@ -2,124 +2,123 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 <BaseLayout title="Tier Lists | Nightshift Tower Defense User Guide">
-  <div class="tiers-bg">
-    <div class="tiers-bg-img"></div>
-    <div class="tiers-bg-overlay"></div>
+  <!-- FULL PAGE BACKGROUND (behind everything) -->
+  <div class="tierpage-bg" aria-hidden="true"></div>
+  <div class="tierpage-bg-overlay" aria-hidden="true"></div>
 
-    <div class="tiers-page">
-      <header class="tiers-hero">
-        <h1 class="tiers-title">Tier Lists</h1>
-        <p class="tiers-sub">
-          These are the best units in each category. Keep in mind that they’re all just my opinion, you should not take it as fact.
-        </p>
-      </header>
+  <div class="tiers-page">
+    <header class="tiers-hero">
+      <h1 class="tiers-title">Tier Lists</h1>
+      <p class="tiers-sub">
+        These are the best units in each category. Keep in mind that they’re all just my opinion, you should not take it as fact.
+      </p>
+    </header>
 
-      <section class="tiers-grid" aria-label="Tier list categories">
-        <a class="tier-card" href="#" aria-label="Starters tier list (coming soon)">
-          <div class="tier-name">STARTERS</div>
-          <div class="tier-slots">
-            <div class="tier-slot">
-              <img src="/images/tierlists/starters/slot-1.png" alt="Starter unit 1" />
-            </div>
-            <div class="tier-slot">
-              <img src="/images/tierlists/starters/slot-2.png" alt="Starter unit 2" />
-            </div>
+    <section class="tiers-grid" aria-label="Tier list categories">
+      <!-- Starters -->
+      <a class="tier-card" href="#" aria-label="Starters tier list (coming soon)">
+        <div class="tier-name">STARTERS</div>
+        <div class="tier-slots">
+          <div class="tier-slot">
+            <img src="/images/tierlists/starters/slot-1.png" alt="Starter unit 1" />
           </div>
-        </a>
-
-        <a class="tier-card" href="#" aria-label="Midgame tier list (coming soon)">
-          <div class="tier-name">MIDGAMES</div>
-          <div class="tier-slots">
-            <div class="tier-slot tier-slot-empty">?</div>
-            <div class="tier-slot tier-slot-empty">?</div>
+          <div class="tier-slot">
+            <img src="/images/tierlists/starters/slot-2.png" alt="Starter unit 2" />
           </div>
-        </a>
+        </div>
+      </a>
 
-        <a class="tier-card" href="#" aria-label="Endgame tier list (coming soon)">
-          <div class="tier-name">ENDGAMES</div>
-          <div class="tier-slots">
-            <div class="tier-slot tier-slot-empty">?</div>
-            <div class="tier-slot tier-slot-empty">?</div>
-          </div>
-        </a>
+      <!-- Midgames -->
+      <a class="tier-card" href="#" aria-label="Midgame tier list (coming soon)">
+        <div class="tier-name">MIDGAMES</div>
+        <div class="tier-slots">
+          <div class="tier-slot tier-slot-empty">?</div>
+          <div class="tier-slot tier-slot-empty">?</div>
+        </div>
+      </a>
 
-        <a class="tier-card" href="#" aria-label="Slowers tier list (coming soon)">
-          <div class="tier-name">SLOWERS</div>
-          <div class="tier-slots">
-            <div class="tier-slot tier-slot-empty">?</div>
-            <div class="tier-slot tier-slot-empty">?</div>
-          </div>
-        </a>
+      <!-- Endgames -->
+      <a class="tier-card" href="#" aria-label="Endgame tier list (coming soon)">
+        <div class="tier-name">ENDGAMES</div>
+        <div class="tier-slots">
+          <div class="tier-slot tier-slot-empty">?</div>
+          <div class="tier-slot tier-slot-empty">?</div>
+        </div>
+      </a>
 
-        <a class="tier-card" href="#" aria-label="Stunners tier list (coming soon)">
-          <div class="tier-name">STUNNERS</div>
-          <div class="tier-slots">
-            <div class="tier-slot tier-slot-empty">?</div>
-            <div class="tier-slot tier-slot-empty">?</div>
-          </div>
-        </a>
+      <!-- Slowers -->
+      <a class="tier-card" href="#" aria-label="Slowers tier list (coming soon)">
+        <div class="tier-name">SLOWERS</div>
+        <div class="tier-slots">
+          <div class="tier-slot tier-slot-empty">?</div>
+          <div class="tier-slot tier-slot-empty">?</div>
+        </div>
+      </a>
 
-        <a class="tier-card" href="#" aria-label="Bleed tier list (coming soon)">
-          <div class="tier-name">BLEED</div>
-          <div class="tier-slots">
-            <div class="tier-slot tier-slot-empty">?</div>
-            <div class="tier-slot tier-slot-empty">?</div>
-          </div>
-        </a>
+      <!-- Stunners -->
+      <a class="tier-card" href="#" aria-label="Stunners tier list (coming soon)">
+        <div class="tier-name">STUNNERS</div>
+        <div class="tier-slots">
+          <div class="tier-slot tier-slot-empty">?</div>
+          <div class="tier-slot tier-slot-empty">?</div>
+        </div>
+      </a>
 
-        <a class="tier-card" href="#" aria-label="Burn tier list (coming soon)">
-          <div class="tier-name">BURN</div>
-          <div class="tier-slots">
-            <div class="tier-slot tier-slot-empty">?</div>
-            <div class="tier-slot tier-slot-empty">?</div>
-          </div>
-        </a>
+      <!-- Bleed -->
+      <a class="tier-card" href="#" aria-label="Bleed tier list (coming soon)">
+        <div class="tier-name">BLEED</div>
+        <div class="tier-slots">
+          <div class="tier-slot tier-slot-empty">?</div>
+          <div class="tier-slot tier-slot-empty">?</div>
+        </div>
+      </a>
 
-        <a class="tier-card" href="#" aria-label="Boosters tier list (coming soon)">
-          <div class="tier-name">BOOSTERS</div>
-          <div class="tier-slots">
-            <div class="tier-slot tier-slot-empty">?</div>
-            <div class="tier-slot tier-slot-empty">?</div>
-          </div>
-        </a>
-      </section>
-    </div>
+      <!-- Burn -->
+      <a class="tier-card" href="#" aria-label="Burn tier list (coming soon)">
+        <div class="tier-name">BURN</div>
+        <div class="tier-slots">
+          <div class="tier-slot tier-slot-empty">?</div>
+          <div class="tier-slot tier-slot-empty">?</div>
+        </div>
+      </a>
+
+      <!-- Boosters -->
+      <a class="tier-card" href="#" aria-label="Boosters tier list (coming soon)">
+        <div class="tier-name">BOOSTERS</div>
+        <div class="tier-slots">
+          <div class="tier-slot tier-slot-empty">?</div>
+          <div class="tier-slot tier-slot-empty">?</div>
+        </div>
+      </a>
+    </section>
   </div>
 
   <style>
-    /* Background wrapper */
-    .tiers-bg{
-      position: relative;
-      overflow: hidden;
-      border-radius: 22px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      padding: 0;
-    }
-
-    .tiers-bg-img{
-      position: absolute;
+    /* FULL PAGE BACKGROUND */
+    .tierpage-bg{
+      position: fixed;
       inset: 0;
+      z-index: -2;
       background-image: url("/images/tierlist-bg.png");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      filter: blur(8px) brightness(0.55) saturate(1.05);
+      filter: blur(10px) brightness(0.55) saturate(1.08);
       transform: scale(1.06);
     }
 
-    .tiers-bg-overlay{
-      position: absolute;
+    .tierpage-bg-overlay{
+      position: fixed;
       inset: 0;
+      z-index: -1;
       background:
         radial-gradient(900px 650px at 20% 10%, rgba(106,168,255,.16), transparent 60%),
         radial-gradient(900px 650px at 80% 20%, rgba(159,91,255,.14), transparent 55%),
-        linear-gradient(180deg, rgba(11,14,20,.65), rgba(11,14,20,.92));
+        linear-gradient(180deg, rgba(11,14,20,.60), rgba(11,14,20,.92));
     }
 
+    /* PAGE LAYOUT */
     .tiers-page{
-      position: relative;
-      z-index: 1;
       max-width: 1100px;
       margin: 0 auto;
       padding: 26px 18px 80px;
@@ -148,6 +147,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       gap: 22px;
     }
 
+    /* BIG CARD */
     .tier-card{
       text-decoration: none;
       display: block;
@@ -173,6 +173,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       text-align: center;
     }
 
+    /* TWO INNER SLOTS */
     .tier-slots{
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -186,32 +187,34 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       border-radius: 18px;
       border: 2px solid rgba(232,238,252,.70);
       background: rgba(0,0,0,.25);
+
+      /* Keep rounded corners clean */
       overflow: hidden;
+
       display: flex;
       align-items: center;
       justify-content: center;
-
-      /* Adds the "framed" feeling so images don't look pasted to the edges */
-      padding: 12px;
     }
 
-    /* The key fix: keep images comfortably inside the slot */
+    /* FIX: no clipped drop-shadow, and no weird cutoff */
     .tier-slot img{
       width: 100%;
       height: 100%;
       object-fit: contain;
       display: block;
 
-      /* makes it sit nicely inside padding, not touch the border */
-      transform: scale(0.92);
-      filter: drop-shadow(0 10px 22px rgba(0,0,0,.35));
+      /* this creates the “flush but not touching” look like the FN site */
+      padding: 12px;
+
+      /* IMPORTANT: remove shadow so nothing gets clipped and looks cut */
+      filter: none;
+      transform: none;
     }
 
     .tier-slot-empty{
       color: rgba(232,238,252,.75);
       font-weight: 1000;
       font-size: 44px;
-      padding: 0;
     }
 
     @media (max-width: 1000px){
