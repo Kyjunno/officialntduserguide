@@ -16,7 +16,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <section class="tiers-grid" aria-label="Tier list categories">
       <!-- Starters -->
-      <a class="tier-card" href="#" aria-label="Starters tier list (coming soon)">
+      <a class="tier-card" href="#">
         <div class="tier-name">STARTERS</div>
         <div class="tier-slots">
           <div class="tier-slot">
@@ -29,7 +29,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Midgames -->
-      <a class="tier-card" href="#" aria-label="Midgame tier list (coming soon)">
+      <a class="tier-card" href="#">
         <div class="tier-name">MIDGAMES</div>
         <div class="tier-slots">
           <div class="tier-slot">
@@ -42,16 +42,20 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Endgames -->
-      <a class="tier-card" href="#" aria-label="Endgame tier list (coming soon)">
+      <a class="tier-card" href="#">
         <div class="tier-name">ENDGAMES</div>
         <div class="tier-slots">
-          <div class="tier-slot tier-slot-empty">?</div>
-          <div class="tier-slot tier-slot-empty">?</div>
+          <div class="tier-slot">
+            <img src="/images/tierlists/endgames/slot-1.png" alt="Endgame unit 1" />
+          </div>
+          <div class="tier-slot">
+            <img src="/images/tierlists/endgames/slot-2.png" alt="Endgame unit 2" />
+          </div>
         </div>
       </a>
 
       <!-- Slowers -->
-      <a class="tier-card" href="#" aria-label="Slowers tier list (coming soon)">
+      <a class="tier-card" href="#">
         <div class="tier-name">SLOWERS</div>
         <div class="tier-slots">
           <div class="tier-slot tier-slot-empty">?</div>
@@ -60,7 +64,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Stunners -->
-      <a class="tier-card" href="#" aria-label="Stunners tier list (coming soon)">
+      <a class="tier-card" href="#">
         <div class="tier-name">STUNNERS</div>
         <div class="tier-slots">
           <div class="tier-slot tier-slot-empty">?</div>
@@ -69,7 +73,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Bleed -->
-      <a class="tier-card" href="#" aria-label="Bleed tier list (coming soon)">
+      <a class="tier-card" href="#">
         <div class="tier-name">BLEED</div>
         <div class="tier-slots">
           <div class="tier-slot tier-slot-empty">?</div>
@@ -78,7 +82,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Burn -->
-      <a class="tier-card" href="#" aria-label="Burn tier list (coming soon)">
+      <a class="tier-card" href="#">
         <div class="tier-name">BURN</div>
         <div class="tier-slots">
           <div class="tier-slot tier-slot-empty">?</div>
@@ -87,7 +91,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </a>
 
       <!-- Boosters -->
-      <a class="tier-card" href="#" aria-label="Boosters tier list (coming soon)">
+      <a class="tier-card" href="#">
         <div class="tier-name">BOOSTERS</div>
         <div class="tier-slots">
           <div class="tier-slot tier-slot-empty">?</div>
@@ -106,7 +110,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      filter: blur(1px) brightness(0.75) contrast(1.05) saturate(1.15);
+      filter: blur(1px) brightness(0.85) contrast(1.05) saturate(1.2);
       transform: scale(1.02);
     }
 
@@ -115,9 +119,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       inset: 0;
       z-index: -1;
       background:
-        radial-gradient(900px 650px at 20% 10%, rgba(106,168,255,.20), transparent 60%),
-        radial-gradient(900px 650px at 80% 20%, rgba(159,91,255,.18), transparent 55%),
-        linear-gradient(180deg, rgba(10,12,18,.35), rgba(10,12,18,.65));
+        radial-gradient(900px 650px at 20% 10%, rgba(106,168,255,.18), transparent 60%),
+        radial-gradient(900px 650px at 80% 20%, rgba(159,91,255,.16), transparent 55%),
+        linear-gradient(180deg, rgba(10,12,18,.30), rgba(10,12,18,.55));
     }
 
     .tiers-page{
@@ -150,10 +154,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     }
 
     .tier-card{
-      text-decoration: none;
-      display: block;
       border-radius: 22px;
-      padding: 18px 18px 20px;
+      padding: 18px;
       border: 1px solid rgba(255,255,255,.20);
       background: rgba(0,0,0,.22);
       box-shadow: var(--shadow);
