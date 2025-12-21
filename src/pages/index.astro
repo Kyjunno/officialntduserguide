@@ -10,9 +10,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <div class="home-card">
         <div class="home-kicker">Official Community Guide</div>
 
-        <h1 class="home-title">
-          Nightshift Tower Defense User Guide
-        </h1>
+        <h1 class="home-title">Nightshift Tower Defense User Guide</h1>
 
         <p class="home-text">
           Hey there, I’m <strong>Clancy</strong>. This user guide is basically here to help you understand all the nerdy facts.
@@ -28,12 +26,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           Join us here:
         </p>
 
-        <a
-          class="home-button"
-          href="https://discord.gg/XHXjcVA4cw"
-          target="_blank"
-          rel="noopener"
-        >
+        <a class="home-button" href="https://discord.gg/XHXjcVA4cw" target="_blank" rel="noopener">
           Join the NTD Discord
         </a>
       </div>
@@ -92,12 +85,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
   .home-card{
     width: 100%;
-    max-width: 900px; /* slightly wider so the title fits cleanly */
+    max-width: 900px;
     border: 1px solid var(--border);
     border-radius: 22px;
     background: rgba(0,0,0,.48);
     box-shadow: var(--shadow);
     padding: 30px 26px;
+    overflow: hidden; /* prevents any accidental spill */
   }
 
   .home-kicker{
@@ -113,12 +107,27 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     margin-bottom: 12px;
   }
 
+  /* Title behavior:
+     - Single line on wide screens
+     - Never overflows the card
+     - Wraps cleanly if needed */
   .home-title{
     margin: 0;
-    font-size: clamp(32px, 3.6vw, 52px);
+    font-size: clamp(28px, 3.4vw, 52px); /* can shrink a bit more when needed */
     line-height: 1.1;
     letter-spacing: -0.015em;
-    white-space: nowrap; /* THIS is what keeps it on one smooth line */
+    max-width: 100%;
+    white-space: normal;      /* allow wrap if it has to */
+    overflow-wrap: anywhere;  /* never spill out */
+    text-wrap: balance;       /* modern browsers: nicer wrapping */
+  }
+
+  /* Force one-line only when there’s clearly enough room */
+  @media (min-width: 1200px){
+    .home-title{
+      white-space: nowrap;
+      overflow-wrap: normal;
+    }
   }
 
   .home-subtitle{
@@ -155,11 +164,5 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   .home-button:hover{
     border-color: rgba(106,168,255,.7);
     background: rgba(106,168,255,.12);
-  }
-
-  @media (max-width: 900px){
-    .home-title{
-      white-space: normal; /* allow wrap on small screens */
-    }
   }
 </style>
