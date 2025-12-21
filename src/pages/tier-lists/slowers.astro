@@ -1,0 +1,155 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+type Unit = {
+  rank: number;
+  name: string;
+  image: string;
+  cost?: string;
+  rarity: string;
+  maxDps: string;
+  attackType: string;
+  placements: string;
+  dmg: string;
+  rng: string;
+  cd: string;
+  reasoning: string;
+};
+
+const units: Unit[] = [
+  {
+    rank: 1,
+    name: "Fan",
+    image: "/images/tierlists/slowers/fan.png",
+    rarity: "Epic",
+    maxDps: "160",
+    attackType: "Cone AOE (50%)",
+    placements: "4",
+    dmg: "10",
+    rng: "24",
+    cd: "0.25",
+    reasoning:
+      "Like I said in the starter tier list, Fan is overlooked quite a bit. While he isn’t the absolutely best at slowing, the fact you can get his shiny version better than you can get a shiny Shadow Freddy is why Fan is first place.",
+  },
+  {
+    rank: 2,
+    name: "Shadow Freddy",
+    image: "/images/tierlists/slowers/shadow-freddy.png",
+    cost: "$12,500",
+    rarity: "Vengeful",
+    maxDps: "1,000",
+    attackType: "AOE + Slow",
+    placements: "1",
+    dmg: "100",
+    rng: "20",
+    cd: "0.1",
+    reasoning:
+      "Shadow Freddy has the single highest slow percentage of all units at 30%. The only reason he isn’t first is because of the chances you get a shiny Fan sooner than shiny Shadow Freddy.",
+  },
+  {
+    rank: 3,
+    name: "Nightguard",
+    image: "/images/tierlists/slowers/nightguard.png",
+    rarity: "Legendary",
+    maxDps: "225",
+    attackType: "Cone AOE (50%)",
+    placements: "3",
+    dmg: "7.5",
+    rng: "22",
+    cd: "0.1",
+    reasoning:
+      "Nightguard’s slow is just 5% less than Fan. If this were overall judgement, I would put Nightguard over Fan. BUT this is the slow tier list, not the BEST tier list.",
+  },
+];
+---
+<BaseLayout title="Slowers Tier List | Nightshift Tower Defense User Guide">
+  <div class="tierpage-bg" aria-hidden="true"></div>
+  <div class="tierpage-bg-overlay" aria-hidden="true"></div>
+
+  <div class="page">
+    <header class="hero">
+      <h1 class="title">Slowers Tier List</h1>
+      <div class="sub">These are judged on best at slowing</div>
+      <div class="note">Reminder that this is made with my opinion in mind.</div>
+    </header>
+
+    <div class="layout">
+      <section class="leftPanel">
+        <div class="leftHeader">
+          <div class="leftTitle">Best Slowing Units</div>
+          <div class="leftSub">Ranked by slow percentage effectiveness</div>
+        </div>
+
+        <div class="rows">
+          {units.map((u) => (
+            <article class="row">
+              <div class="imgWrap">
+                <img class="img" src={u.image} alt={u.name} />
+                <div class="tag name">{u.name}</div>
+                <div class="tag rank">#{u.rank}</div>
+                {u.cost && <div class="tag cost">{u.cost}</div>}
+              </div>
+
+              <div class="info">
+                <div class="miniGrid topLine">
+                  <div class="miniBox">
+                    <div class="k">Max DPS</div>
+                    <div class="v">{u.maxDps}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">Attack Type</div>
+                    <div class="v">{u.attackType}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">Placements</div>
+                    <div class="v">{u.placements}</div>
+                  </div>
+                </div>
+
+                <div class="miniGrid statsLine">
+                  <div class="miniBox">
+                    <div class="k">DMG</div>
+                    <div class="v">{u.dmg}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">CD</div>
+                    <div class="v">{u.cd}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">RNG</div>
+                    <div class="v">{u.rng}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">Rarity</div>
+                    <div class="v">{u.rarity}</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <aside class="rightPanel">
+        <div class="rightHeader">
+          <div class="rightTitle">Why these rankings?</div>
+          <div class="rightSub">Slowing effectiveness explained</div>
+        </div>
+
+        <div class="rightBody">
+          <div class="notesList">
+            {units.map((u) => (
+              <section class="noteCard">
+                <div class="noteHead">
+                  <div class="noteName">{u.name}</div>
+                  <div class="noteRank">#{u.rank}</div>
+                </div>
+                <div class="noteText">{u.reasoning}</div>
+              </section>
+            ))}
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
