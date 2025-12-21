@@ -1,0 +1,187 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+type Unit = {
+  rank: number;
+  name: string;
+  image: string;
+  cost?: string;
+  rarity: string;
+  maxDps: string;
+  attackType: string;
+  placements: string;
+  dmg: string;
+  rng: string;
+  cd: string;
+  reasoning: string;
+};
+
+const units: Unit[] = [
+  {
+    rank: 1,
+    name: "Endo Plush",
+    image: "/images/tierlists/boosters/endo-plush.png",
+    cost: "$500",
+    rarity: "Epic",
+    maxDps: "+15% POWER",
+    attackType: "Boost + Reveal",
+    placements: "3",
+    dmg: "0",
+    rng: "15",
+    cd: "1",
+    reasoning:
+      "Endo plush and crying soul both give the same amount of power bonus, both are easy to get and overall do similar things. HOWEVER, endo plush ALSO has reveal, which in a game full of hidden enemies, is needed",
+  },
+  {
+    rank: 2,
+    name: "Crying Soul",
+    image: "/images/tierlists/boosters/crying-soul.png",
+    cost: "$999",
+    rarity: "Mythic",
+    maxDps: "+15% POWER",
+    attackType: "Boost",
+    placements: "3",
+    dmg: "0",
+    rng: "18",
+    cd: "1",
+    reasoning:
+      "While crying soul gives the same amount of power as endo plush, crying soul doesn't reveal",
+  },
+  {
+    rank: 3,
+    name: "Bort Bunny",
+    image: "/images/tierlists/boosters/bort-bunny.png",
+    cost: "$2,500",
+    rarity: "Mythic",
+    maxDps: "180",
+    attackType: "Pierce + Boost",
+    placements: "2",
+    dmg: "90",
+    rng: "25",
+    cd: "1",
+    reasoning:
+      "while yes, bort bunny does damage, his boost only increases POWER by 11.112%, combine with his price of $2,500 and you can see why he is third",
+  },
+  {
+    rank: 4,
+    name: "The Amalgamation",
+    image: "/images/tierlists/boosters/the-amalgamation.png",
+    cost: "$15,000",
+    rarity: "Vengeful",
+    maxDps: "625",
+    attackType: "Cone AOE (50%)",
+    placements: "1",
+    dmg: "1250",
+    rng: "30",
+    cd: "2",
+    reasoning:
+      "While yes, he is the highest dps of all the boosters, we are looking at pure boost value. Out of all the boosters, his boost actually increase POWER the most, by 34.44% to be exact. So why is he 4th? WELL, that boost only last 10 seconds and has a cooldown of 60 seconds, making it a strong but unreliable boost",
+  },
+];
+---
+
+<BaseLayout title="Boosters Tier List | Nightshift Tower Defense User Guide">
+  <div class="tierpage-bg"></div>
+  <div class="tierpage-bg-overlay"></div>
+
+  <div class="page">
+    <header class="hero">
+      <h1 class="title">Boosters Tier List</h1>
+      <div class="sub">These are judged by power boost</div>
+      <div class="note">Reminder that this is made with my opinion in mind.</div>
+    </header>
+
+    <div class="layout">
+      <section class="leftPanel">
+        <div class="leftHeader">
+          <div class="leftTitle">Best Boosters</div>
+          <div class="leftSub">Ranked by boost effectiveness</div>
+        </div>
+
+        <div class="rows">
+          {units.map((u) => (
+            <article class="row">
+              <div class="imgWrap">
+                <img src={u.image} alt={u.name} loading="lazy" />
+                <div class="tag name">{u.name}</div>
+                <div class="tag rank">#{u.rank}</div>
+                {u.cost && <div class="tag cost">{u.cost}</div>}
+              </div>
+
+              <div class="info">
+                <div class="miniGrid topLine">
+                  <div class="miniBox">
+                    <div class="k">Max DPS</div>
+                    <div class="v">{u.maxDps}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">Attack Type</div>
+                    <div class="v">{u.attackType}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">Placements</div>
+                    <div class="v">{u.placements}</div>
+                  </div>
+                </div>
+
+                <div class="miniGrid statsLine">
+                  <div class="miniBox">
+                    <div class="k">DMG</div>
+                    <div class="v">{u.dmg}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">CD</div>
+                    <div class="v">{u.cd}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">RNG</div>
+                    <div class="v">{u.rng}</div>
+                  </div>
+                  <div class="miniBox">
+                    <div class="k">Rarity</div>
+                    <div class="v">{u.rarity}</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <aside class="rightPanel">
+        <div class="rightHeader">
+          <div class="rightTitle">Why these rankings?</div>
+          <div class="rightSub">Per-unit reasoning</div>
+        </div>
+
+        <div class="rightBody">
+          {units.map((u) => (
+            <div class="noteCard">
+              <div class="noteHead">
+                <div class="noteName">{u.name}</div>
+                <div class="noteRank">#{u.rank}</div>
+              </div>
+              <div class="noteText">{u.reasoning}</div>
+            </div>
+          ))}
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <style>
+    .tierpage-bg {
+      position: fixed;
+      inset: 0;
+      background: url("/images/tierlist-bg.png") center / cover no-repeat;
+      filter: blur(1px) brightness(0.9);
+      z-index: -2;
+    }
+    .tierpage-bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.3), rgba(0,0,0,.6));
+      z-index: -1;
+    }
+  </style>
+</BaseLayout>
