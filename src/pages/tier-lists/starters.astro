@@ -5,6 +5,7 @@ type UnitEntry = {
   name: string;
   rank: number;
   cost: number;
+  rarity: string;
   maxDps: string;
   attackType: string;
   placements: string;
@@ -12,22 +13,142 @@ type UnitEntry = {
     damage: string;
     cooldown: string;
     range: string;
-    dps: string;
   };
+  reasoning: string;
   image: string;
 };
 
 const units: UnitEntry[] = [
-  { name: "Unit Name #1", rank: 1, cost: 800, maxDps: "??", attackType: "??", placements: "??", stats: { damage: "??", cooldown: "??", range: "??", dps: "??" }, image: "/images/units/placeholders/unit-1.png" },
-  { name: "Unit Name #2", rank: 2, cost: 750, maxDps: "??", attackType: "??", placements: "??", stats: { damage: "??", cooldown: "??", range: "??", dps: "??" }, image: "/images/units/placeholders/unit-2.png" },
-  { name: "Unit Name #3", rank: 3, cost: 700, maxDps: "??", attackType: "??", placements: "??", stats: { damage: "??", cooldown: "??", range: "??", dps: "??" }, image: "/images/units/placeholders/unit-3.png" },
-  { name: "Unit Name #4", rank: 4, cost: 650, maxDps: "??", attackType: "??", placements: "??", stats: { damage: "??", cooldown: "??", range: "??", dps: "??" }, image: "/images/units/placeholders/unit-4.png" },
-  { name: "Unit Name #5", rank: 5, cost: 600, maxDps: "??", attackType: "??", placements: "??", stats: { damage: "??", cooldown: "??", range: "??", dps: "??" }, image: "/images/units/placeholders/unit-5.png" },
-  { name: "Unit Name #6", rank: 6, cost: 550, maxDps: "??", attackType: "??", placements: "??", stats: { damage: "??", cooldown: "??", range: "??", dps: "??" }, image: "/images/units/placeholders/unit-6.png" },
-  { name: "Unit Name #7", rank: 7, cost: 500, maxDps: "??", attackType: "??", placements: "??", stats: { damage: "??", cooldown: "??", range: "??", dps: "??" }, image: "/images/units/placeholders/unit-7.png" },
-  { name: "Unit Name #8", rank: 8, cost: 450, maxDps: "??", attackType: "??", placements: "??", stats: { damage: "??", cooldown: "??", range: "??", dps: "??" }, image: "/images/units/placeholders/unit-8.png" },
-  { name: "Unit Name #9", rank: 9, cost: 400, maxDps: "??", attackType: "??", placements: "??", stats: { damage: "??", cooldown: "??", range: "??", dps: "??" }, image: "/images/units/placeholders/unit-9.png" },
-  { name: "Unit Name #10", rank: 10, cost: 350, maxDps: "??", attackType: "??", placements: "??", stats: { damage: "??", cooldown: "??", range: "??", dps: "??" }, image: "/images/units/placeholders/unit-10.png" },
+  {
+    name: "Bear5",
+    rank: 1,
+    cost: 555,
+    rarity: "Other",
+    maxDps: "1,110",
+    attackType: "AOE",
+    placements: "1",
+    stats: { damage: "555", cooldown: "0.5", range: "20" },
+    reasoning:
+      "While TECHNICALLY he’s a late game unit, his placement price is $555. So he is basically a starter unit with late game potential. His ability “Mimic” is quite possibly the strongest passive in the game.",
+    image: "/images/units/starters/bear5.png",
+  },
+  {
+    name: "Test Dummy Endo",
+    rank: 2,
+    cost: 0,
+    rarity: "Mythic",
+    maxDps: "200",
+    attackType: "Single",
+    placements: "2",
+    stats: { damage: "100", cooldown: "1", range: "25" },
+    reasoning:
+      "His DPS is comparable to some midgame units. He outright out DPS’ almost all of the other starters. His passive “Double Trouble” makes him able to attack anywhere on the map basically.",
+    image: "/images/units/starters/test-dummy-endo.png",
+  },
+  {
+    name: "Nightguard",
+    rank: 3,
+    cost: 0,
+    rarity: "Legendary",
+    maxDps: "225",
+    attackType: "Cone AOE (50%)",
+    placements: "3",
+    stats: { damage: "7.5", cooldown: "0.1", range: "22" },
+    reasoning:
+      "In terms of sheer crowd control, Nightguard is top tier. A continuous Cone AOE unit with Burn, Slow AND Reveal? Throw a Critical Strikes chip on him and you have a constant stunning Cone AOE unit.",
+    image: "/images/units/starters/nightguard.png",
+  },
+  {
+    name: "Chicken7",
+    rank: 4,
+    cost: 0,
+    rarity: "Epic",
+    maxDps: "150",
+    attackType: "Beam + Dual",
+    placements: "3",
+    stats: { damage: "5", cooldown: "0.1", range: "22" },
+    reasoning:
+      "Chicken 7 has a HOT amount of DPS when you take into account what dual attacks do. Combine that with the +15% income and you have a solid starter that’ll transition you into late game very fast.",
+    image: "/images/units/starters/chicken7.png",
+  },
+  {
+    name: "Fan",
+    rank: 5,
+    cost: 0,
+    rarity: "Epic",
+    maxDps: "160",
+    attackType: "Cone AOE (50%)",
+    placements: "4",
+    stats: { damage: "10", cooldown: "0.25", range: "24" },
+    reasoning:
+      "Fan is overlooked quite a bit, but Fan is the HIGHEST slowing in the game. For a starter, having that much slowing with cone AOE is insanely good.",
+    image: "/images/units/starters/fan.png",
+  },
+  {
+    name: "Bonnie",
+    rank: 6,
+    cost: 0,
+    rarity: "Common",
+    maxDps: "32",
+    attackType: "Cone AOE (25%)",
+    placements: "2",
+    stats: { damage: "8", cooldown: "0.5", range: "12" },
+    reasoning:
+      "While not as heavy damage as Carl the Cupcake or Freddy, Bonnie makes up for this by being a cone AOE. Being cheap, wide spread, and fast attacking makes Bonnie generate a ton of money to transition into midgame.",
+    image: "/images/units/starters/bonnie.png",
+  },
+  {
+    name: "Carl The Cupcake",
+    rank: 7,
+    cost: 0,
+    rarity: "Rare",
+    maxDps: "86.4",
+    attackType: "Splash + Burn",
+    placements: "2",
+    stats: { damage: "54", cooldown: "1.25", range: "20" },
+    reasoning:
+      "Having splash means more enemies hit which means more money gain per attack. Having burn is just huge, but there are already better burn on better units. His biggest weakness is the cooldown, but the high damage makes up for it.",
+    image: "/images/units/starters/carl-the-cupcake.png",
+  },
+  {
+    name: "Freddy",
+    rank: 8,
+    cost: 0,
+    rarity: "Common",
+    maxDps: "90",
+    attackType: "Single",
+    placements: "3",
+    stats: { damage: "30", cooldown: "1", range: "20" },
+    reasoning:
+      "Good old fashioned Freddy. His biggest issue is being a single target. Still, that single target makes him dish out solid damage overall. Being the cheapest unit in the game makes him super valuable.",
+    image: "/images/units/starters/freddy.png",
+  },
+  {
+    name: "Foxy",
+    rank: 9,
+    cost: 0,
+    rarity: "Rare",
+    maxDps: "93.75",
+    attackType: "Single + Bleed",
+    placements: "2",
+    stats: { damage: "30", cooldown: "0.8", range: "20" },
+    reasoning:
+      "In terms of total output, he’s above Freddy. HOWEVER, starters’ purpose is to have a starting unit that can transition you to mid/late game the fastest. Foxy’s output includes his bleed, but you want to kill enemies as fast as possible for the most amount of money as possible.",
+    image: "/images/units/starters/foxy.png",
+  },
+  {
+    name: "Chica",
+    rank: 10,
+    cost: 0,
+    rarity: "Common",
+    maxDps: "38.4",
+    attackType: "Dual",
+    placements: "3",
+    stats: { damage: "16", cooldown: "1.25", range: "18" },
+    reasoning:
+      "While Chica has better single target DPS than Bonnie, the cooldown really just hurts Chica. While dual basically doubles the DPS to 76.8, that’s still not enough to justify putting Chica higher.",
+    image: "/images/units/starters/chica.png",
+  },
 ];
 ---
 <BaseLayout title="Starter Tier List | Nightshift Tower Defense User Guide">
@@ -42,7 +163,6 @@ const units: UnitEntry[] = [
     </header>
 
     <div class="layout">
-      <!-- LEFT: the one big FNDT-style box -->
       <section class="leftPanel" aria-label="Top 10 starter units">
         <div class="leftHeader">
           <div class="leftTitle">Top 10 Starter Units</div>
@@ -56,7 +176,7 @@ const units: UnitEntry[] = [
                 <img class="img" src={u.image} alt={u.name} loading="lazy" decoding="async" />
                 <div class="tag name">{u.name}</div>
                 <div class="tag rank">#{u.rank}</div>
-                <div class="tag cost">${u.cost}</div>
+                <div class="tag cost">{u.cost ? `$${u.cost}` : "$—"}</div>
               </div>
 
               <div class="info">
@@ -66,11 +186,11 @@ const units: UnitEntry[] = [
                     <div class="v">{u.maxDps}</div>
                   </div>
                   <div class="miniBox">
-                    <div class="k">Attack</div>
+                    <div class="k">Attack Type</div>
                     <div class="v">{u.attackType}</div>
                   </div>
                   <div class="miniBox">
-                    <div class="k">Places</div>
+                    <div class="k">Placements</div>
                     <div class="v">{u.placements}</div>
                   </div>
                 </div>
@@ -89,8 +209,8 @@ const units: UnitEntry[] = [
                     <div class="v">{u.stats.range}</div>
                   </div>
                   <div class="miniBox">
-                    <div class="k">DPS</div>
-                    <div class="v">{u.stats.dps}</div>
+                    <div class="k">Rarity</div>
+                    <div class="v">{u.rarity}</div>
                   </div>
                 </div>
               </div>
@@ -99,16 +219,23 @@ const units: UnitEntry[] = [
         </div>
       </section>
 
-      <!-- RIGHT: your commentary area (empty for now) -->
       <aside class="rightPanel" aria-label="Notes and explanations">
         <div class="rightHeader">
           <div class="rightTitle">Why these rankings?</div>
-          <div class="rightSub">This is where your explanations will go.</div>
+          <div class="rightSub">One note bubble per unit.</div>
         </div>
 
         <div class="rightBody">
-          <div class="hint">
-            Add your reasoning here. You can do one paragraph per unit, or only explain the controversial picks.
+          <div class="notesList">
+            {units.map((u) => (
+              <section class="noteCard" aria-label={`Reasoning for ${u.name}`}>
+                <div class="noteHead">
+                  <div class="noteName">{u.name}</div>
+                  <div class="noteRank">#{u.rank}</div>
+                </div>
+                <div class="noteText">{u.reasoning}</div>
+              </section>
+            ))}
           </div>
         </div>
       </aside>
@@ -116,7 +243,6 @@ const units: UnitEntry[] = [
   </div>
 
   <style>
-    /* Background */
     .tierpage-bg{
       position: fixed;
       inset: 0;
@@ -128,6 +254,7 @@ const units: UnitEntry[] = [
       filter: blur(1px) brightness(0.85) contrast(1.05) saturate(1.2);
       transform: scale(1.02);
     }
+
     .tierpage-bg-overlay{
       position: fixed;
       inset: 0;
@@ -138,7 +265,6 @@ const units: UnitEntry[] = [
         linear-gradient(180deg, rgba(10,12,18,.22), rgba(10,12,18,.55));
     }
 
-    /* Page */
     .page{
       max-width: 1200px;
       margin: 0 auto;
@@ -172,7 +298,6 @@ const units: UnitEntry[] = [
       line-height: 1.55;
     }
 
-    /* Layout: left big box + right notes */
     .layout{
       display: grid;
       grid-template-columns: 1.05fr 0.95fr;
@@ -180,7 +305,6 @@ const units: UnitEntry[] = [
       align-items: start;
     }
 
-    /* Left Panel (FNDT-style big box) */
     .leftPanel{
       border-radius: 22px;
       border: 1px solid rgba(255,255,255,.20);
@@ -214,7 +338,6 @@ const units: UnitEntry[] = [
       gap: 10px;
     }
 
-    /* Each unit row (compact) */
     .row{
       display: grid;
       grid-template-columns: 140px 1fr;
@@ -225,7 +348,6 @@ const units: UnitEntry[] = [
       background: rgba(0,0,0,.16);
     }
 
-    /* Image card with overlays */
     .imgWrap{
       position: relative;
       border-radius: 16px;
@@ -275,7 +397,6 @@ const units: UnitEntry[] = [
       left: 8px;
     }
 
-    /* Compact info grid */
     .info{
       display: grid;
       gap: 8px;
@@ -320,7 +441,6 @@ const units: UnitEntry[] = [
       color: rgba(232,238,252,.92);
     }
 
-    /* Right panel for your explanations */
     .rightPanel{
       border-radius: 22px;
       border: 1px solid rgba(255,255,255,.20);
@@ -355,15 +475,45 @@ const units: UnitEntry[] = [
       line-height: 1.7;
     }
 
-    .hint{
-      border-radius: 16px;
-      border: 1px dashed rgba(255,255,255,.20);
-      padding: 12px;
-      background: rgba(0,0,0,.12);
-      color: rgba(232,238,252,.72);
+    .notesList{
+      display: grid;
+      gap: 10px;
     }
 
-    /* Responsive */
+    .noteCard{
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.14);
+      padding: 12px;
+    }
+
+    .noteHead{
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .noteName{
+      font-weight: 1000;
+      color: rgba(232,238,252,.95);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+
+    .noteRank{
+      font-weight: 1000;
+      color: rgba(232,238,252,.70);
+      font-size: 12px;
+    }
+
+    .noteText{
+      color: rgba(232,238,252,.78);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
     @media (max-width: 1050px){
       .layout{
         grid-template-columns: 1fr;
