@@ -8,27 +8,26 @@ const pageTitle = "Unit Arcade";
 
     <!-- SEARCH VIEW -->
     <section id="searchView" class="ua-center">
-      <div class="ua-card">
+      <div class="ua-card ua-cardBig">
         <h1 class="ua-title">Unit Arcade</h1>
-        <p class="ua-sub">Type a unit name and pick from the dropdown.</p>
+        <p class="ua-sub">
+          Type a unit name and press Enter, or click Open.
+        </p>
 
         <div class="ua-row">
-          <div class="ua-field" id="centerField">
-            <input
-              id="unitSearch"
-              class="ua-input"
-              type="text"
-              placeholder="Search units..."
-              autocomplete="off"
-              spellcheck="false"
-            />
-            <div id="unitDropdown" class="ua-dropdown"></div>
-          </div>
-          <button id="openBtn" class="ua-btn">Open</button>
+          <input
+            id="unitSearch"
+            class="ua-input ua-inputBig"
+            type="text"
+            placeholder="Search for a unit..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button id="openBtn" class="ua-btn ua-btnBig">Open</button>
         </div>
 
         <p class="ua-footnote">
-          Click the search bar to browse units, or type to filter.
+          Example: Bear5, Golden Bonnie, Freddy
         </p>
       </div>
     </section>
@@ -43,8 +42,8 @@ const pageTitle = "Unit Arcade";
         <div class="ua-panel">
           <div class="ua-panelRow">
             <div>
-              <div class="ua-label">Unit search</div>
-              <div class="ua-field" id="topField">
+              <div class="ua-label">Search another unit</div>
+              <div class="ua-row">
                 <input
                   id="unitSearchTop"
                   class="ua-input"
@@ -53,9 +52,8 @@ const pageTitle = "Unit Arcade";
                   autocomplete="off"
                   spellcheck="false"
                 />
-                <div id="unitDropdownTop" class="ua-dropdown"></div>
+                <button id="openBtnTop" class="ua-btn">Open</button>
               </div>
-              <div class="ua-help">Click to browse or type to filter.</div>
             </div>
 
             <div class="ua-imageBox">
@@ -67,17 +65,17 @@ const pageTitle = "Unit Arcade";
           <div class="ua-divider"></div>
 
           <div class="ua-stats4">
-            <div class="ua-stat"><div class="ua-statK">RARITY</div><div id="rarityVal" class="ua-statV">Not set</div></div>
-            <div class="ua-stat"><div class="ua-statK">ATTACK TYPE</div><div id="attackVal" class="ua-statV">Not set</div></div>
-            <div class="ua-stat"><div class="ua-statK">PLACEMENT PRICE</div><div id="priceVal" class="ua-statV">Not set</div></div>
-            <div class="ua-stat"><div class="ua-statK">PLACEMENTS</div><div id="placementsVal" class="ua-statV">Not set</div></div>
+            <div class="ua-stat"><div class="ua-statK">RARITY</div><div id="rarityVal" class="ua-statV">—</div></div>
+            <div class="ua-stat"><div class="ua-statK">ATTACK TYPE</div><div id="attackVal" class="ua-statV">—</div></div>
+            <div class="ua-stat"><div class="ua-statK">PLACEMENT PRICE</div><div id="priceVal" class="ua-statV">—</div></div>
+            <div class="ua-stat"><div class="ua-statK">PLACEMENTS</div><div id="placementsVal" class="ua-statV">—</div></div>
           </div>
 
           <div class="ua-divider"></div>
 
           <div class="ua-wide">
             <div class="ua-wideK">OBTAINABILITY</div>
-            <div id="obtainVal" class="ua-wideV">Not set yet.</div>
+            <div id="obtainVal" class="ua-wideV">—</div>
           </div>
 
           <div class="ua-divider"></div>
@@ -87,7 +85,7 @@ const pageTitle = "Unit Arcade";
               <span>ABILITY</span>
               <span class="ua-wideRight">DESCRIPTION</span>
             </div>
-            <div id="abilityVal" class="ua-wideV">No abilities listed yet.</div>
+            <div id="abilityVal" class="ua-wideV">—</div>
           </div>
         </div>
 
@@ -98,7 +96,9 @@ const pageTitle = "Unit Arcade";
           <div class="ua-calcPanel">
             <div class="ua-calcControls">
               <select id="levelSel" class="ua-select">
-                ${Array.from({ length: 10 }, (_, i) => `<option value="${i+1}">Level ${i+1}</option>`).join("")}
+                ${Array.from({ length: 10 }, (_, i) =>
+                  `<option value="${i+1}">Level ${i+1}</option>`
+                ).join("")}
               </select>
 
               <select id="shinySel" class="ua-select">
@@ -121,10 +121,10 @@ const pageTitle = "Unit Arcade";
             </div>
 
             <div class="ua-calcGrid">
-              <div class="ua-calcStat"><div class="ua-calcK">Damage</div><div id="calcDmg" class="ua-calcV">-</div></div>
-              <div class="ua-calcStat"><div class="ua-calcK">Cooldown</div><div id="calcCd" class="ua-calcV">-</div></div>
-              <div class="ua-calcStat"><div class="ua-calcK">DPS</div><div id="calcDps" class="ua-calcV">-</div></div>
-              <div class="ua-calcStat"><div class="ua-calcK">Range</div><div id="calcRng" class="ua-calcV">-</div></div>
+              <div class="ua-calcStat"><div class="ua-calcK">Damage</div><div id="calcDmg" class="ua-calcV">—</div></div>
+              <div class="ua-calcStat"><div class="ua-calcK">Cooldown</div><div id="calcCd" class="ua-calcV">—</div></div>
+              <div class="ua-calcStat"><div class="ua-calcK">DPS</div><div id="calcDps" class="ua-calcV">—</div></div>
+              <div class="ua-calcStat"><div class="ua-calcK">Range</div><div id="calcRng" class="ua-calcV">—</div></div>
             </div>
           </div>
         </section>
@@ -134,8 +134,6 @@ const pageTitle = "Unit Arcade";
   </main>
 
   <script is:inline>
-    const UNIT_NAMES = ["Bear5","Golden Bonnie","Freddy","Bonnie","Foxy","Chica"];
-
     const UNIT_DATA = {
       "Bear5": { id:"bear5", rarity:"Uncommon", attack:"Single", price:"250", placements:"6", obtain:"Merchant / Summons", ability:"None", dmg:35.35, cd:2.5, rng:20 },
       "Golden Bonnie": { id:"golden-bonnie", rarity:"Mythic", attack:"Pierce + Poison", price:"4500", placements:"2", obtain:"Event", ability:"Not set", dmg:50.5, cd:2.0, rng:27.5 }
@@ -149,10 +147,8 @@ const pageTitle = "Unit Arcade";
 
     const unitSearch = document.getElementById("unitSearch");
     const unitSearchTop = document.getElementById("unitSearchTop");
-    const unitDropdown = document.getElementById("unitDropdown");
-    const unitDropdownTop = document.getElementById("unitDropdownTop");
-
     const openBtn = document.getElementById("openBtn");
+    const openBtnTop = document.getElementById("openBtnTop");
 
     const unitTitle = document.getElementById("unitTitle");
     const unitImg = document.getElementById("unitImg");
@@ -175,59 +171,36 @@ const pageTitle = "Unit Arcade";
     const calcDps = document.getElementById("calcDps");
     const calcRng = document.getElementById("calcRng");
 
-    let currentUnit = null;
-
     function lockScroll(){ html.classList.add("ua-lock"); body.classList.add("ua-lock"); }
     function unlockScroll(){ html.classList.remove("ua-lock"); body.classList.remove("ua-lock"); }
 
-    function showDropdown(input, menu, pick){
-      const q = input.value.toLowerCase();
-      const list = UNIT_NAMES.filter(n=>n.toLowerCase().includes(q)).slice(0,10);
-      menu.innerHTML = "";
-      list.forEach(n=>{
-        const b=document.createElement("button");
-        b.className="ua-ddItem";
-        b.textContent=n;
-        b.onclick=()=>pick(n);
-        menu.appendChild(b);
-      });
-      menu.style.display="flex";
-    }
-
-    function attach(input, menu, pick){
-      input.onfocus=()=>showDropdown(input,menu,pick);
-      input.oninput=()=>showDropdown(input,menu,pick);
-      input.onkeydown=e=>{ if(e.key==="Escape") menu.style.display="none"; };
-    }
-
     function loadUnit(name){
-      if(!UNIT_DATA[name]) return;
-      currentUnit = UNIT_DATA[name];
+      const unit = UNIT_DATA[name];
+      if(!unit) return;
 
       searchView.style.display="none";
       infoView.style.display="block";
       unlockScroll();
 
       unitTitle.textContent=name;
-      rarityVal.textContent=currentUnit.rarity;
-      attackVal.textContent=currentUnit.attack;
-      priceVal.textContent=currentUnit.price;
-      placementsVal.textContent=currentUnit.placements;
-      obtainVal.textContent=currentUnit.obtain;
-      abilityVal.textContent=currentUnit.ability;
+      rarityVal.textContent=unit.rarity;
+      attackVal.textContent=unit.attack;
+      priceVal.textContent=unit.price;
+      placementsVal.textContent=unit.placements;
+      obtainVal.textContent=unit.obtain;
+      abilityVal.textContent=unit.ability;
 
-      unitImg.src=`/units/${currentUnit.id}.png`;
+      unitImg.src=`/units/${unit.id}.png`;
       unitImg.onerror=()=>unitImgLabel.textContent="No image";
       unitImgLabel.textContent="";
 
-      compute();
+      compute(unit);
     }
 
-    function compute(){
-      if(!currentUnit) return;
-      let dmg=currentUnit.dmg*(1+(levelSel.value-1)*0.06);
-      let cd=currentUnit.cd;
-      let rng=currentUnit.rng;
+    function compute(unit){
+      let dmg = unit.dmg * (1 + (levelSel.value - 1) * 0.06);
+      let cd = unit.cd;
+      let rng = unit.rng;
 
       if(shinySel.value==="1") dmg*=1.15;
       if(enchantSel.value==="dmg") dmg*=1.2;
@@ -242,14 +215,10 @@ const pageTitle = "Unit Arcade";
       calcRng.textContent=rng.toFixed(1);
     }
 
-    openBtn.onclick=()=>loadUnit(unitSearch.value);
-    attach(unitSearch,unitDropdown,loadUnit);
-    attach(unitSearchTop,unitDropdownTop,loadUnit);
-
-    levelSel.onchange=compute;
-    shinySel.onchange=compute;
-    enchantSel.onchange=compute;
-    chipSel.onchange=compute;
+    openBtn.onclick=()=>loadUnit(unitSearch.value.trim());
+    openBtnTop.onclick=()=>loadUnit(unitSearchTop.value.trim());
+    unitSearch.onkeydown=e=>{ if(e.key==="Enter") openBtn.click(); };
+    unitSearchTop.onkeydown=e=>{ if(e.key==="Enter") openBtnTop.click(); };
 
     lockScroll();
     infoView.style.display="none";
@@ -276,16 +245,10 @@ const pageTitle = "Unit Arcade";
     :global(html.ua-lock),:global(body.ua-lock){overflow:hidden;height:100%}
 
     .ua-center{min-height:calc(100vh - 140px);display:grid;place-items:center}
-    .ua-card,.ua-panel,.ua-calcPanel{background:rgba(10,15,25,0.6);backdrop-filter:blur(14px);border-radius:18px;border:1px solid rgba(180,210,255,.18)}
-    .ua-card{padding:26px;text-align:center}
-    .ua-row{display:grid;grid-template-columns:1fr 110px;gap:10px}
-    .ua-input,.ua-select{width:100%;padding:14px;border-radius:14px;background:rgba(5,8,15,.6);border:1px solid rgba(180,210,255,.18)}
-    .ua-btn{border-radius:14px;background:rgba(25,40,70,.45);border:1px solid rgba(180,210,255,.25);font-weight:900}
-    .ua-dropdown{display:none;position:absolute;width:100%;background:rgba(5,8,15,.95);border-radius:14px;padding:10px;max-height:380px;overflow:auto;flex-direction:column;gap:8px}
-    .ua-ddItem{padding:12px;border-radius:12px;font-weight:900;text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(180,210,255,.12)}
-    .ua-ddItem:hover{background:rgba(180,210,255,.12)}
-    .ua-imageBox{min-height:240px;border-radius:16px;border:1px solid rgba(180,210,255,.18);display:grid;place-items:center}
-    .ua-image{width:100%;height:100%;object-fit:cover}
+    .ua-cardBig{width:min(900px,100%);padding:40px}
+    .ua-inputBig{font-size:1.1rem;padding:18px}
+    .ua-btnBig{height:64px;font-size:1.1rem}
+
     .ua-calcGrid,.ua-stats4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
   </style>
 </BaseLayout>
