@@ -207,6 +207,12 @@ const pageTitle = "Unit Arcade";
       "Lamp"
     ];
 
+    // Notes for calculator rules implemented here:
+    // - Bleed is tracked like Bunny6: POWER uses (Damage * (1 + bleed%)) before dividing by CD.
+    // - Poison is tracked as "poison DOT per hit": POWER treats it as extra damage per hit added before dividing by CD.
+    // - Dual attacks are tracked via hitMult (damage * hitMult per attack cycle).
+    // - Test Dummy Endo summons Double and Trouble (each 50% of TDE damage): POWER uses powerDamageMult = 2.0.
+
     const UNIT_DATA = {
       "Bear5": {
         id: "bear5",
@@ -228,7 +234,7 @@ const pageTitle = "Unit Arcade";
         attackType: "AOE + Slow",
         placementPrice: "$12,500",
         placements: "1",
-        obtainability: "Summons",
+        obtainability: "Summons.",
         abilityName: "Detect Hidden",
         abilityDesc: "Has a 30% slow and detects hidden (does not reveal).",
         baseDamage: 100,
@@ -258,11 +264,11 @@ const pageTitle = "Unit Arcade";
         placements: "2",
         obtainability: "Bear5 Presents.",
         abilityName: "Bleed",
-        abilityDesc: "50% bleed. Treat POWER as if Bunny6 has +50% damage (non-stacking, permanent).",
+        abilityDesc: "50% bleed (non-stacking, permanent). POWER treats this as +50% damage.",
         baseDamage: 1250,
         baseCooldown: 2.75,
         baseRange: 20,
-        powerDamageMult: 1.5
+        baseBleedPct: 0.50
       },
 
       "Big Band Bonnie": {
@@ -271,7 +277,7 @@ const pageTitle = "Unit Arcade";
         attackType: "Shockwave",
         placementPrice: "$2,500",
         placements: "2",
-        obtainability: "Season 0 Pass",
+        obtainability: "Season 0 Pass.",
         abilityName: "Shockwave",
         abilityDesc: "Closer enemies take more damage, farther enemies take less damage. Stuns for 0.5 seconds.",
         baseDamage: 1000,
@@ -287,7 +293,7 @@ const pageTitle = "Unit Arcade";
         placements: "4",
         obtainability: "Bear5 Presents.",
         abilityName: "Stun",
-        abilityDesc: "0.3 second stun",
+        abilityDesc: "0.3 second stun.",
         baseDamage: 300,
         baseCooldown: 2,
         baseRange: 18
@@ -301,11 +307,25 @@ const pageTitle = "Unit Arcade";
         placements: "2",
         obtainability: "Aftons Shop.",
         abilityName: "Bleed",
-        abilityDesc: "20% bleed. Treat POWER as if Sparky has +20% damage (non-stacking, permanent).",
+        abilityDesc: "20% bleed. POWER treats this as +20% damage.",
         baseDamage: 400,
         baseCooldown: 2,
         baseRange: 25,
-        powerDamageMult: 1.2
+        baseBleedPct: 0.20
+      },
+
+      "Endo 01": {
+        id: "endo-01",
+        rarity: "Legendary",
+        attackType: "Beam",
+        placementPrice: "$2,500",
+        placements: "4",
+        obtainability: "Summons.",
+        abilityName: "Income",
+        abilityDesc: "+20% income on his attacks.",
+        baseDamage: 15,
+        baseCooldown: 0.15,
+        baseRange: 22
       },
 
       "Golden Bonnie": {
@@ -314,12 +334,241 @@ const pageTitle = "Unit Arcade";
         attackType: "Pierce + Poison",
         placementPrice: "$4,500",
         placements: "2",
-        obtainability: "Not set yet.",
-        abilityName: "Not set",
-        abilityDesc: "Not set",
-        baseDamage: 50.5,
-        baseCooldown: 2.0,
-        baseRange: 27.5
+        obtainability: "Summons.",
+        abilityName: "Poison",
+        abilityDesc: "Does a poison DOT of 681 per hit.",
+        baseDamage: 300,
+        baseCooldown: 2.5,
+        baseRange: 25,
+        basePoisonDotPerHit: 681
+      },
+
+      "Phone Guy": {
+        id: "phone-guy",
+        rarity: "Legendary",
+        attackType: "Full AOE + Stun",
+        placementPrice: "$3,000",
+        placements: "2",
+        obtainability: "Summons.",
+        abilityName: "Stun",
+        abilityDesc: "0.05 second stun. Applies a 2 second stun to every enemy in range (1s elites, 0.5s bosses).",
+        baseDamage: 30,
+        baseCooldown: 0.25,
+        baseRange: 23
+      },
+
+      "Golden Freddy": {
+        id: "golden-freddy",
+        rarity: "Mythic",
+        attackType: "Full AOE + Stun",
+        placementPrice: "$5,000",
+        placements: "2",
+        obtainability: "Summons.",
+        abilityName: "Stun",
+        abilityDesc: "Has a 1 second stun.",
+        baseDamage: 325,
+        baseCooldown: 3,
+        baseRange: 25
+      },
+
+      "Test Dummy Endo": {
+        id: "test-dummy-endo",
+        rarity: "Mythic",
+        attackType: "Single",
+        placementPrice: "$250",
+        placements: "2",
+        obtainability: "Beta exclusive unit.",
+        abilityName: "Summons",
+        abilityDesc: "Summons Double and Trouble who each deal 50% of TDE's damage.",
+        baseDamage: 100,
+        baseCooldown: 1,
+        baseRange: 25,
+        powerDamageMult: 2.0
+      },
+
+      "Nightguard": {
+        id: "nightguard",
+        rarity: "Legendary",
+        attackType: "Cone AOE (50%)",
+        placementPrice: "$750",
+        placements: "3",
+        obtainability: "Summons.",
+        abilityName: "Debuffs",
+        abilityDesc: "Has 0.15% burn (bugged rn), 15% slow and reveals hidden enemies.",
+        baseDamage: 7.5,
+        baseCooldown: 0.1,
+        baseRange: 22
+      },
+
+      "Bort Bunny": {
+        id: "bort-bunny",
+        rarity: "Mythic",
+        attackType: "Pierce + Boost",
+        placementPrice: "$2,500",
+        placements: "2",
+        obtainability: "Bear5 presents.",
+        abilityName: "Boost",
+        abilityDesc: "10% CD boost and 50 pierce speed.",
+        baseDamage: 90,
+        baseCooldown: 1,
+        baseRange: 25
+      },
+
+      "Stuffed Freddy": {
+        id: "stuffed-freddy",
+        rarity: "Mythic",
+        attackType: "Blast + Burn",
+        placementPrice: "$1,993",
+        placements: "2",
+        obtainability: "Summons.",
+        abilityName: "Blast/Burn",
+        abilityDesc: "20 blast radius and 1% burn.",
+        baseDamage: 200,
+        baseCooldown: 2,
+        baseRange: 21
+      },
+
+      "Fan": {
+        id: "fan",
+        rarity: "Epic",
+        attackType: "Cone AOE (50%)",
+        placementPrice: "$750",
+        placements: "4",
+        obtainability: "Summons.",
+        abilityName: "Slow",
+        abilityDesc: "20% slowing.",
+        baseDamage: 10,
+        baseCooldown: 0.25,
+        baseRange: 24
+      },
+
+      "Chicken7": {
+        id: "chicken7",
+        rarity: "Epic",
+        attackType: "Beam + Dual",
+        placementPrice: "$777",
+        placements: "3",
+        obtainability: "Bear5 Presents.",
+        abilityName: "Dual + Income",
+        abilityDesc: "Dual attacks (every attack hits twice) and +15% income on her attacks.",
+        baseDamage: 5,
+        baseCooldown: 0.1,
+        baseRange: 22,
+        hitMult: 2
+      },
+
+      "Lamp": {
+        id: "lamp",
+        rarity: "Epic",
+        attackType: "Cone AOE (50%)",
+        placementPrice: "$1,000",
+        placements: "4",
+        obtainability: "Summons.",
+        abilityName: "Burn + Reveal",
+        abilityDesc: "0.5% burn and reveals hidden enemies.",
+        baseDamage: 10,
+        baseCooldown: 0.25,
+        baseRange: 15
+      },
+
+      "Freddy": {
+        id: "freddy",
+        rarity: "Common",
+        attackType: "Single",
+        placementPrice: "$100",
+        placements: "3",
+        obtainability: "Summons & Start.",
+        abilityName: "None",
+        abilityDesc: "None :(",
+        baseDamage: 30,
+        baseCooldown: 1,
+        baseRange: 20
+      },
+
+      "Carl The Cupcake": {
+        id: "carl-the-cupcake",
+        rarity: "Rare",
+        attackType: "Splash (35%) + Burn",
+        placementPrice: "$250",
+        placements: "2",
+        obtainability: "Summons.",
+        abilityName: "Splash/Burn",
+        abilityDesc: "Splash deals 35% of damage to nearby enemies and 0.45% burn.",
+        baseDamage: 54,
+        baseCooldown: 1.25,
+        baseRange: 20
+      },
+
+      "Foxy": {
+        id: "foxy",
+        rarity: "Rare",
+        attackType: "Single + Bleed",
+        placementPrice: "$225",
+        placements: "2",
+        obtainability: "Summons.",
+        abilityName: "Bleed",
+        abilityDesc: "25% bleed. POWER treats this as +25% damage.",
+        baseDamage: 30,
+        baseCooldown: 0.8,
+        baseRange: 20,
+        baseBleedPct: 0.25
+      },
+
+      "Chica": {
+        id: "chica",
+        rarity: "Common",
+        attackType: "Dual",
+        placementPrice: "$200",
+        placements: "3",
+        obtainability: "Summons & Start.",
+        abilityName: "Dual",
+        abilityDesc: "Dual attacks (every attack hits twice).",
+        baseDamage: 16,
+        baseCooldown: 1.25,
+        baseRange: 18,
+        hitMult: 2
+      },
+
+      "Bonnie": {
+        id: "bonnie",
+        rarity: "Common",
+        attackType: "Cone AOE (25%)",
+        placementPrice: "$150",
+        placements: "2",
+        obtainability: "Summons & Start.",
+        abilityName: "None",
+        abilityDesc: "None :(",
+        baseDamage: 8,
+        baseCooldown: 0.5,
+        baseRange: 12
+      },
+
+      "Crying Soul": {
+        id: "crying-soul",
+        rarity: "Mythic",
+        attackType: "Booster",
+        placementPrice: "$999",
+        placements: "3",
+        obtainability: "Endless 1.",
+        abilityName: "Damage Boost",
+        abilityDesc: "Boosts all units damage in range by 15% (18.75% as shiny).",
+        baseDamage: 0,
+        baseCooldown: 1,
+        baseRange: 18
+      },
+
+      "Endo Plush": {
+        id: "endo-plush",
+        rarity: "Epic",
+        attackType: "Booster",
+        placementPrice: "$500",
+        placements: "3",
+        obtainability: "Season 0 Pass.",
+        abilityName: "Range Boost",
+        abilityDesc: "Boosts all units range in range by 15% (18.75% as shiny).",
+        baseDamage: 0,
+        baseCooldown: 1,
+        baseRange: 15
       }
     };
 
@@ -456,8 +705,10 @@ const pageTitle = "Unit Arcade";
       cdMultObj.value *= 0.90;
 
       statusBonusObj.boost += 0.25;
+
       statusBonusObj.bleed += 0.20;
       statusBonusObj.poison += 0.20;
+
       statusBonusObj.slow += 0.10;
       statusBonusObj.stun += 0.10;
       statusBonusObj.burn += 0.10;
@@ -518,19 +769,20 @@ const pageTitle = "Unit Arcade";
         mimic: 0
       };
 
+      // Level scaling: each level gives 2% of Shiny bonuses (applied per level-1 step)
       const lvl = Math.max(0, level - 1);
 
-      dmgMult.value *= 1 + lvl * 0.006;
-      rngMult.value *= 1 + lvl * 0.004;
-      cdMult.value *= 1 - lvl * 0.002;
+      dmgMult.value *= 1 + lvl * 0.006;     // 2% of +30% DMG per level -> +0.6% per level
+      rngMult.value *= 1 + lvl * 0.004;     // 2% of +20% RNG per level -> +0.4% per level
+      cdMult.value *= 1 - lvl * 0.002;      // 2% of -10% CD per level -> -0.2% per level
 
-      statusBonus.boost += lvl * 0.005;
-      statusBonus.bleed += lvl * 0.004;
-      statusBonus.poison += lvl * 0.004;
-      statusBonus.slow += lvl * 0.002;
-      statusBonus.stun += lvl * 0.002;
-      statusBonus.burn += lvl * 0.002;
-      statusBonus.mimic += lvl * 0.002;
+      statusBonus.boost += lvl * 0.005;     // 2% of +25% boost
+      statusBonus.bleed += lvl * 0.004;     // 2% of +20% bleed
+      statusBonus.poison += lvl * 0.004;    // 2% of +20% poison
+      statusBonus.slow += lvl * 0.002;      // 2% of +10% slow
+      statusBonus.stun += lvl * 0.002;      // 2% of +10% stun
+      statusBonus.burn += lvl * 0.002;      // 2% of +10% burn
+      statusBonus.mimic += lvl * 0.002;     // 2% of +10% mimic
 
       applyShiny(isShiny, dmgMult, cdMult, rngMult, statusBonus);
       applyEnchant(enchantSel.value, dmgMult, cdMult, rngMult, statusBonus);
@@ -542,8 +794,31 @@ const pageTitle = "Unit Arcade";
 
       const placements = parsePlacements(currentUnit.placements);
 
+      // Dual / multi-hit support
+      const hitMult = Number.isFinite(currentUnit.hitMult) ? currentUnit.hitMult : 1.0;
+
+      // Poison support: poison DOT "per hit"
+      // Only applied if the unit actually has poison defined.
+      const basePoison = Number.isFinite(currentUnit.basePoisonDotPerHit) ? currentUnit.basePoisonDotPerHit : 0;
+      const poisonBonusMult = basePoison > 0 ? (1 + statusBonus.poison) : 1;
+      const poisonPerHit = basePoison > 0 ? (basePoison * poisonBonusMult) : 0;
+
+      // Bleed support: POWER treats bleed% as extra damage (non-stacking, permanent)
+      // Only applied if the unit actually has bleed defined.
+      const baseBleed = Number.isFinite(currentUnit.baseBleedPct) ? currentUnit.baseBleedPct : 0;
+      const bleedTotal = baseBleed > 0 ? (baseBleed + statusBonus.bleed) : 0;
+
+      // Test Dummy Endo support (and any future "summon copies your attack" style rules)
       const powerDamageMult = Number.isFinite(currentUnit.powerDamageMult) ? currentUnit.powerDamageMult : 1.0;
-      const effectiveDamageForPower = damage * powerDamageMult;
+
+      // Effective damage-per-attack-cycle for POWER
+      // - damage scales with dmgMult
+      // - hitMult multiplies damage per cycle
+      // - poisonPerHit is added once per hit, so multiply by hitMult
+      // - bleedTotal increases total damage as a percent
+      const baseCycleDamage = (damage * hitMult) + (poisonPerHit * hitMult);
+      const cycleDamageWithBleed = baseCycleDamage * (1 + bleedTotal);
+      const effectiveDamageForPower = cycleDamageWithBleed * powerDamageMult;
 
       const dpsForPower = effectiveDamageForPower / cooldown;
       const power = (dpsForPower * range / 100) * placements;
