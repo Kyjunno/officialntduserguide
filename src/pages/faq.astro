@@ -1,11 +1,487 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const faqData = [
+  {
+    category: "Gameplay",
+    items: [
+      { q: "What is the best way to grind for Fazcoins?", a: "Playing Shift 6 in Story Mode is currently the best and most consistent way to grind Fazcoins." },
+      { q: "What is the best way to grind for Season XP?", a: "Endless 1 is the best method. Most players reset around Wave 150 for optimal efficiency." },
+      { q: "What is the best way to grind for Unit XP?", a: "Playing Shift 6 in Story Mode provides the best Unit XP gains." },
+      { q: "What is the best way to get Bear5 Presents?", a: "Salvaging your rarest unit for 24 hours gives the best chance at Bear5 Presents." },
+      { q: "Should I play on Easy, Medium, or Hard?", a: "It depends on your strength. The harder the mode, the more rewards you earn." },
+      { q: "Can we macro?", a: "No. While some players have found exploits, they are inconsistent and unreliable. The team is actively working on completely removing macroing." },
+      { q: "Do levels affect unit damage or stats?", a: "Yes. Every time a unit levels up, it gains 2% of the bonuses that a shiny unit provides." },
+      { q: "How do I enchant units?", a: "Unbind the unit in your inventory, then head to the Puppet in the Enchant Room near Lolbit’s Shop." },
+      { q: "How do I use codes?", a: "Open the Settings menu in the bottom left, type the code, and press Enter." },
+    ],
+  },
+  {
+    category: "Salvage & Shops",
+    items: [
+      { q: "How does Salvage work?", a: "Salvaging works similarly to FNAF AR Special Delivery. You send a unit out to salvage for a set amount of time, but you can still use that unit while it is salvaging." },
+      { q: "Does Salvage remove or consume units?", a: "No. You keep every unit you salvage with." },
+      { q: "What affects Salvage rewards?", a: "Unit level, rarity, and shiny status all increase Salvage rewards." },
+      { q: "What rewards can you get from Salvage?", a: "You can earn chips of all rarities, scraps, and Bear5 Presents." },
+      { q: "How does unit rarity affect Salvage?", a: "The rarer the unit, the better the possible rewards." },
+      { q: "Does shiny affect Salvage rewards?", a: "Yes. A shiny unit is effectively treated as one rarity higher when salvaging." },
+      { q: "What is Afton’s Shop?", a: "Afton’s Shop is where you spend scraps earned from salvaging." },
+      { q: "What can you buy in Afton’s Shop?", a: "You can buy chips that rotate hourly, Bear5 Presents, and Sparky the Dog." },
+      { q: "How often does Afton’s Shop rotate?", a: "Roughly every hour." },
+      { q: "How do you get Sparky the Dog?", a: "You need 500 scraps to purchase the Sparky the Dog present." },
+    ],
+  },
+  {
+    category: "Status Effects & Scaling",
+    items: [
+      { q: "What is Hidden?", a: "Hidden enemies cannot be seen unless a unit has Reveal or Detect. Detect lets that unit see Hidden enemies, while Reveal makes them visible to all units." },
+      { q: "How do status effects work?", a: "All status effects except stun persist until the enemy dies. Once a unit applies the effect, it stays on the enemy." },
+      { q: "Does Poison scale with damage?", a: "No. Poison deals flat damage and does not scale with unit damage." },
+      { q: "Does Bleed scale with damage?", a: "Yes. Bleed deals a percentage of a unit’s damage, so increasing damage increases Bleed damage." },
+      { q: "What status effects are affected by enchants?", a: "All status effects are affected by enchants, but only if the unit naturally has that status effect. Enchants do not add new effects." },
+      { q: "Does shiny affect status effects?", a: "Yes. Shiny units boost all applicable status effects." },
+    ],
+  },
+  {
+    category: "Luck",
+    items: [
+      { q: "What are the summoning rates for units?", a: "Commons: 50%. Rares: 30%. Epics: 17.5%. Legendaries: 2.5%. Mythicals: 0.1%. Vengefuls: 0.005%." },
+      { q: "How many Fazcoins are needed on average to get a specific unit?", a: "Commons: 200. Rares: 400. Epics: 600. Legendaries: 4,000. Mythicals: 100,000. Vengefuls: 2,000,000." },
+      { q: "How many Presents are typically needed to get Bear5?", a: "Roughly 10,000 Presents." },
+      { q: "What is the shiny chance?", a: "2.5%." },
+      { q: "What are the chances for each enchant?", a: "Damage/Range/Cooldown: 25% each. Pizza Party: 10%. Withered & Encased: 5% each. Fractured & Clockworks: 1% each. Diminished: 0.5%. Charlotte’s Offering & Help Wanted: 0.25% each. Springlocked: 0.1%." },
+      { q: "What are the chances for each chip?", a: "Chip chances depend on the salvaged unit’s rarity, level, and whether it is shiny." },
+    ],
+  },
+  {
+    category: "Tier Lists & Charts",
+    items: [
+      { q: "What are the best units in the game overall?", a: "Currently: Bear5, Big Band Bonnie, Test Dummy Endo, Nightguard, and Shadow Freddy." },
+      { q: "What are the best starter units?", a: "Bear5, Test Dummy Endo, and Nightguard." },
+      { q: "What are the best mid-game units?", a: "Big Band Bonnie, Golden Bonnie, and Bunny6." },
+      { q: "What are the best end-game units?", a: "The Amalgamation and Shadow Freddy." },
+      { q: "What are the best booster units?", a: "Endo Plush, Crying Soul, and Bort Bunny." },
+      { q: "How are the tier lists ranked?", a: "They are ranked based on my judgement of what performs best in each category." },
+      { q: "What is POWER and how is it calculated?", a: "POWER accounts for damage, cooldown, and range. Formula: DPS × Range ÷ 100 × Placements." },
+      { q: "How do I find info on a specific unit?", a: "Use the Unit Arcade on this site and search for the unit by name." },
+      { q: "Do units gain stats when leveling up?", a: "Yes. Each level gives 2% of shiny bonuses. A level 50 unit is equivalent to a level 1 shiny." },
+      { q: "Do shiny units have a stat boost?", a: "Yes. Shiny units gain boosts to every stat they have." },
+      { q: "What is the best attack type?", a: "It depends on the situation. Single-target excels at boss damage, AOE handles crowds, and pierce dominates long paths." },
+    ],
+  },
+  {
+    category: "Events, Trading & Future Content",
+    items: [
+      { q: "When will trading be added?", a: "After full release is here." },
+      { q: "Will there be events?", a: "Yes. It is almost Christmas time… hmmm…" },
+      { q: "Will data be reset when the full game releases?", a: "No. All progress will carry over into full release." },
+    ],
+  },
+  {
+    category: "Misc",
+    items: [
+      { q: "What is this site?", a: "This is a community guide site created by me, Clancy." },
+      { q: "Who made this site?", a: "Clancy, the super awesome lead balancer." },
+      { q: "When does this site update?", a: "The site updates whenever an update becomes publicly available in the game. We don’t update it early." },
+      { q: "Is this an official Nightshift Tower Defense site?", a: "Yes. This is an official Nightshift Tower Defense site." },
+    ],
+  },
+];
 ---
+
 <BaseLayout title="FAQ | Official NTD User Guide">
-  <div class="card">
-    <h1 style="margin-top:0;">FAQ</h1>
-    <p style="color:var(--muted); line-height:1.6;">
-      Answer the most common questions here: how power works, how shiny changes stats, how enchants work, and more.
-    </p>
+  <div class="faq-bg" aria-hidden="true"></div>
+  <div class="faq-bg-overlay" aria-hidden="true"></div>
+
+  <div class="faq-wrap">
+    <header class="faq-hero">
+      <h1 class="faq-title">Frequently Asked Questions</h1>
+      <p class="faq-sub">
+        Search for a question, then click it to reveal the answer.
+      </p>
+    </header>
+
+    <section class="faq-panel" aria-label="FAQ panel">
+      <div class="faq-search">
+        <input id="faqSearch" class="faq-input" type="search" placeholder="Search Questions" aria-label="Search Questions" />
+        <div class="faq-hint" id="faqHint" aria-live="polite"></div>
+      </div>
+
+      <div class="faq-cats" id="faqCats" aria-label="FAQ categories">
+        {faqData.map((cat, cIdx) => (
+          <div class="faq-cat" data-cat={cat.category}>
+            <div class="faq-cat-head">
+              <h2 class="faq-cat-title">{cat.category}</h2>
+              <div class="faq-cat-count" data-count>0</div>
+            </div>
+
+            <div class="faq-list">
+              {cat.items.map((item, iIdx) => (
+                <div class="faq-item" data-q={item.q.toLowerCase()} data-a={item.a.toLowerCase()} data-cat={cat.category}>
+                  <button
+                    class="faq-q"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls={`faq-a-${cIdx}-${iIdx}`}
+                    data-faq-button
+                  >
+                    <span class="faq-q-text">Q: {item.q}</span>
+                    <span class="faq-q-icons">
+                      <span class="faq-copy" title="Copy link" aria-hidden="true">⧉</span>
+                      <span class="faq-caret" aria-hidden="true">▾</span>
+                    </span>
+                  </button>
+
+                  <div class="faq-a" id={`faq-a-${cIdx}-${iIdx}`} role="region" aria-label={`Answer: ${item.q}`}>
+                    <div class="faq-a-inner">
+                      <div class="faq-a-text">A: {item.a}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   </div>
+
+  <script is:inline>
+    const searchEl = document.getElementById("faqSearch");
+    const hintEl = document.getElementById("faqHint");
+    const catEls = Array.from(document.querySelectorAll(".faq-cat"));
+    const itemEls = Array.from(document.querySelectorAll(".faq-item"));
+
+    function updateCounts() {
+      catEls.forEach((cat) => {
+        const visible = cat.querySelectorAll(".faq-item:not([data-hidden='true'])").length;
+        const count = cat.querySelector("[data-count]");
+        if (count) count.textContent = String(visible);
+        cat.toggleAttribute("data-hidden", visible === 0);
+      });
+
+      const totalVisible = itemEls.filter(el => el.getAttribute("data-hidden") !== "true").length;
+      if (hintEl) hintEl.textContent = totalVisible === itemEls.length ? "" : `${totalVisible} match${totalVisible === 1 ? "" : "es"}`;
+    }
+
+    function filterFaq(query) {
+      const q = (query || "").trim().toLowerCase();
+      itemEls.forEach((el) => {
+        const hay = (el.getAttribute("data-q") || "") + " " + (el.getAttribute("data-a") || "") + " " + (el.getAttribute("data-cat") || "");
+        const match = q.length === 0 ? true : hay.includes(q);
+        el.setAttribute("data-hidden", match ? "false" : "true");
+      });
+      updateCounts();
+    }
+
+    if (searchEl) {
+      searchEl.addEventListener("input", (e) => filterFaq(e.target.value));
+      filterFaq("");
+    }
+
+    // Accordion behavior + copy anchor
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-faq-button]");
+      if (!btn) return;
+
+      const item = btn.closest(".faq-item");
+      const panelId = btn.getAttribute("aria-controls");
+      const panel = panelId ? document.getElementById(panelId) : null;
+
+      // Copy link if clicked on the copy icon area
+      const clickedCopy = e.target.closest(".faq-copy");
+      if (clickedCopy && item) {
+        const qText = item.getAttribute("data-q") || "";
+        const slug = qText
+          .replace(/[^a-z0-9\\s-]/g, "")
+          .trim()
+          .replace(/\\s+/g, "-")
+          .slice(0, 80);
+
+        const url = new URL(window.location.href);
+        url.hash = slug;
+        navigator.clipboard?.writeText(url.toString()).catch(() => {});
+        clickedCopy.classList.add("copied");
+        setTimeout(() => clickedCopy.classList.remove("copied"), 700);
+        return;
+      }
+
+      const expanded = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", expanded ? "false" : "true");
+      if (panel) panel.toggleAttribute("data-open", !expanded);
+    });
+
+    // Open item from hash on load if possible
+    function openFromHash() {
+      const raw = (window.location.hash || "").replace("#", "").trim();
+      if (!raw) return;
+
+      const target = itemEls.find(el => {
+        const qText = (el.getAttribute("data-q") || "");
+        const slug = qText
+          .replace(/[^a-z0-9\\s-]/g, "")
+          .trim()
+          .replace(/\\s+/g, "-")
+          .slice(0, 80);
+        return slug === raw;
+      });
+
+      if (!target) return;
+
+      const btn = target.querySelector("[data-faq-button]");
+      if (!btn) return;
+
+      // ensure visible even if search had been typed before load
+      if (searchEl) searchEl.value = "";
+      filterFaq("");
+
+      // open
+      btn.setAttribute("aria-expanded", "true");
+      const panelId = btn.getAttribute("aria-controls");
+      const panel = panelId ? document.getElementById(panelId) : null;
+      if (panel) panel.setAttribute("data-open", "true");
+
+      // scroll
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    window.addEventListener("hashchange", openFromHash);
+    window.addEventListener("load", openFromHash);
+  </script>
+
+  <style>
+    .faq-bg{
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image: url("/images/faq-bg.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: blur(4px) brightness(0.50) contrast(1.05) saturate(1.05);
+      transform: scale(1.08);
+    }
+
+    .faq-bg-overlay{
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(900px 650px at 20% 10%, rgba(106,168,255,.10), transparent 60%),
+        radial-gradient(900px 650px at 80% 20%, rgba(159,91,255,.10), transparent 55%),
+        linear-gradient(180deg, rgba(10,12,18,.55), rgba(10,12,18,.85));
+    }
+
+    .faq-wrap{
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 26px 18px 90px;
+    }
+
+    .faq-hero{
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .faq-title{
+      margin: 0;
+      font-size: clamp(42px, 5vw, 66px);
+      line-height: 1.02;
+      letter-spacing: -0.02em;
+    }
+
+    .faq-sub{
+      margin: 14px auto 0;
+      max-width: 86ch;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .faq-panel{
+      border-radius: 22px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(0,0,0,.26);
+      box-shadow: var(--shadow);
+    }
+
+    .faq-search{
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .faq-input{
+      width: 100%;
+      border-radius: 16px;
+      padding: 14px 14px;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(0,0,0,.20);
+      color: rgba(232,238,252,.95);
+      outline: none;
+      font-size: 14px;
+    }
+
+    .faq-input:focus{
+      border-color: rgba(232,238,252,.55);
+    }
+
+    .faq-hint{
+      min-height: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .faq-cats{
+      display: grid;
+      gap: 18px;
+    }
+
+    .faq-cat[data-hidden]{
+      display: none;
+    }
+
+    .faq-cat-head{
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 6px 4px 10px;
+    }
+
+    .faq-cat-title{
+      margin: 0;
+      font-size: 20px;
+      font-weight: 1000;
+      letter-spacing: -0.01em;
+    }
+
+    .faq-cat-count{
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.22);
+      color: rgba(232,238,252,.86);
+    }
+
+    .faq-list{
+      display: grid;
+      gap: 12px;
+    }
+
+    .faq-item[data-hidden='true']{
+      display: none;
+    }
+
+    .faq-q{
+      width: 100%;
+      text-align: left;
+      padding: 14px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.16);
+      color: rgba(232,238,252,.95);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease;
+    }
+
+    .faq-q:hover{
+      transform: translateY(-1px);
+      border-color: rgba(232,238,252,.38);
+      background: rgba(0,0,0,.20);
+    }
+
+    .faq-q-text{
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .faq-q-icons{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+      opacity: 0.9;
+    }
+
+    .faq-copy{
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease, opacity .14s ease;
+      user-select: none;
+    }
+
+    .faq-copy:hover{
+      transform: translateY(-1px);
+      border-color: rgba(232,238,252,.30);
+      background: rgba(0,0,0,.22);
+    }
+
+    .faq-copy.copied{
+      transform: scale(1.06);
+      border-color: rgba(140, 212, 255, .60);
+    }
+
+    .faq-caret{
+      font-size: 14px;
+      transition: transform .14s ease;
+      user-select: none;
+    }
+
+    .faq-q[aria-expanded="true"] .faq-caret{
+      transform: rotate(180deg);
+    }
+
+    .faq-a{
+      margin-top: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-2px);
+      transition: max-height .18s ease, opacity .18s ease, transform .18s ease;
+    }
+
+    .faq-a[data-open]{
+      max-height: 220px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .faq-a-inner{
+      padding: 14px 14px;
+    }
+
+    .faq-a-text{
+      color: rgba(232,238,252,.88);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    @media (max-width: 640px){
+      .faq-panel{ padding: 14px; }
+      .faq-q{ padding: 13px 12px; }
+      .faq-a-inner{ padding: 13px 12px; }
+    }
+  </style>
 </BaseLayout>
