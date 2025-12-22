@@ -58,7 +58,6 @@ const pageTitle = "Unit Arcade";
               <div class="ua-help">Press Enter or click Open.</div>
             </div>
 
-            <!-- Bigger image box -->
             <div class="ua-imageBox">
               <img id="unitImg" class="ua-image" alt="" />
               <div id="unitImgLabel" class="ua-imageText">No image</div>
@@ -95,11 +94,9 @@ const pageTitle = "Unit Arcade";
 
           <div class="ua-divider"></div>
 
+          <!-- Ability box: no "DESCRIPTION" label anymore -->
           <div class="ua-wide">
-            <div class="ua-wideK ua-wideK2">
-              <span>ABILITY</span>
-              <span class="ua-wideRight">DESCRIPTION</span>
-            </div>
+            <div class="ua-wideK">ABILITY</div>
             <div id="abilityVal" class="ua-wideV">No abilities listed yet.</div>
           </div>
         </div>
@@ -114,16 +111,7 @@ const pageTitle = "Unit Arcade";
               <label class="ua-control">
                 <span class="ua-controlK">Level</span>
                 <select id="levelSel" class="ua-select">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
+                  <!-- 1..100 injected by script -->
                 </select>
               </label>
 
@@ -160,22 +148,23 @@ const pageTitle = "Unit Arcade";
               </label>
             </div>
 
+            <!-- Output boxes: centered text -->
             <div class="ua-calcGrid">
-              <div class="ua-calcStat">
-                <div class="ua-calcK">Damage</div>
-                <div id="calcDmg" class="ua-calcV">-</div>
+              <div class="ua-calcStat ua-out">
+                <div class="ua-calcK">POWER</div>
+                <div id="calcPower" class="ua-calcV">-</div>
               </div>
-              <div class="ua-calcStat">
-                <div class="ua-calcK">Cooldown</div>
-                <div id="calcCd" class="ua-calcV">-</div>
+              <div class="ua-calcStat ua-out">
+                <div class="ua-calcK">DAMAGE</div>
+                <div id="calcDamage" class="ua-calcV">-</div>
               </div>
-              <div class="ua-calcStat">
-                <div class="ua-calcK">DPS</div>
-                <div id="calcDps" class="ua-calcV">-</div>
+              <div class="ua-calcStat ua-out">
+                <div class="ua-calcK">COOLDOWN</div>
+                <div id="calcCooldown" class="ua-calcV">-</div>
               </div>
-              <div class="ua-calcStat">
-                <div class="ua-calcK">Range</div>
-                <div id="calcRng" class="ua-calcV">-</div>
+              <div class="ua-calcStat ua-out">
+                <div class="ua-calcK">RANGE</div>
+                <div id="calcRange" class="ua-calcV">-</div>
               </div>
             </div>
 
@@ -215,15 +204,17 @@ const pageTitle = "Unit Arcade";
       "Lamp"
     ];
 
+    // Minimal starter data. Expand as you add real unit stats.
     const UNIT_DATA = {
       "Bear5": {
         id: "bear5",
         rarity: "Uncommon",
         attackType: "Single",
         placementPrice: "Not set",
-        placements: "Not set",
+        placements: "6",
         obtainability: "Not set yet.",
-        ability: "No abilities listed yet.",
+        abilityName: "NO PASSIVE",
+        abilityDesc: "This unit has no active passive :(",
         baseDamage: 35.35,
         baseCooldown: 2.5,
         baseRange: 20.0
@@ -235,7 +226,8 @@ const pageTitle = "Unit Arcade";
         placementPrice: "$4,500",
         placements: "2",
         obtainability: "Not set yet.",
-        ability: "Not set yet.",
+        abilityName: "Not set",
+        abilityDesc: "Not set",
         baseDamage: 50.5,
         baseCooldown: 2.0,
         baseRange: 27.5
@@ -273,14 +265,27 @@ const pageTitle = "Unit Arcade";
     const enchantSel = document.getElementById("enchantSel");
     const chipSel = document.getElementById("chipSel");
 
-    const calcDmg = document.getElementById("calcDmg");
-    const calcCd = document.getElementById("calcCd");
-    const calcDps = document.getElementById("calcDps");
-    const calcRng = document.getElementById("calcRng");
+    const calcPower = document.getElementById("calcPower");
+    const calcDamage = document.getElementById("calcDamage");
+    const calcCooldown = document.getElementById("calcCooldown");
+    const calcRange = document.getElementById("calcRange");
     const calcNote = document.getElementById("calcNote");
 
     let currentUnitName = "";
     let currentUnit = null;
+
+    // Build level options 1..100
+    (function initLevels() {
+      const frag = document.createDocumentFragment();
+      for (let i = 1; i <= 100; i++) {
+        const opt = document.createElement("option");
+        opt.value = String(i);
+        opt.textContent = String(i);
+        frag.appendChild(opt);
+      }
+      levelSel.appendChild(frag);
+      levelSel.value = "1";
+    })();
 
     function lockScroll() {
       htmlEl.classList.add("ua-lock");
@@ -301,7 +306,6 @@ const pageTitle = "Unit Arcade";
       return (s || "").trim().toLowerCase();
     }
 
-    // exact match or case-insensitive exact match
     function resolveUnitName(input) {
       const raw = (input || "").trim();
       if (!raw) return "";
@@ -351,12 +355,17 @@ const pageTitle = "Unit Arcade";
       return n.toFixed(digits);
     }
 
+    function parsePlacements(v) {
+      const n = Number(String(v || "").replace(/[^\d.]/g, ""));
+      return Number.isFinite(n) && n > 0 ? n : 1;
+    }
+
     function computeAndRender() {
       if (!currentUnit || !Number.isFinite(currentUnit.baseDamage) || !Number.isFinite(currentUnit.baseCooldown)) {
-        calcDmg.textContent = "-";
-        calcCd.textContent = "-";
-        calcDps.textContent = "-";
-        calcRng.textContent = "-";
+        calcPower.textContent = "-";
+        calcDamage.textContent = "-";
+        calcCooldown.textContent = "-";
+        calcRange.textContent = "-";
         calcNote.textContent = "This unit has no calculator stats set yet.";
         return;
       }
@@ -368,6 +377,7 @@ const pageTitle = "Unit Arcade";
       let cdMult = 1;
       let rngMult = 1;
 
+      // Placeholder scaling (you’ll replace with real rules later)
       dmgMult *= 1 + Math.max(0, level - 1) * 0.06;
       if (shiny) dmgMult *= 1.15;
 
@@ -390,13 +400,18 @@ const pageTitle = "Unit Arcade";
 
       const damage = currentUnit.baseDamage * dmgMult;
       const cooldown = Math.max(0.05, currentUnit.baseCooldown * cdMult);
-      const dps = damage / cooldown;
       const range = (Number.isFinite(currentUnit.baseRange) ? currentUnit.baseRange : 0) * rngMult;
 
-      calcDmg.textContent = fmt(damage, 2);
-      calcCd.textContent = fmt(cooldown, 3);
-      calcDps.textContent = fmt(dps, 2);
-      calcRng.textContent = Number.isFinite(range) ? fmt(range, 1) : "-";
+      const dps = damage / cooldown;
+      const placements = parsePlacements(currentUnit.placements);
+
+      // POWER = (DPS * RANGE / 100) * placements
+      const power = (dps * range / 100) * placements;
+
+      calcPower.textContent = fmt(power, 2);
+      calcDamage.textContent = fmt(damage, 2);
+      calcCooldown.textContent = fmt(cooldown, 3);
+      calcRange.textContent = Number.isFinite(range) ? fmt(range, 1) : "-";
 
       calcNote.textContent = "These formulas are placeholders. Once you paste your real unit-machine rules, we swap them in.";
     }
@@ -426,7 +441,14 @@ const pageTitle = "Unit Arcade";
       priceVal.textContent = data.placementPrice || "Not set";
       placementsVal.textContent = data.placements || "Not set";
       obtainVal.textContent = data.obtainability || "Not set yet.";
-      abilityVal.textContent = data.ability || "No abilities listed yet.";
+
+      // Ability format: "Name: Description"
+      const aName = (data.abilityName || "").trim();
+      const aDesc = (data.abilityDesc || "").trim();
+      if (aName && aDesc) abilityVal.textContent = `${aName}: ${aDesc}`;
+      else if (aName) abilityVal.textContent = aName;
+      else if (aDesc) abilityVal.textContent = aDesc;
+      else abilityVal.textContent = "No abilities listed yet.";
 
       trySetImage(data.id || "");
       computeAndRender();
@@ -453,7 +475,6 @@ const pageTitle = "Unit Arcade";
   <style>
     :global(body) { background: transparent !important; }
 
-    /* Full-page background with blur */
     :global(body::before) {
       content: "";
       position: fixed;
@@ -683,18 +704,9 @@ const pageTitle = "Unit Arcade";
       margin-bottom: 10px;
     }
 
-    .ua-wideK2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .ua-wideRight { text-align: center; }
     .ua-wideV { font-weight: 700; opacity: 0.9; }
 
-    .ua-calc {
-      margin-top: 20px;
-    }
+    .ua-calc { margin-top: 20px; }
 
     .ua-calcTitle {
       margin: 18px 0 6px;
@@ -702,10 +714,7 @@ const pageTitle = "Unit Arcade";
       font-weight: 900;
     }
 
-    .ua-calcSub {
-      margin: 0 0 12px;
-      opacity: 0.85;
-    }
+    .ua-calcSub { margin: 0 0 12px; opacity: 0.85; }
 
     .ua-calcPanel {
       border-radius: 18px;
@@ -722,10 +731,7 @@ const pageTitle = "Unit Arcade";
       gap: 12px;
     }
 
-    .ua-control {
-      display: grid;
-      gap: 8px;
-    }
+    .ua-control { display: grid; gap: 8px; }
 
     .ua-controlK {
       font-size: 0.72rem;
@@ -757,8 +763,10 @@ const pageTitle = "Unit Arcade";
       border: 1px solid rgba(180, 210, 255, 0.14);
       background: rgba(5, 8, 15, 0.35);
       padding: 12px;
-      text-align: center;
     }
+
+    /* Output boxes centered */
+    .ua-out { text-align: center; }
 
     .ua-calcK {
       font-size: 0.72rem;
