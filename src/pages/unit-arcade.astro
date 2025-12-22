@@ -13,7 +13,7 @@ const pageTitle = "Unit Arcade";
         <p class="ua-sub">Type a unit name and pick from the dropdown.</p>
 
         <div class="ua-row">
-          <div class="ua-field">
+          <div class="ua-field" id="fieldCenter">
             <input
               id="unitSearch"
               class="ua-input"
@@ -28,7 +28,7 @@ const pageTitle = "Unit Arcade";
           <button id="openBtn" class="ua-btn" type="button">Open</button>
         </div>
 
-        <div id="uaHint" class="ua-hint">Click the search bar to browse units.</div>
+        <p class="ua-footnote">Click the search bar to browse units, or type to filter.</p>
       </div>
     </section>
 
@@ -43,7 +43,7 @@ const pageTitle = "Unit Arcade";
             <div class="ua-panelLeft">
               <div class="ua-label">Unit search</div>
 
-              <div class="ua-field">
+              <div class="ua-field" id="fieldTop">
                 <input
                   id="unitSearchTop"
                   class="ua-input"
@@ -148,11 +148,12 @@ const pageTitle = "Unit Arcade";
     const searchView = document.getElementById("searchView");
     const infoView = document.getElementById("infoView");
 
+    const fieldCenter = document.getElementById("fieldCenter");
     const unitSearch = document.getElementById("unitSearch");
     const unitDropdown = document.getElementById("unitDropdown");
     const openBtn = document.getElementById("openBtn");
-    const uaHint = document.getElementById("uaHint");
 
+    const fieldTop = document.getElementById("fieldTop");
     const unitSearchTop = document.getElementById("unitSearchTop");
     const unitDropdownTop = document.getElementById("unitDropdownTop");
 
@@ -171,18 +172,6 @@ const pageTitle = "Unit Arcade";
       document.body.style.overflow = "hidden";
       document.documentElement.style.height = "100%";
       document.body.style.height = "100%";
-
-      const candidates = [
-        document.querySelector("main"),
-        document.querySelector(".layout"),
-        document.querySelector(".site"),
-        document.querySelector(".page"),
-        document.querySelector("#app"),
-        document.querySelector("#root"),
-        document.querySelector("[data-scroll-container]")
-      ].filter(Boolean);
-
-      for (const el of candidates) el.style.overflow = "hidden";
     }
 
     function hardUnlockScroll() {
@@ -190,20 +179,9 @@ const pageTitle = "Unit Arcade";
       document.body.style.overflow = "";
       document.documentElement.style.height = "";
       document.body.style.height = "";
-
-      const candidates = [
-        document.querySelector("main"),
-        document.querySelector(".layout"),
-        document.querySelector(".site"),
-        document.querySelector(".page"),
-        document.querySelector("#app"),
-        document.querySelector("#root"),
-        document.querySelector("[data-scroll-container]")
-      ].filter(Boolean);
-
-      for (const el of candidates) el.style.overflow = "";
     }
 
+    // No scroll until info screen is shown
     hardLockScroll();
 
     function normalize(s) {
@@ -224,6 +202,11 @@ const pageTitle = "Unit Arcade";
       menuEl.classList.add("ua-hidden");
     }
 
+    function closeAllMenus() {
+      hideMenu(unitDropdown);
+      hideMenu(unitDropdownTop);
+    }
+
     function renderMenu(menuEl, items, onPick) {
       menuEl.innerHTML = "";
 
@@ -240,57 +223,84 @@ const pageTitle = "Unit Arcade";
         btn.type = "button";
         btn.className = "ua-ddItem";
         btn.textContent = name;
-        btn.addEventListener("click", () => onPick(name));
+        btn.addEventListener("click", () => {
+          onPick(name);
+          closeAllMenus();
+        });
         menuEl.appendChild(btn);
       }
     }
 
-    function attachDropdown(inputEl, menuEl, onPick) {
-      function openWith(query) {
-        const list = filterUnits(query);
-        renderMenu(menuEl, list, (name) => {
-          inputEl.value = name;
-          hideMenu(menuEl);
-          onPick(name);
-        });
-        showMenu(menuEl);
-      }
+    function openMenuFor(inputEl, menuEl, onPick) {
+      const list = filterUnits(inputEl.value);
+      renderMenu(menuEl, list, (name) => {
+        inputEl.value = name;
+        onPick(name);
+      });
+      showMenu(menuEl);
+    }
 
-      inputEl.addEventListener("focus", () => openWith(inputEl.value));
-      inputEl.addEventListener("click", () => openWith(inputEl.value));
-      inputEl.addEventListener("input", () => openWith(inputEl.value));
+    function attachDropdown(inputEl, menuEl, onPick) {
+      inputEl.addEventListener("focus", () => {
+        closeAllMenus();
+        openMenuFor(inputEl, menuEl, onPick);
+      });
+
+      inputEl.addEventListener("click", () => {
+        closeAllMenus();
+        openMenuFor(inputEl, menuEl, onPick);
+      });
+
+      inputEl.addEventListener("input", () => {
+        openMenuFor(inputEl, menuEl, onPick);
+      });
 
       inputEl.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") hideMenu(menuEl);
+        if (e.key === "Escape") {
+          closeAllMenus();
+          inputEl.blur();
+        }
+
         if (e.key === "Enter") {
           const val = normalize(inputEl.value);
           if (UNIT_NAMES.includes(val)) {
-            hideMenu(menuEl);
             onPick(val);
+            closeAllMenus();
           }
         }
       });
 
-      document.addEventListener("mousedown", (e) => {
-        const wrap = inputEl.closest(".ua-field");
-        if (!wrap) return;
-        if (!wrap.contains(e.target)) hideMenu(menuEl);
+      // When the input loses focus, close the dropdown shortly after
+      // (timeout lets clicks on menu items register first)
+      inputEl.addEventListener("blur", () => {
+        setTimeout(() => {
+          // Only close if focus didn't move into the menu itself
+          if (!menuEl.contains(document.activeElement)) closeAllMenus();
+        }, 120);
       });
     }
+
+    // One global click-away handler that ALWAYS works
+    document.addEventListener("pointerdown", (e) => {
+      const t = e.target;
+
+      const insideCenter = fieldCenter && fieldCenter.contains(t);
+      const insideTop = fieldTop && fieldTop.contains(t);
+
+      if (!insideCenter && !insideTop) closeAllMenus();
+    });
 
     function loadUnit(name) {
       const unitName = normalize(name);
 
-      if (!UNIT_NAMES.includes(unitName)) {
-        uaHint.textContent = "Pick a unit from the dropdown list.";
-        return;
-      }
+      if (!UNIT_NAMES.includes(unitName)) return;
 
+      // Switch views
       searchView.classList.add("ua-hidden");
       infoView.classList.remove("ua-hidden");
-
       hardUnlockScroll();
 
+      // Sync top search
       unitTitle.textContent = unitName;
       unitSearchTop.value = unitName;
 
@@ -409,13 +419,18 @@ const pageTitle = "Unit Arcade";
       height: 52px;
     }
 
-    .ua-hint {
-      margin-top: 12px;
+    /* replaces the weird “bar” completely with normal text */
+    .ua-footnote {
+      margin: 12px 0 0;
+      padding: 0;
+      background: none;
+      border: none;
+      border-radius: 0;
       font-size: 0.85rem;
       opacity: 0.7;
     }
 
-    /* DROPDOWN: force clean vertical list, centered, bold */
+    /* DROPDOWN */
     .ua-dropdown {
       position: absolute;
       top: calc(100% + 8px);
@@ -428,13 +443,12 @@ const pageTitle = "Unit Arcade";
       background: rgba(5, 8, 15, 0.94);
       backdrop-filter: blur(10px);
 
-      max-height: 360px; /* ~10 items */
+      max-height: 360px;
       overflow-y: auto;
       overflow-x: hidden;
 
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
 
-      /* HARD OVERRIDES so global styles can't turn this into "chips" */
       display: flex !important;
       flex-direction: column !important;
       align-items: stretch !important;
@@ -443,10 +457,8 @@ const pageTitle = "Unit Arcade";
     }
 
     .ua-ddItem {
-      /* HARD OVERRIDES so global button styles can't turn this into inline pills */
       display: block !important;
       width: 100% !important;
-      max-width: 100% !important;
 
       margin: 0 !important;
       padding: 12px 12px !important;
@@ -461,7 +473,6 @@ const pageTitle = "Unit Arcade";
 
       font-weight: 900 !important;
       font-size: 1.05rem !important;
-      letter-spacing: 0.02em !important;
 
       text-align: center !important;
       white-space: nowrap !important;
@@ -485,6 +496,7 @@ const pageTitle = "Unit Arcade";
       font-weight: 800;
     }
 
+    /* INFO VIEW STYLES */
     .ua-infoWrap {
       padding-bottom: 72px;
     }
