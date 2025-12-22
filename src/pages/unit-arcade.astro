@@ -130,7 +130,7 @@ const pageTitle = "Unit Arcade";
 
                   <option value="pizza_party">Pizza Party: +30% DMG, +20% RNG, -10% CD</option>
                   <option value="withered">Withered: +35% DMG, +35% RNG, +5% CD, +5% Bleed</option>
-                  <option value="encased">Encased: +30% DMG, +35% RNG, +10% Slow, -10% CD</option>
+                  <option value="encased">Encased: +30% DMG, +20% RNG, +10% Slow, -10% CD</option>
                   <option value="fractured">Fractured: +65% DMG, +25% RNG, +20% Poison, +5% CD, +5% Slow</option>
                   <option value="clockworks">Clockworks: +35% DMG, +20% RNG, +20% Stun, +5% Burn, -25% CD</option>
                   <option value="diminished">Diminished: +135% DMG, +50% RNG, +35% CD, +15% Slow, +15% Bleed</option>
@@ -142,12 +142,8 @@ const pageTitle = "Unit Arcade";
 
               <label class="ua-control">
                 <span class="ua-controlK">Chip</span>
-                <select id="chipSel" class="ua-select">
-                  <option value="none">None</option>
-                  <option value="dmg15">DMG +15%</option>
-                  <option value="dmg30">DMG +30%</option>
-                  <option value="cd15">CD -15%</option>
-                  <option value="rng15">RNG +15%</option>
+                <select id="chipSel" class="ua-select" disabled>
+                  <option value="none">Disabled (chip rules TBD)</option>
                 </select>
               </label>
 
@@ -216,15 +212,15 @@ const pageTitle = "Unit Arcade";
       "Lamp"
     ];
 
-    // Key rules:
-    // - Bleed/Poison bonuses are MULTIPLICATIVE (shiny/levels/enchants multiply the unit's base bleed/poison).
-    // - Bleed: POWER treats bleed% as extra damage: cycleDamage * (1 + finalBleedPct)
-    // - Poison: if unit has basePoisonDotPerHit, POWER adds poisonPerHit per hit (poisonPerHit scales multiplicatively)
-    // - Dual: hitMult multiplies hits per attack cycle
-    // - Summoned copies (TDE): powerDamageMult multiplies total cycle damage for POWER
-    // - Boosters: show BOOST % instead of DAMAGE, and POWER becomes "added POWER per placement"
-    //   for a chosen target unit.
-    // - IMPORTANT: Enchants do NOT affect booster boost% OR booster power output.
+    // RULES LOCKED IN (per your clarifications):
+    // - Dual means double hits on ONE target => hitMult multiplies on-hit damage.
+    // - Range stays consistent regardless of attack type.
+    // - Poison is a FLAT DPS once applied; does NOT scale with damage; only scales with +% poison sources.
+    // - Bleed is DPS equal to (Damage * bleedPct) per second once applied; scales with damage AND +% bleed sources (bleedPct changes).
+    // - Bleed/Poison bonuses are MULTIPLICATIVE (shiny/levels/enchants multiply the base bleed% or base poison DPS).
+    // - Boosters: show BOOST % and POWER = added POWER per placement for a chosen target.
+    // - Enchants do NOT affect booster boost% or booster output.
+    // - Chips are disabled for now.
 
     const UNIT_DATA = {
       "Bear5": {
@@ -277,7 +273,7 @@ const pageTitle = "Unit Arcade";
         placements: "2",
         obtainability: "Bear5 Presents.",
         abilityName: "Bleed",
-        abilityDesc: "50% bleed (non-stacking, permanent). POWER treats bleed as extra damage.",
+        abilityDesc: "50% bleed (non-stacking, permanent).",
         baseDamage: 1250,
         baseCooldown: 2.75,
         baseRange: 20,
@@ -320,7 +316,7 @@ const pageTitle = "Unit Arcade";
         placements: "2",
         obtainability: "Aftons Shop.",
         abilityName: "Bleed",
-        abilityDesc: "20% bleed. POWER treats bleed as extra damage.",
+        abilityDesc: "20% bleed.",
         baseDamage: 400,
         baseCooldown: 2,
         baseRange: 25,
@@ -349,11 +345,11 @@ const pageTitle = "Unit Arcade";
         placements: "2",
         obtainability: "Summons.",
         abilityName: "Poison",
-        abilityDesc: "Does a poison DOT of 681 per hit.",
+        abilityDesc: "Poison deals 681 damage per second once applied (until death).",
         baseDamage: 300,
         baseCooldown: 2.5,
         baseRange: 25,
-        basePoisonDotPerHit: 681
+        basePoisonDps: 681
       },
 
       "Phone Guy": {
@@ -520,7 +516,7 @@ const pageTitle = "Unit Arcade";
         placements: "2",
         obtainability: "Summons.",
         abilityName: "Bleed",
-        abilityDesc: "25% bleed. POWER treats bleed as extra damage.",
+        abilityDesc: "25% bleed.",
         baseDamage: 30,
         baseCooldown: 0.8,
         baseRange: 20,
@@ -568,7 +564,6 @@ const pageTitle = "Unit Arcade";
         baseDamage: 0,
         baseCooldown: 1,
         baseRange: 18,
-
         boosterType: "damage",
         baseBoostPct: 0.15
       },
@@ -585,7 +580,6 @@ const pageTitle = "Unit Arcade";
         baseDamage: 0,
         baseCooldown: 1,
         baseRange: 15,
-
         boosterType: "range",
         baseBoostPct: 0.15
       }
@@ -748,7 +742,6 @@ const pageTitle = "Unit Arcade";
       cdMultObj.value *= 0.90;
 
       statusMultObj.boost *= 1.25;
-
       statusMultObj.bleed *= 1.20;
       statusMultObj.poison *= 1.20;
 
@@ -758,7 +751,6 @@ const pageTitle = "Unit Arcade";
       statusMultObj.mimic *= 1.10;
     }
 
-    // Enchant bonuses (for bleed/poison etc) are multiplicative modifiers too
     function applyEnchant(key, dmgMultObj, cdMultObj, rngMultObj, statusMultObj) {
       const k = key || "none";
       if (k === "none") return;
@@ -778,14 +770,6 @@ const pageTitle = "Unit Arcade";
       if (k === "springlocked") { dmgMultObj.value *= 2.00; rngMultObj.value *= 1.35; cdMultObj.value *= 0.90; statusMultObj.stun *= 1.25; statusMultObj.bleed *= 1.15; }
     }
 
-    function applyChip(key, dmgMultObj, cdMultObj, rngMultObj) {
-      const k = key || "none";
-      if (k === "dmg15") dmgMultObj.value *= 1.15;
-      if (k === "dmg30") dmgMultObj.value *= 1.30;
-      if (k === "cd15") cdMultObj.value *= 0.85;
-      if (k === "rng15") rngMultObj.value *= 1.15;
-    }
-
     // Base per-placement power at base stats only (includes innate mechanics),
     // used for boosters (enchants ignored for boosters).
     function basePowerPerPlacement(unit) {
@@ -794,18 +778,17 @@ const pageTitle = "Unit Arcade";
       if (unit.baseCooldown <= 0) return 0;
 
       const hitMult = Number.isFinite(unit.hitMult) ? unit.hitMult : 1.0;
-
-      const basePoison = Number.isFinite(unit.basePoisonDotPerHit) ? unit.basePoisonDotPerHit : 0;
-      const baseBleed = Number.isFinite(unit.baseBleedPct) ? unit.baseBleedPct : 0;
-
       const powerDamageMult = Number.isFinite(unit.powerDamageMult) ? unit.powerDamageMult : 1.0;
 
-      const cycleBase = (unit.baseDamage * hitMult) + (basePoison * hitMult);
-      const cycleWithBleed = baseBleed > 0 ? (cycleBase * (1 + baseBleed)) : cycleBase;
+      const baseHitDps = (unit.baseDamage * hitMult) / unit.baseCooldown;
 
-      const effective = cycleWithBleed * powerDamageMult;
-      const dps = effective / unit.baseCooldown;
-      return (dps * unit.baseRange / 100);
+      const baseBleedPct = Number.isFinite(unit.baseBleedPct) ? unit.baseBleedPct : 0;
+      const baseBleedDps = baseBleedPct > 0 ? (unit.baseDamage * baseBleedPct) : 0;
+
+      const basePoisonDps = Number.isFinite(unit.basePoisonDps) ? unit.basePoisonDps : 0;
+
+      const totalDps = (baseHitDps + baseBleedDps + basePoisonDps) * powerDamageMult;
+      return (totalDps * unit.baseRange / 100);
     }
 
     function computeAndRender() {
@@ -828,7 +811,7 @@ const pageTitle = "Unit Arcade";
 
       // BOOSTER MODE: enchants/chips do not affect boost% or output at all
       if (isBooster) {
-        let boostPct = currentUnit.baseBoostPct + (lvl * 0.00075);
+        let boostPct = currentUnit.baseBoostPct + (lvl * 0.00075); // 0.075% per level-up
         if (isShiny) boostPct *= 1.25;
 
         const targetName = buffTargetSel.value;
@@ -873,8 +856,6 @@ const pageTitle = "Unit Arcade";
       const cdMult = { value: 1 };
       const rngMult = { value: 1 };
 
-      // Multiplicative status multipliers for bleed/poison/etc.
-      // Start at 1 and multiply from level/shiny/enchant.
       const statusMult = {
         boost: 1,
         bleed: 1,
@@ -890,44 +871,41 @@ const pageTitle = "Unit Arcade";
       rngMult.value *= 1 + lvl * 0.004;
       cdMult.value *= 1 - lvl * 0.002;
 
-      // Level scaling for status modifiers: multiply base status by (1 + lvl * perLevel)
-      // (These only matter for units that already have that status in their base kit.)
-      statusMult.boost *= 1 + lvl * 0.005;   // 0.5% per level
-      statusMult.bleed *= 1 + lvl * 0.004;   // 0.4% per level
-      statusMult.poison *= 1 + lvl * 0.004;  // 0.4% per level
-      statusMult.slow *= 1 + lvl * 0.002;    // 0.2% per level
-      statusMult.stun *= 1 + lvl * 0.002;    // 0.2% per level
-      statusMult.burn *= 1 + lvl * 0.002;    // 0.2% per level
-      statusMult.mimic *= 1 + lvl * 0.002;   // 0.2% per level
+      // Status scaling (multiplicative): multiply base status by (1 + lvl * perLevel)
+      statusMult.boost *= 1 + lvl * 0.005;
+      statusMult.bleed *= 1 + lvl * 0.004;
+      statusMult.poison *= 1 + lvl * 0.004;
+      statusMult.slow *= 1 + lvl * 0.002;
+      statusMult.stun *= 1 + lvl * 0.002;
+      statusMult.burn *= 1 + lvl * 0.002;
+      statusMult.mimic *= 1 + lvl * 0.002;
 
       applyShiny(isShiny, dmgMult, cdMult, rngMult, statusMult);
       applyEnchant(enchantSel.value, dmgMult, cdMult, rngMult, statusMult);
-      applyChip(chipSel.value, dmgMult, cdMult, rngMult);
+
+      // Chips disabled: do nothing.
 
       const damage = currentUnit.baseDamage * dmgMult.value;
-      const cooldown = Math.max(0.05, currentUnit.baseCooldown * cdMult.value);
+      const cooldown = Math.max(0.01, currentUnit.baseCooldown * cdMult.value);
       const range = (Number.isFinite(currentUnit.baseRange) ? currentUnit.baseRange : 0) * rngMult.value;
 
       const hitMult = Number.isFinite(currentUnit.hitMult) ? currentUnit.hitMult : 1.0;
       const powerDamageMult = Number.isFinite(currentUnit.powerDamageMult) ? currentUnit.powerDamageMult : 1.0;
 
-      // Poison: only if unit has base poison
-      const basePoison = Number.isFinite(currentUnit.basePoisonDotPerHit) ? currentUnit.basePoisonDotPerHit : 0;
-      const poisonPerHit = basePoison > 0 ? (basePoison * statusMult.poison) : 0;
+      // Hit DPS
+      const hitDps = (damage * hitMult) / cooldown;
 
-      // Bleed: only if unit has base bleed
-      const baseBleed = Number.isFinite(currentUnit.baseBleedPct) ? currentUnit.baseBleedPct : 0;
-      const finalBleedPct = baseBleed > 0 ? (baseBleed * statusMult.bleed) : 0;
+      // Bleed DPS: damage * (finalBleedPct) per second
+      const baseBleedPct = Number.isFinite(currentUnit.baseBleedPct) ? currentUnit.baseBleedPct : 0;
+      const finalBleedPct = baseBleedPct > 0 ? (baseBleedPct * statusMult.bleed) : 0;
+      const bleedDps = finalBleedPct > 0 ? (damage * finalBleedPct) : 0;
 
-      // POWER cycle damage:
-      // - (damage * hitMult) + (poisonPerHit * hitMult)
-      // - then apply bleed extra damage as (1 + finalBleedPct)
-      const baseCycleDamage = (damage * hitMult) + (poisonPerHit * hitMult);
-      const cycleWithBleed = finalBleedPct > 0 ? (baseCycleDamage * (1 + finalBleedPct)) : baseCycleDamage;
-      const effectiveDamageForPower = cycleWithBleed * powerDamageMult;
+      // Poison DPS: flat per second, independent of damage/cooldown; scales only with poison multipliers
+      const basePoisonDps = Number.isFinite(currentUnit.basePoisonDps) ? currentUnit.basePoisonDps : 0;
+      const poisonDps = basePoisonDps > 0 ? (basePoisonDps * statusMult.poison) : 0;
 
-      const dpsForPower = effectiveDamageForPower / cooldown;
-      const power = (dpsForPower * range / 100) * placements;
+      const totalDps = (hitDps + bleedDps + poisonDps) * powerDamageMult;
+      const power = (totalDps * range / 100) * placements;
 
       calcDamageLabel.textContent = "DAMAGE";
       calcPower.textContent = fmt(power, 2);
@@ -936,7 +914,7 @@ const pageTitle = "Unit Arcade";
       calcRange.textContent = Number.isFinite(range) ? fmt(range, 1) : "-";
 
       calcNote.textContent =
-        "Levels add 2% of Shiny bonuses per level. POWER = (DPS × RNG / 100) × placements.";
+        "POWER = ((Hit DPS + Bleed DPS + Poison DPS) × RNG / 100) × placements. Chips disabled.";
     }
 
     function loadUnitFromInput(value) {
@@ -994,7 +972,6 @@ const pageTitle = "Unit Arcade";
     levelSel.addEventListener("change", computeAndRender);
     shinySel.addEventListener("change", computeAndRender);
     enchantSel.addEventListener("change", computeAndRender);
-    chipSel.addEventListener("change", computeAndRender);
     buffTargetSel.addEventListener("change", computeAndRender);
   </script>
 
