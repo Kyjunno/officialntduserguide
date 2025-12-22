@@ -89,7 +89,7 @@ const pageTitle = "Unit Arcade";
 
           <div class="ua-wide">
             <div class="ua-wideK">OBTAINABILITY</div>
-            <div id="obtainVal" class="ua-wideV">Bear5 Presents.</div>
+            <div id="obtainVal" class="ua-wideV">Not set yet.</div>
           </div>
 
           <div class="ua-divider"></div>
@@ -242,7 +242,7 @@ const pageTitle = "Unit Arcade";
         attackType: "Cone AOE (50%)",
         placementPrice: "$15,000",
         placements: "1",
-        obtainability: "Summons.",
+        obtainability: "Not set yet.",
         abilityName: "Team Buff",
         abilityDesc: "Every 60 seconds, boosts the DMG, RNG and CD of every unit in range by 10% each.",
         baseDamage: 1250,
@@ -256,12 +256,15 @@ const pageTitle = "Unit Arcade";
         attackType: "Single + Bleed",
         placementPrice: "$6,666",
         placements: "2",
-        obtainability: "Bear5 Presents.",
+        obtainability: "Not set yet.",
         abilityName: "Bleed",
-        abilityDesc: "50% bleed. Bleed deals 50% of Bunny6's damage every second to the target. The bleed never leaves, but it does not stack.",
+        abilityDesc: "50% bleed. Treat POWER as if Bunny6 has +50% damage (non-stacking, permanent).",
         baseDamage: 1250,
         baseCooldown: 2.75,
-        baseRange: 20
+        baseRange: 20,
+
+        // ✅ Bunny6 POWER rule: (Damage * 1.5) is used inside POWER math only
+        powerDamageMult: 1.5
       },
 
       "Golden Bonnie": {
@@ -474,6 +477,7 @@ const pageTitle = "Unit Arcade";
         mimic: 0
       };
 
+      // Level scaling: each level gives 2% of Shiny bonuses (using level-1 steps)
       const lvl = Math.max(0, level - 1);
 
       dmgMult.value *= 1 + lvl * 0.006;
@@ -496,10 +500,14 @@ const pageTitle = "Unit Arcade";
       const cooldown = Math.max(0.05, currentUnit.baseCooldown * cdMult.value);
       const range = (Number.isFinite(currentUnit.baseRange) ? currentUnit.baseRange : 0) * rngMult.value;
 
-      const dps = damage / cooldown;
       const placements = parsePlacements(currentUnit.placements);
 
-      const power = (dps * range / 100) * placements;
+      // ✅ Bunny6 rule: POWER uses (damage * powerDamageMult) instead of damage
+      const powerDamageMult = Number.isFinite(currentUnit.powerDamageMult) ? currentUnit.powerDamageMult : 1.0;
+      const effectiveDamageForPower = damage * powerDamageMult;
+
+      const dpsForPower = effectiveDamageForPower / cooldown;
+      const power = (dpsForPower * range / 100) * placements;
 
       calcPower.textContent = fmt(power, 2);
       calcDamage.textContent = fmt(damage, 2);
