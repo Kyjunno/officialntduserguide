@@ -1,11 +1,465 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
+
 <BaseLayout title="Info &amp; Guides | Official NTD User Guide">
-  <div class="card">
-    <h1 style="margin-top:0;">Info &amp; Guides</h1>
-    <p style="color:var(--muted); line-height:1.6;">
-      Put your charts and guide pages here. This is the hub for mechanics explanations and strategy.
-    </p>
+  <div class="page-bg" style="--page-bg: url('/images/guides-bg.png')" aria-hidden="true"></div>
+  <div class="page-bg-overlay" aria-hidden="true"></div>
+
+  <div class="guides-wrap">
+    <header class="guides-hero">
+      <h1 class="guides-title">Info &amp; Guides</h1>
+      <p class="guides-sub">
+        Reference tools and quick, clear explanations for mechanics. No fluff, just answers.
+      </p>
+    </header>
+
+    <main class="guides-stack" aria-label="Info and guides modules">
+      <!-- 1) POWER List -->
+      <section class="guide-box" aria-label="Power list">
+        <div class="box-top">
+          <div class="box-title">Nightshift Tower Defense POWER List By Clancy</div>
+          <div class="box-badge">Google Sheet</div>
+        </div>
+        <div class="box-desc">
+          A living reference list that ranks and compares overall power. Best used alongside tier lists.
+        </div>
+        <div class="box-actions">
+          <a
+            class="box-btn"
+            href="https://docs.google.com/spreadsheets/d/19_xB9LuzibW8vKG2joLE2vmsCweJ0jj4QH5jqiz6pQg/edit?gid=0#gid=0"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open Nightshift Tower Defense POWER List By Clancy in a new tab"
+          >
+            Open Sheet <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- 2) Enchant List -->
+      <section class="guide-box" aria-label="Enchant list">
+        <div class="box-top">
+          <div class="box-title">Nightshift Tower Defense Enchant List By Clancy</div>
+          <div class="box-badge">Google Sheet</div>
+        </div>
+        <div class="box-desc">
+          A complete list of enchants and what they do. Great for quick lookup while building.
+        </div>
+        <div class="box-actions">
+          <a
+            class="box-btn"
+            href="https://docs.google.com/spreadsheets/d/1T9-y930-4v2L8QQ0Kgor9H-eWfngOdAtx7BNTniZKrs/edit?gid=0#gid=0"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open Nightshift Tower Defense Enchant List By Clancy in a new tab"
+          >
+            Open Sheet <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- 3) Chip List (Coming Soon) -->
+      <section class="guide-box" aria-label="Chip list coming soon">
+        <div class="box-top">
+          <div class="box-title">Nightshift Tower Defense Chip List By Clancy</div>
+          <div class="box-badge soon">Coming Soon</div>
+        </div>
+        <div class="box-desc">
+          This will be the full chip reference sheet. It’s not live yet, but it’s planned for this hub.
+        </div>
+        <div class="box-actions">
+          <span class="box-btn disabled" aria-disabled="true">
+            Not available yet
+          </span>
+        </div>
+      </section>
+
+      <!-- 4) Status Effects dropdown box -->
+      <section class="guide-box" aria-label="Status effects reference">
+        <div class="box-top">
+          <div class="box-title">Status Effects Reference</div>
+          <div class="box-badge">Interactive</div>
+        </div>
+
+        <div class="box-desc">
+          Pick an effect and get a straight explanation of what it does, what scales, and what does not.
+        </div>
+
+        <div class="picker-row">
+          <label class="picker-label" for="statusSelect">Status Effect</label>
+          <select id="statusSelect" class="picker-select" aria-label="Select a status effect">
+            <option value="poison">Poison</option>
+            <option value="bleed">Bleed</option>
+            <option value="burn">Burn</option>
+            <option value="slow">Slow</option>
+            <option value="stun">Stun</option>
+          </select>
+        </div>
+
+        <div id="statusPanel" class="info-panel" role="region" aria-label="Status effect details">
+          <div class="panel-title" id="statusTitle">Poison</div>
+          <div class="panel-text" id="statusText">
+            Poison stays on an enemy until it dies. Its damage is flat and does not scale with the unit’s damage unless an enchant
+            or effect explicitly says it increases poison.
+          </div>
+          <div class="panel-note" id="statusNote">
+            If something says “+% Poison,” that changes poison. A normal “+% Damage” does not.
+          </div>
+        </div>
+      </section>
+
+      <!-- 5) Enchants dropdown box -->
+      <section class="guide-box" aria-label="Enchant reference">
+        <div class="box-top">
+          <div class="box-title">Enchants Reference</div>
+          <div class="box-badge">Interactive</div>
+        </div>
+
+        <div class="box-desc">
+          Pick an enchant to see what it changes in plain English. This is the quick answer box, not the full list.
+        </div>
+
+        <div class="picker-row">
+          <label class="picker-label" for="enchantSelect">Enchant</label>
+          <select id="enchantSelect" class="picker-select" aria-label="Select an enchant">
+            <option value="damagePct">+% Damage</option>
+            <option value="poisonPct">+% Poison</option>
+            <option value="bleedPct">+% Bleed</option>
+            <option value="cooldownPct">-% Cooldown</option>
+            <option value="rangeFlat">+ Range</option>
+          </select>
+        </div>
+
+        <div id="enchantPanel" class="info-panel" role="region" aria-label="Enchant details">
+          <div class="panel-title" id="enchantTitle">+% Damage</div>
+          <div class="panel-text" id="enchantText">
+            Increases the unit’s damage. This will also increase any effects that scale from damage, like bleed.
+          </div>
+          <div class="panel-note" id="enchantNote">
+            It does not increase poison damage unless something explicitly says it affects poison.
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
+
+  <script is:inline>
+    const statusData = {
+      poison: {
+        title: "Poison",
+        text:
+          "Poison stays on an enemy until it dies. Its damage is flat and does not scale with the unit’s damage unless an enchant or effect explicitly says it increases poison.",
+        note:
+          "If something says “+% Poison,” that changes poison. A normal “+% Damage” does not.",
+      },
+      bleed: {
+        title: "Bleed",
+        text:
+          "Bleed damage scales with the unit’s damage. Increasing unit damage increases bleed damage, but does not automatically increase the bleed amount unless something says it changes the bleed %.",
+        note:
+          "A “+% Bleed” increases the bleed % itself. A “+% Damage” increases the damage bleed is based on.",
+      },
+      burn: {
+        title: "Burn",
+        text:
+          "Burn deals damage over time. If your game treats burn as scaling or flat, put the exact rule here so players don’t have to guess.",
+        note:
+          "Replace this note with the real burn rule once you confirm it from tooltips or testing.",
+      },
+      slow: {
+        title: "Slow",
+        text:
+          "Slow reduces enemy movement speed for a duration. If it stacks, refreshes, or has a cap, define that here in one clear sentence.",
+        note:
+          "Replace this note with your confirmed stacking and refresh rules for slow.",
+      },
+      stun: {
+        title: "Stun",
+        text:
+          "Stun prevents an enemy from acting or moving for a duration. If it has diminishing returns, immunity windows, or caps, define them here.",
+        note:
+          "Replace this note with your confirmed stun rules once you have them.",
+      },
+    };
+
+    const enchantData = {
+      damagePct: {
+        title: "+% Damage",
+        text:
+          "Increases the unit’s damage. This will also increase any effects that scale from damage, like bleed.",
+        note:
+          "It does not increase poison damage unless something explicitly says it affects poison.",
+      },
+      poisonPct: {
+        title: "+% Poison",
+        text:
+          "Increases poison specifically. If poison is flat by default, this is the kind of modifier that actually changes its damage.",
+        note:
+          "Use this for poison-focused builds. It’s separate from normal damage scaling.",
+      },
+      bleedPct: {
+        title: "+% Bleed",
+        text:
+          "Increases the bleed percentage used to calculate bleed damage. This changes bleed itself, not just the damage it’s based on.",
+        note:
+          "Pairing +% Bleed with +% Damage boosts bleed in two different ways.",
+      },
+      cooldownPct: {
+        title: "-% Cooldown",
+        text:
+          "Reduces attack cooldown. If the game rounds cooldown values, the practical minimum matters for optimization.",
+        note:
+          "You mentioned the lowest possible cooldown is 0.01 due to rounding. That’s the floor players should expect.",
+      },
+      rangeFlat: {
+        title: "+ Range",
+        text:
+          "Increases attack range. Range should stay consistent regardless of attack type, so this should always behave predictably.",
+        note:
+          "If any unit breaks this rule, it’s worth calling out as an exception here.",
+      },
+    };
+
+    function setPanel(panelPrefix, data) {
+      const select = document.getElementById(panelPrefix + "Select");
+      const titleEl = document.getElementById(panelPrefix + "Title");
+      const textEl = document.getElementById(panelPrefix + "Text");
+      const noteEl = document.getElementById(panelPrefix + "Note");
+
+      if (!select || !titleEl || !textEl || !noteEl) return;
+
+      const key = select.value;
+      const item = data[key];
+      if (!item) return;
+
+      titleEl.textContent = item.title;
+      textEl.textContent = item.text;
+      noteEl.textContent = item.note;
+    }
+
+    const statusSelect = document.getElementById("statusSelect");
+    const enchantSelect = document.getElementById("enchantSelect");
+
+    if (statusSelect) {
+      statusSelect.addEventListener("change", () => setPanel("status", statusData));
+      setPanel("status", statusData);
+    }
+
+    if (enchantSelect) {
+      enchantSelect.addEventListener("change", () => setPanel("enchant", enchantData));
+      setPanel("enchant", enchantData);
+    }
+  </script>
+
+  <style>
+    .page-bg{
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image: var(--page-bg);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: blur(1px) brightness(0.85) contrast(1.05) saturate(1.2);
+      transform: scale(1.02);
+    }
+
+    .page-bg-overlay{
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(900px 650px at 20% 10%, rgba(106,168,255,.18), transparent 60%),
+        radial-gradient(900px 650px at 80% 20%, rgba(159,91,255,.16), transparent 55%),
+        linear-gradient(180deg, rgba(10,12,18,.30), rgba(10,12,18,.55));
+    }
+
+    .guides-wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 26px 18px 90px;
+      text-align: center;
+    }
+
+    .guides-hero{
+      margin-bottom: 18px;
+    }
+
+    .guides-title{
+      margin: 0;
+      font-size: clamp(42px, 5vw, 66px);
+      line-height: 1.02;
+      letter-spacing: -0.02em;
+    }
+
+    .guides-sub{
+      margin: 14px auto 0;
+      max-width: 80ch;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .guides-stack{
+      margin-top: 22px;
+      display: grid;
+      gap: 18px;
+      justify-items: center;
+    }
+
+    .guide-box{
+      width: 100%;
+      border-radius: 22px;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(0,0,0,.22);
+      box-shadow: var(--shadow);
+      text-align: left;
+    }
+
+    .box-top{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .box-title{
+      font-weight: 1000;
+      letter-spacing: -0.01em;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .box-badge{
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.22);
+      color: rgba(232,238,252,.86);
+      white-space: nowrap;
+    }
+
+    .box-badge.soon{
+      opacity: 0.85;
+    }
+
+    .box-desc{
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .box-actions{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .box-btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      color: inherit;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      font-size: 12px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(232,238,252,.35);
+      background: rgba(0,0,0,.18);
+      transition: transform .14s ease, border-color .14s ease, background .14s ease;
+      width: fit-content;
+    }
+
+    .box-btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(232,238,252,.6);
+      background: rgba(0,0,0,.22);
+    }
+
+    .box-btn.disabled{
+      opacity: 0.65;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .picker-row{
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 12px;
+      align-items: center;
+      margin-top: 8px;
+      margin-bottom: 12px;
+    }
+
+    .picker-label{
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      font-size: 13px;
+      color: rgba(232,238,252,.90);
+    }
+
+    .picker-select{
+      width: 100%;
+      border-radius: 14px;
+      padding: 12px 12px;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(0,0,0,.20);
+      color: rgba(232,238,252,.95);
+      outline: none;
+    }
+
+    .picker-select:focus{
+      border-color: rgba(232,238,252,.55);
+    }
+
+    .info-panel{
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.16);
+      padding: 14px 14px 12px;
+    }
+
+    .panel-title{
+      font-weight: 1000;
+      font-size: 16px;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .panel-text{
+      color: rgba(232,238,252,.88);
+      line-height: 1.7;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .panel-note{
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 13px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      padding-top: 10px;
+    }
+
+    @media (max-width: 640px){
+      .picker-row{
+        grid-template-columns: 1fr;
+      }
+
+      .box-top{
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
 </BaseLayout>
