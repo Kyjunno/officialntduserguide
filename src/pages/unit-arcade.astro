@@ -94,6 +94,7 @@ const pageTitle = "Unit Arcade";
 
           <div class="ua-divider"></div>
 
+          <!-- Ability box: single label, value formatted "Name: Description" -->
           <div class="ua-wide">
             <div class="ua-wideK">ABILITY</div>
             <div id="abilityVal" class="ua-wideV">No abilities listed yet.</div>
@@ -152,6 +153,7 @@ const pageTitle = "Unit Arcade";
               </label>
             </div>
 
+            <!-- Output boxes: centered text -->
             <div class="ua-calcGrid">
               <div class="ua-calcStat ua-out">
                 <div class="ua-calcK">POWER</div>
@@ -207,6 +209,8 @@ const pageTitle = "Unit Arcade";
       "Lamp"
     ];
 
+    // Minimal starter data. Expand as you add real unit stats.
+    // For later bleed/poison math, we'll add per-unit fields once you describe them.
     const UNIT_DATA = {
       "Bear5": {
         id: "bear5",
@@ -276,6 +280,7 @@ const pageTitle = "Unit Arcade";
     let currentUnitName = "";
     let currentUnit = null;
 
+    // Build level options 1..100
     (function initLevels() {
       const frag = document.createDocumentFragment();
       for (let i = 1; i <= 100; i++) {
@@ -307,10 +312,12 @@ const pageTitle = "Unit Arcade";
       return (s || "").trim().toLowerCase();
     }
 
+    // exact match or case-insensitive exact match
     function resolveUnitName(input) {
       const raw = (input || "").trim();
       if (!raw) return "";
       if (UNIT_NAMES.includes(raw)) return raw;
+
       const n = normalizeName(raw);
       const hit = UNIT_NAMES.find(u => normalizeName(u) === n);
       return hit || "";
@@ -360,30 +367,48 @@ const pageTitle = "Unit Arcade";
       return Number.isFinite(n) && n > 0 ? n : 1;
     }
 
-    function applyEnchant(key, dmgMultObj, cdMultObj, rngMultObj) {
-      const k = key || "none";
+    // Shiny rules (max)
+    // +30% DMG, +20% RNG, -10% CD
+    // plus future-facing bonuses (we store these for later bleed/poison modeling):
+    // +25% boost, +20% bleed, +20% poison, +10% slow/stun/burn/mimic
+    function applyShiny(isShiny, dmgMultObj, cdMultObj, rngMultObj, statusBonusObj) {
+      if (!isShiny) return;
 
-      // Default: no changes
+      dmgMultObj.value *= 1.30;
+      rngMultObj.value *= 1.20;
+      cdMultObj.value *= 0.90;
+
+      statusBonusObj.boost += 0.25;
+      statusBonusObj.bleed += 0.20;
+      statusBonusObj.poison += 0.20;
+      statusBonusObj.slow += 0.10;
+      statusBonusObj.stun += 0.10;
+      statusBonusObj.burn += 0.10;
+      statusBonusObj.mimic += 0.10;
+    }
+
+    function applyEnchant(key, dmgMultObj, cdMultObj, rngMultObj, statusBonusObj) {
+      const k = key || "none";
       if (k === "none") return;
 
-      // Simple max-level enchants
+      // simple max-level enchants
       if (k === "damage3") dmgMultObj.value *= 1.25;
       if (k === "range3") rngMultObj.value *= 1.30;
       if (k === "cooldown3") cdMultObj.value *= 0.85;
 
-      // Complex enchants
+      // complex enchants (DMG/RNG/CD applied now; status stored for later)
       if (k === "pizza_party") { dmgMultObj.value *= 1.30; rngMultObj.value *= 1.20; cdMultObj.value *= 0.90; }
-      if (k === "withered") { dmgMultObj.value *= 1.35; rngMultObj.value *= 1.35; cdMultObj.value *= 1.05; }
-      if (k === "encased") { dmgMultObj.value *= 1.30; rngMultObj.value *= 1.20; cdMultObj.value *= 0.90; }
-      if (k === "fractured") { dmgMultObj.value *= 1.65; rngMultObj.value *= 1.25; cdMultObj.value *= 1.05; }
-      if (k === "clockworks") { dmgMultObj.value *= 1.35; rngMultObj.value *= 1.20; cdMultObj.value *= 0.75; }
-      if (k === "diminished") { dmgMultObj.value *= 2.35; rngMultObj.value *= 1.50; cdMultObj.value *= 1.35; }
-      if (k === "charlottes_offering") { dmgMultObj.value *= 1.65; rngMultObj.value *= 1.75; cdMultObj.value *= 0.90; }
-      if (k === "help_wanted") { dmgMultObj.value *= 1.75; rngMultObj.value *= 1.35; cdMultObj.value *= 0.95; }
-      if (k === "springlocked") { dmgMultObj.value *= 2.00; rngMultObj.value *= 1.35; cdMultObj.value *= 0.90; }
+      if (k === "withered") { dmgMultObj.value *= 1.35; rngMultObj.value *= 1.35; cdMultObj.value *= 1.05; statusBonusObj.bleed += 0.05; }
+      if (k === "encased") { dmgMultObj.value *= 1.30; rngMultObj.value *= 1.20; cdMultObj.value *= 0.90; statusBonusObj.slow += 0.10; }
+      if (k === "fractured") { dmgMultObj.value *= 1.65; rngMultObj.value *= 1.25; cdMultObj.value *= 1.05; statusBonusObj.poison += 0.20; statusBonusObj.slow += 0.05; }
+      if (k === "clockworks") { dmgMultObj.value *= 1.35; rngMultObj.value *= 1.20; cdMultObj.value *= 0.75; statusBonusObj.stun += 0.20; statusBonusObj.burn += 0.05; }
+      if (k === "diminished") { dmgMultObj.value *= 2.35; rngMultObj.value *= 1.50; cdMultObj.value *= 1.35; statusBonusObj.slow += 0.15; statusBonusObj.bleed += 0.15; }
+      if (k === "charlottes_offering") { dmgMultObj.value *= 1.65; rngMultObj.value *= 1.75; cdMultObj.value *= 0.90; statusBonusObj.burn += 0.20; statusBonusObj.slow += 0.05; }
+      if (k === "help_wanted") { dmgMultObj.value *= 1.75; rngMultObj.value *= 1.35; cdMultObj.value *= 0.95; statusBonusObj.poison += 0.15; statusBonusObj.stun += 0.10; statusBonusObj.burn += 0.05; }
+      if (k === "springlocked") { dmgMultObj.value *= 2.00; rngMultObj.value *= 1.35; cdMultObj.value *= 0.90; statusBonusObj.stun += 0.25; statusBonusObj.bleed += 0.15; }
     }
 
-    function applyChip(key, dmgMultObj, cdMultObj, rngMultObj) {
+    function applyChip(key, dmgMultObj, cdMultObj, rngMultObj, statusBonusObj) {
       const k = key || "none";
       if (k === "dmg15") dmgMultObj.value *= 1.15;
       if (k === "dmg30") dmgMultObj.value *= 1.30;
@@ -402,17 +427,30 @@ const pageTitle = "Unit Arcade";
       }
 
       const level = Number(levelSel.value || "1");
-      const shiny = Number(shinySel.value || "0") === 1;
+      const isShiny = Number(shinySel.value || "0") === 1;
 
       const dmgMult = { value: 1 };
       const cdMult = { value: 1 };
       const rngMult = { value: 1 };
 
-      dmgMult.value *= 1 + Math.max(0, level - 1) * 0.06;
-      if (shiny) dmgMult.value *= 1.15;
+      // Status bonuses are tracked for future bleed/poison modeling.
+      const statusBonus = {
+        boost: 0,
+        bleed: 0,
+        poison: 0,
+        slow: 0,
+        stun: 0,
+        burn: 0,
+        mimic: 0
+      };
 
-      applyEnchant(enchantSel.value, dmgMult, cdMult, rngMult);
-      applyChip(chipSel.value, dmgMult, cdMult, rngMult);
+      // Placeholder level scaling (replace with your real unit-machine rules later)
+      dmgMult.value *= 1 + Math.max(0, level - 1) * 0.06;
+
+      // Apply shiny (new rules) first, then enchant and chip
+      applyShiny(isShiny, dmgMult, cdMult, rngMult, statusBonus);
+      applyEnchant(enchantSel.value, dmgMult, cdMult, rngMult, statusBonus);
+      applyChip(chipSel.value, dmgMult, cdMult, rngMult, statusBonus);
 
       const damage = currentUnit.baseDamage * dmgMult.value;
       const cooldown = Math.max(0.05, currentUnit.baseCooldown * cdMult.value);
@@ -421,6 +459,8 @@ const pageTitle = "Unit Arcade";
       const dps = damage / cooldown;
       const placements = parsePlacements(currentUnit.placements);
 
+      // POWER = (DPS * RANGE / 100) * placements
+      // Note: bleed/poison modeling will be added once you define per-unit rules.
       const power = (dps * range / 100) * placements;
 
       calcPower.textContent = fmt(power, 2);
@@ -428,7 +468,8 @@ const pageTitle = "Unit Arcade";
       calcCooldown.textContent = fmt(cooldown, 3);
       calcRange.textContent = Number.isFinite(range) ? fmt(range, 1) : "-";
 
-      calcNote.textContent = "POWER = (DPS × RANGE / 100) × placements. Status effects from enchants are not modeled yet.";
+      calcNote.textContent =
+        "Shiny: +30% DMG, +20% RNG, -10% CD. POWER = (DPS × RNG / 100) × placements. Bleed/Poison will be added once we define unit rules.";
     }
 
     function loadUnitFromInput(value) {
@@ -489,6 +530,7 @@ const pageTitle = "Unit Arcade";
   <style>
     :global(body) { background: transparent !important; }
 
+    /* Full-page background with blur */
     :global(body::before) {
       content: "";
       position: fixed;
@@ -511,6 +553,7 @@ const pageTitle = "Unit Arcade";
       pointer-events: none;
     }
 
+    /* No scroll until a unit is selected */
     :global(html.ua-lock),
     :global(body.ua-lock) {
       height: 100% !important;
@@ -609,6 +652,7 @@ const pageTitle = "Unit Arcade";
       opacity: 0.75;
     }
 
+    /* INFO VIEW */
     .ua-infoWrap { padding-bottom: 72px; }
     .ua-infoTitle { margin: 0 0 6px; font-size: 2.2rem; font-weight: 900; }
     .ua-infoSub { margin: 0 0 18px; opacity: 0.85; }
@@ -720,6 +764,7 @@ const pageTitle = "Unit Arcade";
 
     .ua-wideV { font-weight: 700; opacity: 0.9; }
 
+    /* CALCULATOR */
     .ua-calc { margin-top: 20px; }
 
     .ua-calcTitle {
@@ -779,6 +824,7 @@ const pageTitle = "Unit Arcade";
       padding: 12px;
     }
 
+    /* Output boxes centered */
     .ua-out { text-align: center; }
 
     .ua-calcK {
