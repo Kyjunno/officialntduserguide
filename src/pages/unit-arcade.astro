@@ -216,9 +216,6 @@ const pageTitle = "Unit Arcade";
       "Lamp"
     ];
 
-    // Minimal data now, expandable later.
-    // Add stats for calculator: baseDamage, baseCooldown, baseRange
-    // If a unit is missing stats, the calculator shows placeholders.
     const UNIT_DATA = {
       "Bear5": {
         id: "bear5",
@@ -240,7 +237,7 @@ const pageTitle = "Unit Arcade";
         placements: "2",
         obtainability: "Not set yet.",
         ability: "Not set yet.",
-        baseDamage: 50.50,
+        baseDamage: 50.5,
         baseCooldown: 2.0,
         baseRange: 27.5
       }
@@ -398,7 +395,6 @@ const pageTitle = "Unit Arcade";
       unitImgLabel.textContent = "No image";
       unitImg.style.display = "none";
       unitImg.removeAttribute("src");
-      unitImg.removeAttribute("srcset");
       unitImg.alt = "";
 
       if (!unitId) return;
@@ -416,9 +412,8 @@ const pageTitle = "Unit Arcade";
 
       unitImg.onerror = () => {
         idx += 1;
-        if (idx < candidates.length) {
-          unitImg.src = candidates[idx];
-        } else {
+        if (idx < candidates.length) unitImg.src = candidates[idx];
+        else {
           unitImg.onerror = null;
           unitImg.style.display = "none";
           unitImgLabel.textContent = "No image";
@@ -452,10 +447,7 @@ const pageTitle = "Unit Arcade";
       let cdMult = 1;
       let rngMult = 1;
 
-      // simple level scaling: +6% per level after 1 (placeholder you can tune)
       dmgMult *= 1 + Math.max(0, level - 1) * 0.06;
-
-      // shiny: +15% dmg (placeholder)
       if (shiny) dmgMult *= 1.15;
 
       function applyModifier(key) {
@@ -516,7 +508,6 @@ const pageTitle = "Unit Arcade";
       closeAllMenus();
       computeAndRender();
 
-      // scroll to top of info view for a clean reveal
       window.scrollTo({ top: 0, behavior: "instant" });
     }
 
@@ -525,7 +516,6 @@ const pageTitle = "Unit Arcade";
     attachDropdown(unitSearch, unitDropdown, centerField, loadUnit);
     attachDropdown(unitSearchTop, unitDropdownTop, topField, loadUnit);
 
-    // Calculator events
     levelSel.addEventListener("change", computeAndRender);
     shinySel.addEventListener("change", computeAndRender);
     enchantSel.addEventListener("change", computeAndRender);
@@ -533,14 +523,14 @@ const pageTitle = "Unit Arcade";
   </script>
 
   <style>
-    /* Full-page background image (from /public) */
+    /* Full-page background image (YOUR ACTUAL PATH: /public/images/unit-arcade-bg.png) */
     :global(body) { background: transparent !important; }
     :global(body::before) {
       content: "";
       position: fixed;
       inset: 0;
       z-index: -2;
-      background-image: url("/unit-arcade-bg.png");
+      background-image: url("/images/unit-arcade-bg.png");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -571,7 +561,6 @@ const pageTitle = "Unit Arcade";
       padding: 24px;
     }
 
-    /* Center search card view */
     .ua-center {
       min-height: calc(100vh - 140px);
       display: grid;
@@ -628,7 +617,6 @@ const pageTitle = "Unit Arcade";
       opacity: 0.7;
     }
 
-    /* Dropdown behavior and styling */
     .ua-dropdown {
       display: none;
       position: absolute;
@@ -642,7 +630,6 @@ const pageTitle = "Unit Arcade";
       background: rgba(5, 8, 15, 0.94);
       backdrop-filter: blur(10px);
 
-      /* ~10 items visible, scroll inside */
       max-height: 420px;
       overflow-y: auto;
       overflow-x: hidden;
@@ -686,7 +673,6 @@ const pageTitle = "Unit Arcade";
       font-weight: 800;
     }
 
-    /* Info view */
     .ua-infoWrap { padding-bottom: 72px; }
     .ua-infoTitle { margin: 0 0 6px; font-size: 2.2rem; font-weight: 900; }
     .ua-infoSub { margin: 0 0 18px; opacity: 0.85; }
@@ -804,21 +790,9 @@ const pageTitle = "Unit Arcade";
     .ua-wideRight { text-align: center; }
     .ua-wideV { font-weight: 700; opacity: 0.9; }
 
-    /* Calculator area */
-    .ua-calc {
-      margin-top: 20px;
-    }
-
-    .ua-calcTitle {
-      margin: 18px 0 6px;
-      font-size: 1.6rem;
-      font-weight: 900;
-    }
-
-    .ua-calcSub {
-      margin: 0 0 12px;
-      opacity: 0.85;
-    }
+    .ua-calc { margin-top: 20px; }
+    .ua-calcTitle { margin: 18px 0 6px; font-size: 1.6rem; font-weight: 900; }
+    .ua-calcSub { margin: 0 0 12px; opacity: 0.85; }
 
     .ua-calcPanel {
       border-radius: 18px;
@@ -835,10 +809,7 @@ const pageTitle = "Unit Arcade";
       gap: 12px;
     }
 
-    .ua-control {
-      display: grid;
-      gap: 8px;
-    }
+    .ua-control { display: grid; gap: 8px; }
 
     .ua-controlK {
       font-size: 0.72rem;
@@ -880,11 +851,7 @@ const pageTitle = "Unit Arcade";
       opacity: 0.75;
     }
 
-    .ua-calcV {
-      margin-top: 8px;
-      font-weight: 900;
-      font-size: 1.2rem;
-    }
+    .ua-calcV { margin-top: 8px; font-weight: 900; font-size: 1.2rem; }
 
     .ua-calcNote {
       margin-top: 12px;
