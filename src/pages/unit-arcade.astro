@@ -1,360 +1,572 @@
 ---
+// src/pages/unit-arcade.astro
+import Layout from "../layouts/Layout.astro";
+
 const units = [
-  { name: "Bear5", slug: "bear5" },
-  { name: "Test Dummy Endo", slug: "test-dummy-endo" },
-  { name: "Nightguard", slug: "nightguard" },
-  { name: "Chicken7", slug: "chicken7" },
-  { name: "Fan", slug: "fan" },
-  { name: "Bonnie", slug: "bonnie" },
-  { name: "Carl The Cupcake", slug: "carl-the-cupcake" },
-  { name: "Freddy", slug: "freddy" },
-  { name: "Foxy", slug: "foxy" },
-  { name: "Chica", slug: "chica" },
-  { name: "Big Band Bonnie", slug: "big-band-bonnie" },
-  { name: "Golden Bonnie", slug: "golden-bonnie" },
-  { name: "Bunny6", slug: "bunny6" },
-  { name: "Sparky The Dog", slug: "sparky-the-dog" },
-  { name: "Endo 01", slug: "endo-01" },
-  { name: "Bort Bunny", slug: "bort-bunny" },
-  { name: "Stuffed Freddy", slug: "stuffed-freddy" },
-  { name: "Phone Guy", slug: "phone-guy" },
-  { name: "Golden Freddy", slug: "golden-freddy" },
-  { name: "Fox4", slug: "fox4" },
-  { name: "The Amalgamation", slug: "the-amalgamation" },
-  { name: "Shadow Freddy", slug: "shadow-freddy" },
-  { name: "Endo Plush", slug: "endo-plush" },
-  { name: "Crying Soul", slug: "crying-soul" },
-  { name: "Lamp", slug: "lamp" },
+  "Bear5",
+  "Test Dummy Endo",
+  "Nightguard",
+  "Chicken7",
+  "Fan",
+  "Bonnie",
+  "Carl The Cupcake",
+  "Freddy",
+  "Foxy",
+  "Chica",
+  "Big Band Bonnie",
+  "Golden Bonnie",
+  "Bunny6",
+  "Sparky The Dog",
+  "Endo 01",
+  "Bort Bunny",
+  "Stuffed Freddy",
+  "Phone Guy",
+  "Golden Freddy",
+  "Fox4",
+  "The Amalgamation",
+  "Shadow Freddy",
+  "Endo Plush",
+  "Crying Soul",
+  "Lamp",
 ];
 ---
+<Layout title="Unit Arcade | Official NTD User Guide">
+  <section class="ua">
+    <div class="bg"></div>
 
-<style>
-  .uaPage {
-    min-height: 100vh;
-    padding: 24px 18px 60px;
-    display: flex;
-    justify-content: center;
+    <div class="centerCard" id="pickCard" aria-hidden="false">
+      <h1>Unit Arcade</h1>
+      <p class="sub">Type a unit name and pick from the dropdown.</p>
 
-    background-image:
-      radial-gradient(1200px 700px at 15% 20%, rgba(10, 25, 55, 0.65), rgba(0,0,0,0)),
-      radial-gradient(1000px 600px at 85% 30%, rgba(60, 25, 90, 0.55), rgba(0,0,0,0)),
-      linear-gradient(to bottom, rgba(5, 8, 16, 0.45), rgba(5, 8, 16, 0.70)),
-      url("/images/unit-arcade-bg.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-
-  .uaWrap {
-    width: min(1100px, 100%);
-  }
-
-  .uaWrap.noScroll {
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-  }
-
-  .uaWrap.canScroll {
-    overflow: visible;
-    height: auto;
-  }
-
-  .centerCard {
-    width: min(720px, 100%);
-    margin: 120px auto 0;
-    border-radius: 18px;
-    padding: 22px 22px 18px;
-    background: rgba(10, 12, 18, 0.60);
-    border: 1px solid rgba(140, 170, 255, 0.25);
-    box-shadow: 0 12px 50px rgba(0,0,0,0.55);
-    backdrop-filter: blur(10px);
-  }
-
-  .centerTitle {
-    margin: 0 0 6px;
-    text-align: center;
-    font-size: clamp(28px, 3.4vw, 42px);
-    color: rgba(240,245,255,0.95);
-    font-weight: 800;
-  }
-
-  .centerSub {
-    margin: 0 0 16px;
-    text-align: center;
-    color: rgba(200,210,225,0.9);
-    font-size: 14px;
-  }
-
-  .searchWrap { position: relative; }
-
-  .searchInput {
-    width: 100%;
-    height: 44px;
-    border-radius: 12px;
-    background: rgba(8,10,15,0.65);
-    border: 1px solid rgba(140,170,255,0.22);
-    color: rgba(240,245,255,0.95);
-    padding: 0 14px;
-    outline: none;
-    font-size: 14px;
-  }
-
-  .searchInput::placeholder { color: rgba(190,200,215,0.55); }
-
-  .dropdown {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 52px;
-    z-index: 9999;
-
-    border-radius: 14px;
-    background: rgba(8,10,15,0.92);
-    border: 1px solid rgba(140,170,255,0.22);
-    box-shadow: 0 16px 60px rgba(0,0,0,0.65);
-    overflow: hidden;
-  }
-
-  .dropdown.hidden { display: none; }
-
-  .dropdownList {
-    max-height: 420px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-  }
-
-  .ddItem {
-    padding: 14px 14px;
-    text-align: center;
-    font-weight: 900;
-    letter-spacing: 0.4px;
-    color: rgba(240,245,255,0.92);
-    font-size: 16px;
-    cursor: pointer;
-    user-select: none;
-    border-bottom: 1px solid rgba(140,170,255,0.10);
-  }
-
-  .ddItem:last-child { border-bottom: none; }
-
-  .ddItem:hover { background: rgba(40,70,160,0.18); }
-
-  .hint {
-    margin-top: 10px;
-    color: rgba(190,205,225,0.65);
-    font-size: 12px;
-    text-align: center;
-  }
-
-  .details { margin-top: 24px; display: none; }
-  .details.show { display: block; }
-
-  .panel {
-    border-radius: 18px;
-    padding: 18px;
-    background: rgba(10,12,18,0.62);
-    border: 1px solid rgba(140,170,255,0.22);
-    box-shadow: 0 12px 50px rgba(0,0,0,0.55);
-    backdrop-filter: blur(10px);
-  }
-
-  .topGrid {
-    display: grid;
-    grid-template-columns: 460px 1fr;
-    gap: 16px;
-    align-items: start;
-  }
-
-  @media (max-width: 980px) {
-    .topGrid { grid-template-columns: 1fr; }
-    .centerCard { margin-top: 70px; }
-  }
-
-  .imgBox {
-    border-radius: 18px;
-    border: 1px solid rgba(140,170,255,0.22);
-    background: rgba(8,10,15,0.60);
-    overflow: hidden;
-    height: 360px;
-    position: relative;
-  }
-
-  .imgBox img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    padding: 18px;
-    box-sizing: border-box;
-  }
-
-  .noImg {
-    height: 100%;
-    display: grid;
-    place-items: center;
-    color: rgba(210,220,235,0.75);
-    font-weight: 700;
-  }
-
-  .metaGrid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .metaCard {
-    border-radius: 14px;
-    border: 1px solid rgba(140,170,255,0.18);
-    background: rgba(8,10,15,0.55);
-    padding: 12px;
-  }
-
-  .metaLabel {
-    font-size: 11px;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    color: rgba(190,205,225,0.65);
-    margin-bottom: 6px;
-    font-weight: 800;
-  }
-
-  .metaValue {
-    font-size: 14px;
-    color: rgba(240,245,255,0.92);
-    font-weight: 900;
-  }
-</style>
-
-<div class="uaPage">
-  <div class="uaWrap noScroll" id="uaWrap">
-    <div style="width: 100%;">
-      <div class="centerCard">
-        <h1 class="centerTitle">Unit Arcade</h1>
-        <p class="centerSub">Type a unit name and pick from the dropdown.</p>
-
-        <div class="searchWrap" id="searchWrap">
-          <input id="unitSearch" class="searchInput" placeholder="Search units..." autocomplete="off" />
-          <div id="dropdown" class="dropdown hidden">
-            <div id="dropdownList" class="dropdownList"></div>
-          </div>
+      <div class="searchWrap" id="searchWrap">
+        <input id="unitInput" type="text" placeholder="Search units..." autocomplete="off" />
+        <div class="dropdown" id="dropdown" role="listbox" aria-label="Unit list" hidden>
+          <div class="dropdownInner" id="dropdownInner"></div>
         </div>
-
-        <div class="hint">Click the search bar to browse units.</div>
       </div>
+    </div>
 
-      <div class="details" id="details">
-        <div class="panel">
-          <div class="topGrid">
-            <div class="imgBox">
-              <div class="noImg" id="noImg">No image</div>
-              <img id="unitImg" alt="Selected unit image" style="display:none;" />
+    <div class="details" id="details" hidden>
+      <div class="detailsShell">
+        <div class="topRow">
+          <div class="left">
+            <div class="searchLine">
+              <div class="label">Unit search</div>
+              <div class="searchInline">
+                <input id="unitInput2" type="text" placeholder="Search units..." autocomplete="off" />
+                <div class="dropdown inline" id="dropdown2" role="listbox" aria-label="Unit list" hidden>
+                  <div class="dropdownInner" id="dropdownInner2"></div>
+                </div>
+              </div>
+              <div class="hint">Click the search bar to browse, or type to filter.</div>
             </div>
 
             <div class="metaGrid">
-              <div class="metaCard">
-                <div class="metaLabel">Unit</div>
-                <div class="metaValue" id="metaName">Not set</div>
+              <div class="metaBox">
+                <div class="k">Rarity</div>
+                <div class="v" id="rarityVal">Not set</div>
               </div>
-              <div class="metaCard">
-                <div class="metaLabel">Image path</div>
-                <div class="metaValue" id="metaPath">Not set</div>
+              <div class="metaBox">
+                <div class="k">Attack Type</div>
+                <div class="v" id="attackVal">Not set</div>
               </div>
-              <div class="metaCard">
-                <div class="metaLabel">Rarity</div>
-                <div class="metaValue">Not set</div>
+              <div class="metaBox">
+                <div class="k">Placement Price</div>
+                <div class="v" id="priceVal">Not set</div>
               </div>
-              <div class="metaCard">
-                <div class="metaLabel">Attack type</div>
-                <div class="metaValue">Not set</div>
+              <div class="metaBox">
+                <div class="k">Placements</div>
+                <div class="v" id="placeVal">Not set</div>
               </div>
+            </div>
+
+            <div class="wideBox">
+              <div class="k">Obtainability</div>
+              <div class="v muted">Not set yet.</div>
+            </div>
+
+            <div class="wideBox">
+              <div class="row2">
+                <div class="k">Ability</div>
+                <div class="k right">Description</div>
+              </div>
+              <div class="row2">
+                <div class="v muted">No abilities listed yet.</div>
+                <div class="v muted right">Add this later.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="right">
+            <div class="portrait" id="portrait">
+              <div class="noImg">No image</div>
             </div>
           </div>
         </div>
 
-        <!-- Calculator panel will go here next -->
+        <div class="calc">
+          <div class="calcTitle">Calculator</div>
+          <div class="calcRow">
+            <div class="field">
+              <div class="k">Level</div>
+              <input type="number" min="1" max="100" value="1" />
+            </div>
+
+            <div class="field">
+              <div class="k">Variant</div>
+              <select>
+                <option>Normal</option>
+                <option>Shiny</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="k">Enchant</div>
+              <select>
+                <option>None</option>
+                <option>DMG</option>
+                <option>CD</option>
+                <option>RNG</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="k">Chip</div>
+              <select>
+                <option>None</option>
+                <option>Critical Strikes</option>
+                <option>Attack Speed</option>
+                <option>Range</option>
+              </select>
+            </div>
+
+            <button class="applyBtn" type="button">Apply</button>
+          </div>
+
+          <div class="calcGrid">
+            <div class="statBox">
+              <div class="k">Cost</div>
+              <div class="v">0</div>
+            </div>
+            <div class="statBox">
+              <div class="k">DPS</div>
+              <div class="v">0</div>
+            </div>
+            <div class="statBox">
+              <div class="k">Damage</div>
+              <div class="v">0</div>
+            </div>
+            <div class="statBox">
+              <div class="k">Cooldown</div>
+              <div class="v">0</div>
+            </div>
+            <div class="statBox">
+              <div class="k">Range</div>
+              <div class="v">0</div>
+            </div>
+          </div>
+
+          <div class="note muted">
+            This calculator is a shell for now. Once your unit data table is added, we’ll compute real numbers.
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+  </section>
 
-<script>
-  const units = JSON.parse(`${JSON.stringify(units)}`);
+  <script is:inline>
+    const UNITS = ${JSON.stringify(units)};
 
-  const uaWrap = document.getElementById("uaWrap");
-  const searchWrap = document.getElementById("searchWrap");
-  const unitSearch = document.getElementById("unitSearch");
-  const dropdown = document.getElementById("dropdown");
-  const dropdownList = document.getElementById("dropdownList");
+    const pickCard = document.getElementById("pickCard");
+    const details = document.getElementById("details");
 
-  const details = document.getElementById("details");
-  const unitImg = document.getElementById("unitImg");
-  const noImg = document.getElementById("noImg");
+    const input1 = document.getElementById("unitInput");
+    const dd1 = document.getElementById("dropdown");
+    const ddInner1 = document.getElementById("dropdownInner");
 
-  const metaName = document.getElementById("metaName");
-  const metaPath = document.getElementById("metaPath");
+    const input2 = document.getElementById("unitInput2");
+    const dd2 = document.getElementById("dropdown2");
+    const ddInner2 = document.getElementById("dropdownInner2");
 
-  function openDropdown() { dropdown.classList.remove("hidden"); }
-  function closeDropdown() { dropdown.classList.add("hidden"); }
+    const portrait = document.getElementById("portrait");
 
-  function filteredUnits(query) {
-    const q = (query || "").trim().toLowerCase();
-    if (!q) return units;
-    return units.filter(u => u.name.toLowerCase().includes(q));
-  }
+    function norm(s){ return (s || "").toLowerCase().trim(); }
 
-  function renderDropdown() {
-    const list = filteredUnits(unitSearch.value).slice(0, 10);
-
-    if (list.length === 0) {
-      dropdownList.innerHTML = '<div class="ddItem" style="opacity:.6;cursor:default;">No matches</div>';
-      return;
+    function setNoScroll(on){
+      document.body.classList.toggle("no-scroll", !!on);
     }
 
-    dropdownList.innerHTML = list
-      .map(u => `<div class="ddItem" data-name="${u.name}">${u.name}</div>`)
-      .join("");
-  }
+    function buildList(targetInner, targetDd, query){
+      const q = norm(query);
+      const filtered = q ? UNITS.filter(u => norm(u).includes(q)) : UNITS.slice();
+      const top = filtered.slice(0, 50);
 
-  unitSearch.addEventListener("focus", () => { renderDropdown(); openDropdown(); });
-  unitSearch.addEventListener("click", () => { renderDropdown(); openDropdown(); });
-  unitSearch.addEventListener("input", () => { renderDropdown(); openDropdown(); });
+      targetInner.innerHTML = "";
+      for (const name of top){
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "ddItem";
+        btn.textContent = name;
+        btn.addEventListener("click", () => selectUnit(name));
+        targetInner.appendChild(btn);
+      }
 
-  document.addEventListener("mousedown", (e) => {
-    if (!searchWrap.contains(e.target)) closeDropdown();
-  });
+      targetDd.hidden = top.length === 0;
+    }
 
-  dropdownList.addEventListener("mousedown", (e) => {
-    const item = e.target.closest(".ddItem");
-    if (!item) return;
+    function openDropdown(which){
+      if (which === 1){
+        buildList(ddInner1, dd1, input1.value);
+        dd1.hidden = false;
+      } else {
+        buildList(ddInner2, dd2, input2.value);
+        dd2.hidden = false;
+      }
+    }
 
-    const name = item.getAttribute("data-name");
-    const u = units.find(x => x.name === name);
-    if (!u) return;
+    function closeDropdowns(){
+      dd1.hidden = true;
+      dd2.hidden = true;
+    }
 
-    unitSearch.value = name;
-    closeDropdown();
+    function selectUnit(name){
+      closeDropdowns();
 
-    details.classList.add("show");
-    uaWrap.classList.remove("noScroll");
-    uaWrap.classList.add("canScroll");
+      input1.value = name;
+      input2.value = name;
 
-    const imgPath = `/images/units/${u.slug}.png`;
-    metaName.textContent = u.name;
-    metaPath.textContent = imgPath;
+      pickCard.hidden = true;
+      pickCard.setAttribute("aria-hidden", "true");
 
-    unitImg.src = imgPath;
+      details.hidden = false;
 
-    unitImg.onload = () => {
-      noImg.style.display = "none";
-      unitImg.style.display = "block";
-    };
+      setNoScroll(false);
 
-    unitImg.onerror = () => {
-      unitImg.style.display = "none";
-      noImg.style.display = "grid";
-    };
-  });
-</script>
+      // Placeholder image wiring: looks for /units/<slug>.png in public
+      // Example: public/units/bear5.png
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const imgPath = `/units/${slug}.png`;
+
+      portrait.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = imgPath;
+      img.alt = name;
+      img.loading = "lazy";
+      img.addEventListener("error", () => {
+        portrait.innerHTML = '<div class="noImg">No image</div>';
+      });
+      portrait.appendChild(img);
+    }
+
+    function initialState(){
+      pickCard.hidden = false;
+      pickCard.setAttribute("aria-hidden", "false");
+      details.hidden = true;
+      closeDropdowns();
+      setNoScroll(true);
+    }
+
+    // initial
+    initialState();
+
+    // input 1 behavior (center card)
+    input1.addEventListener("focus", () => openDropdown(1));
+    input1.addEventListener("click", () => openDropdown(1));
+    input1.addEventListener("input", () => openDropdown(1));
+
+    // input 2 behavior (details view)
+    input2.addEventListener("focus", () => openDropdown(2));
+    input2.addEventListener("click", () => openDropdown(2));
+    input2.addEventListener("input", () => openDropdown(2));
+
+    // click outside closes dropdown
+    document.addEventListener("mousedown", (e) => {
+      const in1 = e.target.closest("#searchWrap");
+      const in2 = e.target.closest(".searchInline");
+      if (!in1 && !in2) closeDropdowns();
+    });
+
+    // escape closes dropdown
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeDropdowns();
+    });
+  </script>
+
+  <style>
+    .ua{
+      position: relative;
+      min-height: calc(100vh - 64px);
+      padding: 26px 0 40px;
+    }
+
+    .bg{
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image: url("/unit-arcade-bg.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: blur(10px);
+      transform: scale(1.05);
+    }
+    .bg::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(1000px 600px at 25% 10%, rgba(18,30,58,.55), rgba(0,0,0,.62));
+    }
+
+    .centerCard{
+      width: min(860px, 94vw);
+      margin: 80px auto 0;
+      padding: 28px 28px 22px;
+      border-radius: 18px;
+      background: rgba(10,14,22,.58);
+      border: 1px solid rgba(170,195,255,.18);
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      text-align: center;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .centerCard h1{
+      margin:0;
+      font-size: 40px;
+      letter-spacing:.3px;
+      font-weight: 850;
+    }
+
+    .sub{
+      margin: 8px 0 18px;
+      color: rgba(232,238,252,.75);
+      font-size: 14px;
+    }
+
+    .searchWrap{
+      position: relative;
+      width: min(740px, 92%);
+      margin: 0 auto;
+    }
+
+    input[type="text"], input[type="number"], select{
+      width:100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(170,195,255,.18);
+      background: rgba(7,10,16,.55);
+      color: rgba(232,238,252,.92);
+      outline:none;
+    }
+    input::placeholder{ color: rgba(232,238,252,.42); }
+
+    .dropdown{
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 10px);
+      background: rgba(7,10,16,.92);
+      border: 1px solid rgba(170,195,255,.22);
+      border-radius: 14px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.45);
+      overflow: hidden;
+      z-index: 40;
+    }
+
+    .dropdown.inline{
+      top: calc(100% + 8px);
+    }
+
+    .dropdownInner{
+      max-height: 360px; /* shows ~10 items, scroll inside */
+      overflow: auto;
+      padding: 8px;
+    }
+
+    .ddItem{
+      width: 100%;
+      display: block;
+      text-align: center;
+      padding: 12px 10px;
+      margin: 6px 0;
+      border-radius: 12px;
+      border: 1px solid rgba(170,195,255,.12);
+      background: rgba(20,28,45,.35);
+      color: rgba(232,238,252,.92);
+      font-weight: 800;
+      letter-spacing: .2px;
+      cursor: pointer;
+      transition: .12s ease;
+    }
+    .ddItem:hover{
+      background: rgba(125,160,255,.14);
+      border-color: rgba(170,195,255,.22);
+      transform: translateY(-1px);
+    }
+
+    .details{
+      width: min(1100px, 96vw);
+      margin: 28px auto 0;
+    }
+
+    .detailsShell{
+      padding: 22px;
+      border-radius: 18px;
+      background: rgba(10,14,22,.62);
+      border: 1px solid rgba(170,195,255,.18);
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .topRow{
+      display:grid;
+      grid-template-columns: 1fr 220px;
+      gap: 18px;
+      align-items:start;
+    }
+
+    .label{
+      font-size: 12px;
+      color: rgba(232,238,252,.7);
+      font-weight: 800;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .hint{
+      margin-top: 8px;
+      color: rgba(232,238,252,.55);
+      font-size: 12px;
+    }
+
+    .searchInline{
+      position: relative;
+    }
+
+    .metaGrid{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .metaBox, .wideBox, .statBox{
+      border-radius: 14px;
+      border: 1px solid rgba(170,195,255,.14);
+      background: rgba(7,10,16,.48);
+      padding: 12px 12px;
+    }
+
+    .k{
+      font-size: 12px;
+      color: rgba(232,238,252,.7);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      margin-bottom: 6px;
+    }
+
+    .v{
+      font-size: 14px;
+      font-weight: 750;
+      color: rgba(232,238,252,.92);
+    }
+
+    .muted{ color: rgba(232,238,252,.58); }
+
+    .wideBox{
+      margin-top: 12px;
+    }
+
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+    .right{ text-align:right; }
+
+    .portrait{
+      width: 220px;
+      height: 220px; /* bigger portrait */
+      border-radius: 18px;
+      border: 1px solid rgba(170,195,255,.18);
+      background: rgba(7,10,16,.55);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .portrait img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+    .noImg{
+      color: rgba(232,238,252,.55);
+      font-weight: 750;
+    }
+
+    .calc{
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(170,195,255,.18);
+      background: rgba(7,10,16,.42);
+    }
+
+    .calcTitle{
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .calcRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr auto;
+      gap: 10px;
+      align-items:end;
+    }
+
+    .field .k{ margin-bottom: 6px; }
+
+    .applyBtn{
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(170,195,255,.20);
+      background: rgba(20,28,45,.55);
+      color: rgba(232,238,252,.92);
+      font-weight: 850;
+      cursor: pointer;
+      transition: .12s ease;
+      height: 44px;
+    }
+    .applyBtn:hover{
+      background: rgba(125,160,255,.16);
+    }
+
+    .calcGrid{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .note{
+      margin-top: 10px;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 980px){
+      .topRow{ grid-template-columns: 1fr; }
+      .portrait{ width: 100%; height: 260px; }
+      .metaGrid{ grid-template-columns: 1fr 1fr; }
+      .calcRow{ grid-template-columns: 1fr 1fr; }
+      .calcGrid{ grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</Layout>
