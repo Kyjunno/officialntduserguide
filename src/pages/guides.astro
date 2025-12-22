@@ -21,7 +21,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           <div class="box-main">
             <div class="box-title">Nightshift Tower Defense POWER List By Clancy</div>
             <div class="box-desc">
-              A living reference list that ranks and compares overall power. Best used alongside tier lists.
+              A living reference list that ranks POWER!! Power is DPSxRANGE/100xPLACEMENTS!
             </div>
             <div class="box-actions">
               <a
@@ -49,7 +49,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           <div class="box-main">
             <div class="box-title">Nightshift Tower Defense Enchant List By Clancy</div>
             <div class="box-desc">
-              A complete list of enchants and what they do. Great for quick lookup while building.
+              A complete list of enchants and what they do for each unit in the game!!
             </div>
             <div class="box-actions">
               <a
@@ -189,23 +189,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       burn: {
         title: "Burn",
         text:
-          "Burn deals damage over time. Replace this with the confirmed rule for whether burn is flat or scales, and how it refreshes or stacks.",
+          "Burn deals % of the health of the enemy. The higher the health, the more it does",
         note:
-          "Fill this in once you confirm burn from tooltips or testing.",
+          "increasing the % of the burn increases the total output.",
       },
       slow: {
         title: "Slow",
         text:
-          "Slow reduces enemy movement speed for a duration. Replace this with your confirmed stacking, refresh, and cap rules.",
+          "Slow reduces enemy movement speed for the entire time the enemy is alive after being hit.",
         note:
-          "Fill this in once you confirm slow behavior.",
+          "Some enemies are resistent to slowing.",
       },
       stun: {
         title: "Stun",
         text:
-          "Stun prevents an enemy from acting or moving for a duration. Replace this with your confirmed immunity, cap, or diminishing rules (if any).",
+          "Stun stops the enemies in their place. The longer the stun, the longer the enemies is stopped",
         note:
-          "Fill this in once you confirm stun behavior.",
+          "Elites and Bosses have resistances to stun.",
       },
     };
 
