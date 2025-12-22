@@ -36,9 +36,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             </div>
           </div>
 
-          <div class="box-media" aria-hidden="true">
-            <div class="media-label">Image slot</div>
-            <div class="media-sub">Drop a preview here later</div>
+          <div class="box-media" aria-label="Power list preview image">
+            <img
+              class="box-img"
+              src="/images/guides/power.png"
+              alt="Power list preview"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
         </div>
       </section>
@@ -64,9 +69,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             </div>
           </div>
 
-          <div class="box-media" aria-hidden="true">
-            <div class="media-label">Image slot</div>
-            <div class="media-sub">Drop a preview here later</div>
+          <div class="box-media" aria-label="Enchant list preview image">
+            <img
+              class="box-img"
+              src="/images/guides/enchant-list.png"
+              alt="Enchant list preview"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
         </div>
       </section>
@@ -84,9 +94,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             </div>
           </div>
 
-          <div class="box-media" aria-hidden="true" data-soon="true">
-            <div class="media-label">Coming soon</div>
-            <div class="media-sub">Chip previews later</div>
+          <div class="box-media" aria-label="Chip list preview image">
+            <img
+              class="box-img"
+              src="/images/guides/chips.png"
+              alt="Chip list preview"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="media-soon-tag" aria-hidden="true">Coming soon</div>
           </div>
         </div>
       </section>
@@ -123,9 +139,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             </div>
           </div>
 
-          <div class="box-media" aria-hidden="true">
-            <div class="media-label">Image slot</div>
-            <div class="media-sub">Status icon or chart</div>
+          <div class="box-media" aria-label="Status effect image">
+            <img
+              id="statusImg"
+              class="box-img"
+              src="/images/guides/status/poison.png"
+              alt="Status effect icon"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
         </div>
       </section>
@@ -160,17 +182,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             <div id="enchantPanel" class="info-panel" role="region" aria-label="Enchant details">
               <div class="panel-title" id="enchantTitle">Damage 3</div>
               <div class="panel-text" id="enchantText">
-                +25% Damage.
+                +25% DMG.
               </div>
               <div class="panel-note" id="enchantNote">
-                This assumes max enchant level.
+                Max enchant level assumed.
               </div>
             </div>
           </div>
 
-          <div class="box-media" aria-hidden="true">
-            <div class="media-label">Image slot</div>
-            <div class="media-sub">Enchant icon or chart</div>
+          <div class="box-media" aria-label="Enchant image">
+            <img
+              id="enchantImg"
+              class="box-img"
+              src="/images/guides/enchants/damage3.png"
+              alt="Enchant icon"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
         </div>
       </section>
@@ -185,6 +213,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           "Poison stays on an enemy until it dies. Its damage is flat and does not scale with the unit’s damage unless an enchant or effect explicitly says it increases poison.",
         note:
           "If something says “+% Poison,” that changes poison. A normal “+% Damage” does not.",
+        img: "/images/guides/status/poison.png",
       },
       bleed: {
         title: "Bleed",
@@ -192,6 +221,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           "Bleed damage scales with the unit’s damage. Increasing unit damage increases bleed damage, but does not automatically increase the bleed amount unless something says it changes the bleed %.",
         note:
           "A “+% Bleed” increases the bleed % itself. A “+% Damage” increases the damage bleed is based on.",
+        img: "/images/guides/status/bleed.png",
       },
       burn: {
         title: "Burn",
@@ -199,6 +229,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           "Burn deals % of the health of the enemy. The higher the health, the more it does",
         note:
           "increasing the % of the burn increases the total output.",
+        img: "/images/guides/status/burn.png",
       },
       slow: {
         title: "Slow",
@@ -206,6 +237,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           "Slow reduces enemy movement speed for the entire time the enemy is alive after being hit.",
         note:
           "Some enemies are resistent to slowing.",
+        img: "/images/guides/status/slow.png",
       },
       stun: {
         title: "Stun",
@@ -213,6 +245,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           "Stun stops the enemies in their place. The longer the stun, the longer the enemies is stopped",
         note:
           "Elites and Bosses have resistances to stun.",
+        img: "/images/guides/status/stun.png",
       },
     };
 
@@ -221,61 +254,73 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         title: "Damage 3",
         text: "+25% DMG.",
         note: "Max enchant level assumed.",
+        img: "/images/guides/enchants/damage3.png",
       },
       range3: {
         title: "Range 3",
         text: "+30% RNG.",
         note: "Max enchant level assumed.",
+        img: "/images/guides/enchants/range3.png",
       },
       cooldown3: {
         title: "Cooldown 3",
         text: "-15% CD (attacks faster).",
         note: "Max enchant level assumed.",
+        img: "/images/guides/enchants/cooldown3.png",
       },
       pizzaParty: {
         title: "Pizza Party",
         text: "+30% DMG, +20% RNG, -10% CD.",
         note: "Max enchant level assumed.",
+        img: "/images/guides/enchants/pizza-party.png",
       },
       withered: {
         title: "Withered",
         text: "+35% DMG, +35% RNG, +5% CD (attacks slower), +5% Bleed.",
         note: "Max enchant level assumed.",
+        img: "/images/guides/enchants/withered.png",
       },
       bleedEncased: {
         title: "Bleed Encased",
         text: "+30% DMG, +20% RNG, +10% Slow, -10% CD.",
         note: "Max enchant level assumed.",
+        img: "/images/guides/enchants/bleed-encased.png",
       },
       fractured: {
         title: "Fractured",
         text: "+65% DMG, +25% RNG, +20% Poison, +5% CD, +5% Slow.",
         note: "Max enchant level assumed.",
+        img: "/images/guides/enchants/fractured.png",
       },
       clockworks: {
         title: "Clockworks",
         text: "+35% DMG, +20% RNG, +20% Stun, +5% Burn, -25% CD.",
         note: "Max enchant level assumed.",
+        img: "/images/guides/enchants/clockworks.png",
       },
       diminished: {
         title: "Diminished",
         text: "+135% DMG, +50% RNG, +35% CD, +15% Slow, +15% Bleed.",
         note: "Max enchant level assumed.",
+        img: "/images/guides/enchants/diminished.png",
       },
       charlottesOffering: {
         title: "Charlotte's Offering",
         text: "+65% DMG, +75% RNG, +20% Burn, +5% Slow, -10% CD.",
         note: "Max enchant level assumed.",
+        img: "/images/guides/enchants/charlottes-offering.png",
       },
       helpWanted: {
         title: "Help Wanted",
         text: "+75% DMG, +35% RNG, +15% Poison, +10% Stun, +5% Burn, -5% CD.",
         note: "Max enchant level assumed.",
+        img: "/images/guides/enchants/help-wanted.png",
       },
       springlocked: {
         title: "Springlocked",
         text: "+100% DMG, +35% RNG, +25% Stun, +15% Bleed, -10% CD.",
         note: "Max enchant level assumed.",
+        img: "/images/guides/enchants/springlocked.png",
       },
     };
 
@@ -284,6 +329,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       const titleEl = document.getElementById(prefix + "Title");
       const textEl = document.getElementById(prefix + "Text");
       const noteEl = document.getElementById(prefix + "Note");
+      const imgEl = document.getElementById(prefix + "Img");
       if (!select || !titleEl || !textEl || !noteEl) return;
 
       const item = data[select.value];
@@ -292,6 +338,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       titleEl.textContent = item.title;
       textEl.textContent = item.text;
       noteEl.textContent = item.note;
+
+      if (imgEl && item.img) {
+        imgEl.src = item.img;
+        imgEl.alt = prefix === "status" ? `${item.title} status icon` : `${item.title} enchant icon`;
+      }
     }
 
     const statusSelect = document.getElementById("statusSelect");
@@ -309,7 +360,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </script>
 
   <style>
-    /* Background */
     .page-bg{
       position: fixed;
       inset: 0;
@@ -435,34 +485,41 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     }
 
     .box-media{
+      position: relative;
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,.18);
       background: rgba(0,0,0,.18);
       min-height: 140px;
       overflow: hidden;
+      padding: 10px;
       display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      padding: 12px;
-      text-align: center;
     }
 
-    .box-media[data-soon="true"]{
-      opacity: 0.7;
+    .box-img{
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+      border-radius: 12px;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
     }
 
-    .media-label{
-      font-weight: 1000;
-      letter-spacing: -0.01em;
-      font-size: 14px;
-      margin-bottom: 6px;
-      color: rgba(232,238,252,.92);
-    }
-
-    .media-sub{
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
+    .media-soon-tag{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.30);
+      color: rgba(232,238,252,.86);
+      pointer-events: none;
     }
 
     .picker-row{
@@ -544,7 +601,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         grid-template-columns: 1fr;
       }
       .box-media{
-        min-height: 120px;
+        min-height: 140px;
       }
     }
 
