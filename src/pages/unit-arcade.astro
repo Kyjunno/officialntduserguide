@@ -130,13 +130,13 @@ const pageTitle = "Unit Arcade";
 
                   <option value="pizza_party">Pizza Party: +30% DMG, +20% RNG, -10% CD</option>
                   <option value="withered">Withered: +35% DMG, +35% RNG, +5% CD, +5% Bleed</option>
-                  <option value="encased">Encased: +30% DMG, +20% RNG, -10% CD, +10% Slow</option>
-                  <option value="fractured">Fractured: +65% DMG, +25% RNG, +5% CD, +20% Poison, +5% Slow</option>
-                  <option value="clockworks">Clockworks: +35% DMG, +20% RNG, -25% CD, +20% Stun, +5% Burn</option>
+                  <option value="encased">Encased: +30% DMG, +20% RNG, +10% Slow, -10% CD</option>
+                  <option value="fractured">Fractured: +65% DMG, +25% RNG, +20% Poison, +5% CD, +5% Slow</option>
+                  <option value="clockworks">Clockworks: +35% DMG, +20% RNG, +20% Stun, +5% Burn, -25% CD</option>
                   <option value="diminished">Diminished: +135% DMG, +50% RNG, +35% CD, +15% Slow, +15% Bleed</option>
-                  <option value="charlottes_offering">Charlotte&apos;s Offering: +65% DMG, +75% RNG, -10% CD, +20% Burn, +5% Slow</option>
-                  <option value="help_wanted">Help Wanted: +75% DMG, +35% RNG, -5% CD, +15% Poison, +10% Stun, +5% Burn</option>
-                  <option value="springlocked">Springlocked: +100% DMG, +35% RNG, -10% CD, +25% Stun, +15% Bleed</option>
+                  <option value="charlottes_offering">Charlotte&apos;s Offering: +65% DMG, +75% RNG, +20% Burn, +5% Slow, -10% CD</option>
+                  <option value="help_wanted">Help Wanted: +75% DMG, +35% RNG, +15% Poison, +10% Stun, +5% Burn, -5% CD</option>
+                  <option value="springlocked">Springlocked: +100% DMG, +35% RNG, +25% Stun, +15% Bleed, -10% CD</option>
                 </select>
               </label>
 
@@ -287,10 +287,25 @@ const pageTitle = "Unit Arcade";
         placements: "4",
         obtainability: "Bear5 Presents.",
         abilityName: "Stun",
-        abilityDesc: "0.3 second stun.",
+        abilityDesc: "0.3 second stun",
         baseDamage: 300,
         baseCooldown: 2,
         baseRange: 18
+      },
+
+      "Sparky The Dog": {
+        id: "sparky-the-dog",
+        rarity: "Mythic",
+        attackType: "Pierce + Bleed",
+        placementPrice: "$2,750",
+        placements: "2",
+        obtainability: "Aftons Shop.",
+        abilityName: "Bleed",
+        abilityDesc: "20% bleed. Treat POWER as if Sparky has +20% damage (non-stacking, permanent).",
+        baseDamage: 400,
+        baseCooldown: 2,
+        baseRange: 25,
+        powerDamageMult: 1.2
       },
 
       "Golden Bonnie": {
