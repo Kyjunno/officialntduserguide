@@ -150,6 +150,12 @@ const pageTitle = "Unit Arcade";
                   <option value="rng15">RNG +15%</option>
                 </select>
               </label>
+
+              <!-- Booster-only target selector -->
+              <label class="ua-control" id="buffTargetWrap" style="display:none">
+                <span class="ua-controlK">Buff Target</span>
+                <select id="buffTargetSel" class="ua-select"></select>
+              </label>
             </div>
 
             <div class="ua-calcGrid">
@@ -157,14 +163,17 @@ const pageTitle = "Unit Arcade";
                 <div class="ua-calcK">POWER</div>
                 <div id="calcPower" class="ua-calcV">-</div>
               </div>
+
               <div class="ua-calcStat ua-out">
-                <div class="ua-calcK">DAMAGE</div>
+                <div id="calcDamageLabel" class="ua-calcK">DAMAGE</div>
                 <div id="calcDamage" class="ua-calcV">-</div>
               </div>
+
               <div class="ua-calcStat ua-out">
                 <div class="ua-calcK">COOLDOWN</div>
                 <div id="calcCooldown" class="ua-calcV">-</div>
               </div>
+
               <div class="ua-calcStat ua-out">
                 <div class="ua-calcK">RANGE</div>
                 <div id="calcRange" class="ua-calcV">-</div>
@@ -207,11 +216,13 @@ const pageTitle = "Unit Arcade";
       "Lamp"
     ];
 
-    // Notes for calculator rules implemented here:
-    // - Bleed is tracked like Bunny6: POWER uses (Damage * (1 + bleed%)) before dividing by CD.
-    // - Poison is tracked as "poison DOT per hit": POWER treats it as extra damage per hit added before dividing by CD.
-    // - Dual attacks are tracked via hitMult (damage * hitMult per attack cycle).
-    // - Test Dummy Endo summons Double and Trouble (each 50% of TDE damage): POWER uses powerDamageMult = 2.0.
+    // Calculator rules implemented:
+    // - Bleed: POWER treats bleed% as extra damage (non-stacking, permanent)
+    // - Poison: if unit has basePoisonDotPerHit, POWER adds poisonPerHit per hit
+    // - Dual: hitMult multiplies hits per attack cycle
+    // - Summoned copies (TDE): powerDamageMult multiplies total cycle damage for POWER
+    // - Boosters (Crying Soul / Endo Plush): show BOOST % instead of DAMAGE, and POWER becomes
+    //   "added POWER per placement" for a chosen target unit.
 
     const UNIT_DATA = {
       "Bear5": {
@@ -502,7 +513,7 @@ const pageTitle = "Unit Arcade";
       "Foxy": {
         id: "foxy",
         rarity: "Rare",
-        attackType: "Single + Bleed",
+        attackType: "Single",
         placementPrice: "$225",
         placements: "2",
         obtainability: "Summons.",
@@ -554,7 +565,10 @@ const pageTitle = "Unit Arcade";
         abilityDesc: "Boosts all units damage in range by 15% (18.75% as shiny).",
         baseDamage: 0,
         baseCooldown: 1,
-        baseRange: 18
+        baseRange: 18,
+
+        boosterType: "damage",
+        baseBoostPct: 0.15
       },
 
       "Endo Plush": {
@@ -568,7 +582,10 @@ const pageTitle = "Unit Arcade";
         abilityDesc: "Boosts all units range in range by 15% (18.75% as shiny).",
         baseDamage: 0,
         baseCooldown: 1,
-        baseRange: 15
+        baseRange: 15,
+
+        boosterType: "range",
+        baseBoostPct: 0.15
       }
     };
 
@@ -603,7 +620,11 @@ const pageTitle = "Unit Arcade";
     const enchantSel = document.getElementById("enchantSel");
     const chipSel = document.getElementById("chipSel");
 
+    const buffTargetWrap = document.getElementById("buffTargetWrap");
+    const buffTargetSel = document.getElementById("buffTargetSel");
+
     const calcPower = document.getElementById("calcPower");
+    const calcDamageLabel = document.getElementById("calcDamageLabel");
     const calcDamage = document.getElementById("calcDamage");
     const calcCooldown = document.getElementById("calcCooldown");
     const calcRange = document.getElementById("calcRange");
@@ -622,6 +643,26 @@ const pageTitle = "Unit Arcade";
       }
       levelSel.appendChild(frag);
       levelSel.value = "1";
+    })();
+
+    (function initBuffTargets() {
+      const frag = document.createDocumentFragment();
+      for (const name of UNIT_NAMES) {
+        const u = UNIT_DATA[name];
+        if (!u) continue;
+        if (u.attackType === "Booster") continue;
+        if (!Number.isFinite(u.baseDamage) || !Number.isFinite(u.baseCooldown) || !Number.isFinite(u.baseRange)) continue;
+
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        frag.appendChild(opt);
+      }
+      buffTargetSel.appendChild(frag);
+
+      const hasFreddy = [...buffTargetSel.options].some(o => o.value === "Freddy");
+      if (hasFreddy) buffTargetSel.value = "Freddy";
+      else if (buffTargetSel.options.length) buffTargetSel.value = buffTargetSel.options[0].value;
     })();
 
     function lockScroll() {
@@ -743,8 +784,9 @@ const pageTitle = "Unit Arcade";
     }
 
     function computeAndRender() {
-      if (!currentUnit || !Number.isFinite(currentUnit.baseDamage) || !Number.isFinite(currentUnit.baseCooldown)) {
+      if (!currentUnit || !Number.isFinite(currentUnit.baseCooldown)) {
         calcPower.textContent = "-";
+        calcDamageLabel.textContent = "DAMAGE";
         calcDamage.textContent = "-";
         calcCooldown.textContent = "-";
         calcRange.textContent = "-";
@@ -769,53 +811,96 @@ const pageTitle = "Unit Arcade";
         mimic: 0
       };
 
-      // Level scaling: each level gives 2% of Shiny bonuses (applied per level-1 step)
       const lvl = Math.max(0, level - 1);
 
-      dmgMult.value *= 1 + lvl * 0.006;     // 2% of +30% DMG per level -> +0.6% per level
-      rngMult.value *= 1 + lvl * 0.004;     // 2% of +20% RNG per level -> +0.4% per level
-      cdMult.value *= 1 - lvl * 0.002;      // 2% of -10% CD per level -> -0.2% per level
+      // Level scaling: each level gives 2% of Shiny bonuses
+      dmgMult.value *= 1 + lvl * 0.006;
+      rngMult.value *= 1 + lvl * 0.004;
+      cdMult.value *= 1 - lvl * 0.002;
 
-      statusBonus.boost += lvl * 0.005;     // 2% of +25% boost
-      statusBonus.bleed += lvl * 0.004;     // 2% of +20% bleed
-      statusBonus.poison += lvl * 0.004;    // 2% of +20% poison
-      statusBonus.slow += lvl * 0.002;      // 2% of +10% slow
-      statusBonus.stun += lvl * 0.002;      // 2% of +10% stun
-      statusBonus.burn += lvl * 0.002;      // 2% of +10% burn
-      statusBonus.mimic += lvl * 0.002;     // 2% of +10% mimic
+      statusBonus.boost += lvl * 0.005;
+      statusBonus.bleed += lvl * 0.004;
+      statusBonus.poison += lvl * 0.004;
+      statusBonus.slow += lvl * 0.002;
+      statusBonus.stun += lvl * 0.002;
+      statusBonus.burn += lvl * 0.002;
+      statusBonus.mimic += lvl * 0.002;
 
       applyShiny(isShiny, dmgMult, cdMult, rngMult, statusBonus);
       applyEnchant(enchantSel.value, dmgMult, cdMult, rngMult, statusBonus);
       applyChip(chipSel.value, dmgMult, cdMult, rngMult, statusBonus);
 
+      const placements = parsePlacements(currentUnit.placements);
+
+      // Booster mode (Crying Soul / Endo Plush)
+      const isBooster = !!(currentUnit.boosterType && Number.isFinite(currentUnit.baseBoostPct));
+      if (isBooster) {
+        // Base: 15% at level 1.
+        // Each level-up adds 0.075% (because 2% of shiny's +3.75% booster increase per level = 0.075%).
+        // At level 100: 15% + 99 * 0.075% = 22.425%
+        let boostPct = currentUnit.baseBoostPct + (lvl * 0.00075);
+
+        // Shiny boosters get +25% on their boost (15% -> 18.75%)
+        if (isShiny) boostPct *= 1.25;
+
+        // Target unit baseline per-placement POWER under the current options
+        const targetName = buffTargetSel.value;
+        const target = UNIT_DATA[targetName];
+
+        if (!target || target.attackType === "Booster" || !Number.isFinite(target.baseDamage) || !Number.isFinite(target.baseCooldown) || !Number.isFinite(target.baseRange)) {
+          calcPower.textContent = "-";
+          calcDamageLabel.textContent = "BOOST %";
+          calcDamage.textContent = fmt(boostPct * 100, 3) + "%";
+          calcCooldown.textContent = "-";
+          calcRange.textContent = "-";
+          calcNote.textContent = "Pick a valid buff target.";
+          return;
+        }
+
+        const targetDamage = target.baseDamage * dmgMult.value;
+        const targetCooldown = Math.max(0.05, target.baseCooldown * cdMult.value);
+        const targetRange = target.baseRange * rngMult.value;
+
+        const targetPerPlacementPower = ((targetDamage / targetCooldown) * targetRange / 100);
+        const addedPerPlacement = targetPerPlacementPower * boostPct;
+
+        calcDamageLabel.textContent = "BOOST %";
+        calcDamage.textContent = fmt(boostPct * 100, 3) + "%";
+
+        calcPower.textContent = fmt(addedPerPlacement, 3);
+        calcCooldown.textContent = "-";
+        calcRange.textContent = "-";
+        calcNote.textContent = `POWER shows added POWER per placement for ${targetName}.`;
+
+        return;
+      }
+
+      // Normal attacker mode
+      if (!Number.isFinite(currentUnit.baseDamage)) {
+        calcPower.textContent = "-";
+        calcDamageLabel.textContent = "DAMAGE";
+        calcDamage.textContent = "-";
+        calcCooldown.textContent = "-";
+        calcRange.textContent = "-";
+        calcNote.textContent = "This unit has no calculator stats set yet.";
+        return;
+      }
+
       const damage = currentUnit.baseDamage * dmgMult.value;
       const cooldown = Math.max(0.05, currentUnit.baseCooldown * cdMult.value);
       const range = (Number.isFinite(currentUnit.baseRange) ? currentUnit.baseRange : 0) * rngMult.value;
 
-      const placements = parsePlacements(currentUnit.placements);
-
-      // Dual / multi-hit support
       const hitMult = Number.isFinite(currentUnit.hitMult) ? currentUnit.hitMult : 1.0;
 
-      // Poison support: poison DOT "per hit"
-      // Only applied if the unit actually has poison defined.
       const basePoison = Number.isFinite(currentUnit.basePoisonDotPerHit) ? currentUnit.basePoisonDotPerHit : 0;
       const poisonBonusMult = basePoison > 0 ? (1 + statusBonus.poison) : 1;
       const poisonPerHit = basePoison > 0 ? (basePoison * poisonBonusMult) : 0;
 
-      // Bleed support: POWER treats bleed% as extra damage (non-stacking, permanent)
-      // Only applied if the unit actually has bleed defined.
       const baseBleed = Number.isFinite(currentUnit.baseBleedPct) ? currentUnit.baseBleedPct : 0;
       const bleedTotal = baseBleed > 0 ? (baseBleed + statusBonus.bleed) : 0;
 
-      // Test Dummy Endo support (and any future "summon copies your attack" style rules)
       const powerDamageMult = Number.isFinite(currentUnit.powerDamageMult) ? currentUnit.powerDamageMult : 1.0;
 
-      // Effective damage-per-attack-cycle for POWER
-      // - damage scales with dmgMult
-      // - hitMult multiplies damage per cycle
-      // - poisonPerHit is added once per hit, so multiply by hitMult
-      // - bleedTotal increases total damage as a percent
       const baseCycleDamage = (damage * hitMult) + (poisonPerHit * hitMult);
       const cycleDamageWithBleed = baseCycleDamage * (1 + bleedTotal);
       const effectiveDamageForPower = cycleDamageWithBleed * powerDamageMult;
@@ -823,6 +908,7 @@ const pageTitle = "Unit Arcade";
       const dpsForPower = effectiveDamageForPower / cooldown;
       const power = (dpsForPower * range / 100) * placements;
 
+      calcDamageLabel.textContent = "DAMAGE";
       calcPower.textContent = fmt(power, 2);
       calcDamage.textContent = fmt(damage, 2);
       calcCooldown.textContent = fmt(cooldown, 3);
@@ -841,6 +927,9 @@ const pageTitle = "Unit Arcade";
 
       currentUnitName = unitName;
       currentUnit = UNIT_DATA[unitName] || null;
+
+      const isBooster = !!(currentUnit && currentUnit.boosterType && Number.isFinite(currentUnit.baseBoostPct));
+      buffTargetWrap.style.display = isBooster ? "" : "none";
 
       searchView.style.display = "none";
       infoView.style.display = "block";
@@ -885,6 +974,7 @@ const pageTitle = "Unit Arcade";
     shinySel.addEventListener("change", computeAndRender);
     enchantSel.addEventListener("change", computeAndRender);
     chipSel.addEventListener("change", computeAndRender);
+    buffTargetSel.addEventListener("change", computeAndRender);
   </script>
 
   <style>
