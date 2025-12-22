@@ -139,7 +139,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             </div>
           </div>
 
-          <div class="box-media" aria-label="Status effect image">
+          <div class="box-media box-media--icon" aria-label="Status effect image">
             <img
               id="statusImg"
               class="box-img"
@@ -190,7 +190,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             </div>
           </div>
 
-          <div class="box-media" aria-label="Enchant image">
+          <div class="box-media box-media--icon" aria-label="Enchant image">
             <img
               id="enchantImg"
               class="box-img"
@@ -484,18 +484,24 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       pointer-events: none;
     }
 
-    /* FLUSH IMAGE FRAME (NO CROPPING) */
+    /* MEDIA WINDOW */
     .box-media{
       position: relative;
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,.18);
       background: rgba(0,0,0,.18);
-      min-height: 140px;
       overflow: hidden;
       padding: 0;
       display: flex;
-      align-items: stretch;
-      justify-content: stretch;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 16 / 9;
+    }
+
+    /* Icons can be a bit squarer without looking weird */
+    .box-media--icon{
+      aspect-ratio: 1 / 1;
+      min-height: 140px;
     }
 
     .box-img{
@@ -504,9 +510,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       display: block;
       border-radius: 0;
       filter: none;
-      object-fit: contain;          /* <-- changed from cover to contain */
+      object-fit: contain;
       object-position: center;
-      background: rgba(0,0,0,.22);  /* makes letterboxing look intentional */
+      background:
+        radial-gradient(700px 300px at 50% 40%, rgba(255,255,255,.06), transparent 60%),
+        rgba(0,0,0,.22);
     }
 
     .media-soon-tag{
@@ -604,7 +612,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         grid-template-columns: 1fr;
       }
       .box-media{
-        min-height: 140px;
+        min-height: 160px;
       }
     }
 
