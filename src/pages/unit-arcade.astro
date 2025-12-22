@@ -106,7 +106,6 @@ const pageTitle = "Unit Arcade";
   </main>
 
   <script is:inline>
-    // Put the list directly in JS so we don't rely on JSON script tags (safer on some setups)
     const UNIT_NAMES = [
       "Bear5",
       "Test Dummy Endo",
@@ -135,7 +134,6 @@ const pageTitle = "Unit Arcade";
       "Lamp"
     ];
 
-    // Minimal placeholder data. We'll expand this later.
     const UNIT_DATA = {
       "Golden Bonnie": {
         rarity: "Mythic",
@@ -169,13 +167,11 @@ const pageTitle = "Unit Arcade";
     const abilityVal = document.getElementById("abilityVal");
 
     function hardLockScroll() {
-      // Lock the obvious places
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
       document.documentElement.style.height = "100%";
       document.body.style.height = "100%";
 
-      // Lock common Astro layout wrappers too (because many templates scroll a wrapper, not the body)
       const candidates = [
         document.querySelector("main"),
         document.querySelector(".layout"),
@@ -183,12 +179,10 @@ const pageTitle = "Unit Arcade";
         document.querySelector(".page"),
         document.querySelector("#app"),
         document.querySelector("#root"),
-        document.querySelector("[data-scroll-container]"),
+        document.querySelector("[data-scroll-container]")
       ].filter(Boolean);
 
-      for (const el of candidates) {
-        el.style.overflow = "hidden";
-      }
+      for (const el of candidates) el.style.overflow = "hidden";
     }
 
     function hardUnlockScroll() {
@@ -204,15 +198,12 @@ const pageTitle = "Unit Arcade";
         document.querySelector(".page"),
         document.querySelector("#app"),
         document.querySelector("#root"),
-        document.querySelector("[data-scroll-container]"),
+        document.querySelector("[data-scroll-container]")
       ].filter(Boolean);
 
-      for (const el of candidates) {
-        el.style.overflow = "";
-      }
+      for (const el of candidates) el.style.overflow = "";
     }
 
-    // Start locked because there is nothing to scroll on the search-only screen
     hardLockScroll();
 
     function normalize(s) {
@@ -238,7 +229,7 @@ const pageTitle = "Unit Arcade";
 
       if (!items.length) {
         const empty = document.createElement("div");
-        empty.className = "ua-ddItem ua-ddEmpty";
+        empty.className = "ua-ddEmpty";
         empty.textContent = "No matches";
         menuEl.appendChild(empty);
         return;
@@ -265,11 +256,8 @@ const pageTitle = "Unit Arcade";
         showMenu(menuEl);
       }
 
-      // This is the key: open on click/focus even if empty
       inputEl.addEventListener("focus", () => openWith(inputEl.value));
       inputEl.addEventListener("click", () => openWith(inputEl.value));
-
-      // Update while typing
       inputEl.addEventListener("input", () => openWith(inputEl.value));
 
       inputEl.addEventListener("keydown", (e) => {
@@ -283,7 +271,6 @@ const pageTitle = "Unit Arcade";
         }
       });
 
-      // Close when clicking outside the field
       document.addEventListener("mousedown", (e) => {
         const wrap = inputEl.closest(".ua-field");
         if (!wrap) return;
@@ -299,11 +286,9 @@ const pageTitle = "Unit Arcade";
         return;
       }
 
-      // Switch screens
       searchView.classList.add("ua-hidden");
       infoView.classList.remove("ua-hidden");
 
-      // Allow page scrolling now that there is content
       hardUnlockScroll();
 
       unitTitle.textContent = unitName;
@@ -348,7 +333,7 @@ const pageTitle = "Unit Arcade";
       position: fixed;
       inset: 0;
       z-index: -1;
-      background: rgba(5, 10, 20, 0.35);
+      background: rgba(5, 10, 20, 0.30);
       pointer-events: none;
     }
 
@@ -368,7 +353,6 @@ const pageTitle = "Unit Arcade";
       place-items: center;
     }
 
-    /* Important: allow dropdown to escape without being clipped */
     .ua-card {
       width: min(760px, 100%);
       border-radius: 18px;
@@ -431,6 +415,7 @@ const pageTitle = "Unit Arcade";
       opacity: 0.7;
     }
 
+    /* DROPDOWN: force clean vertical list, centered, bold */
     .ua-dropdown {
       position: absolute;
       top: calc(100% + 8px);
@@ -440,39 +425,64 @@ const pageTitle = "Unit Arcade";
 
       border-radius: 14px;
       border: 1px solid rgba(180, 210, 255, 0.18);
-      background: rgba(5, 8, 15, 0.92);
+      background: rgba(5, 8, 15, 0.94);
       backdrop-filter: blur(10px);
 
-      max-height: 360px; /* about 10 items */
+      max-height: 360px; /* ~10 items */
       overflow-y: auto;
+      overflow-x: hidden;
 
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+
+      /* HARD OVERRIDES so global styles can't turn this into "chips" */
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 0 !important;
+      padding: 8px !important;
     }
 
     .ua-ddItem {
-      width: 100%;
-      text-align: left;
-      padding: 10px 12px;
-      border: 0;
-      background: transparent;
-      color: inherit;
-      cursor: pointer;
-      font-weight: 700;
-      opacity: 0.92;
+      /* HARD OVERRIDES so global button styles can't turn this into inline pills */
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+
+      margin: 0 !important;
+      padding: 12px 12px !important;
+
+      border: 1px solid rgba(180, 210, 255, 0.10) !important;
+      border-radius: 12px !important;
+
+      background: rgba(255, 255, 255, 0.04) !important;
+      color: inherit !important;
+
+      cursor: pointer !important;
+
+      font-weight: 900 !important;
+      font-size: 1.05rem !important;
+      letter-spacing: 0.02em !important;
+
+      text-align: center !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .ua-ddItem + .ua-ddItem {
+      margin-top: 8px !important;
     }
 
     .ua-ddItem:hover {
-      background: rgba(180, 210, 255, 0.10);
-      opacity: 1;
+      background: rgba(180, 210, 255, 0.10) !important;
+      border-color: rgba(180, 210, 255, 0.22) !important;
     }
 
     .ua-ddEmpty {
-      cursor: default;
+      padding: 12px 12px;
+      text-align: center;
       opacity: 0.65;
-    }
-
-    .ua-ddEmpty:hover {
-      background: transparent;
+      font-weight: 800;
     }
 
     .ua-infoWrap {
