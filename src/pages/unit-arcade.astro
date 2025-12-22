@@ -26,7 +26,7 @@ const pageTitle = "Unit Arcade";
           <button id="openBtn" class="ua-btn ua-btnBig" type="button">Open</button>
         </div>
 
-        <p id="searchHint" class="ua-footnote">Example: Bear5, Bunny6, Shadow Freddy</p>
+        <p id="searchHint" class="ua-footnote">Example: Bear5, Bunny6, Big Band Bonnie</p>
       </div>
     </section>
 
@@ -89,7 +89,7 @@ const pageTitle = "Unit Arcade";
 
           <div class="ua-wide">
             <div class="ua-wideK">OBTAINABILITY</div>
-            <div id="obtainVal" class="ua-wideV">Bear5 Presents.</div>
+            <div id="obtainVal" class="ua-wideV">Not set yet.</div>
           </div>
 
           <div class="ua-divider"></div>
@@ -242,7 +242,7 @@ const pageTitle = "Unit Arcade";
         attackType: "Cone AOE (50%)",
         placementPrice: "$15,000",
         placements: "1",
-        obtainability: "Summons.",
+        obtainability: "Not set yet.",
         abilityName: "Team Buff",
         abilityDesc: "Every 60 seconds, boosts the DMG, RNG and CD of every unit in range by 10% each.",
         baseDamage: 1250,
@@ -256,15 +256,28 @@ const pageTitle = "Unit Arcade";
         attackType: "Single + Bleed",
         placementPrice: "$6,666",
         placements: "2",
-        obtainability: "bear5 Presents.",
+        obtainability: "Not set yet.",
         abilityName: "Bleed",
         abilityDesc: "50% bleed. Treat POWER as if Bunny6 has +50% damage (non-stacking, permanent).",
         baseDamage: 1250,
         baseCooldown: 2.75,
         baseRange: 20,
-
-        // ✅ Bunny6 POWER rule: (Damage * 1.5) is used inside POWER math only
         powerDamageMult: 1.5
+      },
+
+      "Big Band Bonnie": {
+        id: "big-band-bonnie",
+        rarity: "Vengeful",
+        attackType: "Shockwave",
+        placementPrice: "$2,500",
+        placements: "2",
+        obtainability: "Season 0 Pass",
+        abilityName: "Shockwave",
+        abilityDesc:
+          "Closer enemies take more damage, farther enemies take less damage. Stuns for 0.5 seconds.",
+        baseDamage: 1000,
+        baseCooldown: 2.5,
+        baseRange: 22
       },
 
       "Golden Bonnie": {
@@ -359,7 +372,7 @@ const pageTitle = "Unit Arcade";
       if (UNIT_NAMES.includes(raw)) return raw;
 
       const n = normalizeName(raw);
-      const hit = UNIT_NAMES.find(u => normalizeName(u) === n);
+      const hit = UNIT_NAMES.find((u) => normalizeName(u) === n);
       return hit || "";
     }
 
@@ -464,7 +477,7 @@ const pageTitle = "Unit Arcade";
       const isShiny = Number(shinySel.value || "0") === 1;
 
       const dmgMult = { value: 1 };
-      const cdMult  = { value: 1 };
+      const cdMult = { value: 1 };
       const rngMult = { value: 1 };
 
       const statusBonus = {
@@ -477,20 +490,19 @@ const pageTitle = "Unit Arcade";
         mimic: 0
       };
 
-      // Level scaling: each level gives 2% of Shiny bonuses (using level-1 steps)
       const lvl = Math.max(0, level - 1);
 
       dmgMult.value *= 1 + lvl * 0.006;
       rngMult.value *= 1 + lvl * 0.004;
-      cdMult.value  *= 1 - lvl * 0.002;
+      cdMult.value *= 1 - lvl * 0.002;
 
-      statusBonus.boost  += lvl * 0.005;
-      statusBonus.bleed  += lvl * 0.004;
+      statusBonus.boost += lvl * 0.005;
+      statusBonus.bleed += lvl * 0.004;
       statusBonus.poison += lvl * 0.004;
-      statusBonus.slow   += lvl * 0.002;
-      statusBonus.stun   += lvl * 0.002;
-      statusBonus.burn   += lvl * 0.002;
-      statusBonus.mimic  += lvl * 0.002;
+      statusBonus.slow += lvl * 0.002;
+      statusBonus.stun += lvl * 0.002;
+      statusBonus.burn += lvl * 0.002;
+      statusBonus.mimic += lvl * 0.002;
 
       applyShiny(isShiny, dmgMult, cdMult, rngMult, statusBonus);
       applyEnchant(enchantSel.value, dmgMult, cdMult, rngMult, statusBonus);
@@ -502,7 +514,6 @@ const pageTitle = "Unit Arcade";
 
       const placements = parsePlacements(currentUnit.placements);
 
-      // ✅ Bunny6 rule: POWER uses (damage * powerDamageMult) instead of damage
       const powerDamageMult = Number.isFinite(currentUnit.powerDamageMult) ? currentUnit.powerDamageMult : 1.0;
       const effectiveDamageForPower = damage * powerDamageMult;
 
