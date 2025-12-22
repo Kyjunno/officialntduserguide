@@ -216,13 +216,14 @@ const pageTitle = "Unit Arcade";
       "Lamp"
     ];
 
-    // Calculator rules implemented:
+    // Key rules:
     // - Bleed: POWER treats bleed% as extra damage (non-stacking, permanent)
     // - Poison: if unit has basePoisonDotPerHit, POWER adds poisonPerHit per hit
     // - Dual: hitMult multiplies hits per attack cycle
     // - Summoned copies (TDE): powerDamageMult multiplies total cycle damage for POWER
-    // - Boosters (Crying Soul / Endo Plush): show BOOST % instead of DAMAGE, and POWER becomes
-    //   "added POWER per placement" for a chosen target unit.
+    // - Boosters: show BOOST % instead of DAMAGE, and POWER becomes "added POWER per placement"
+    //   for a chosen target unit.
+    // - IMPORTANT: Enchants do NOT affect booster boost% OR booster power output.
 
     const UNIT_DATA = {
       "Bear5": {
@@ -783,6 +784,26 @@ const pageTitle = "Unit Arcade";
       if (k === "rng15") rngMultObj.value *= 1.15;
     }
 
+    // Compute a unit's BASE per-placement power at base stats only (no level/shiny/enchant/chip),
+    // but DOES include the unit's innate mechanics like dual/bleed/poison/summon-mult.
+    function basePowerPerPlacement(unit) {
+      if (!unit || unit.attackType === "Booster") return 0;
+      if (!Number.isFinite(unit.baseDamage) || !Number.isFinite(unit.baseCooldown) || !Number.isFinite(unit.baseRange)) return 0;
+      if (unit.baseCooldown <= 0) return 0;
+
+      const hitMult = Number.isFinite(unit.hitMult) ? unit.hitMult : 1.0;
+      const basePoison = Number.isFinite(unit.basePoisonDotPerHit) ? unit.basePoisonDotPerHit : 0;
+      const baseBleed = Number.isFinite(unit.baseBleedPct) ? unit.baseBleedPct : 0;
+      const powerDamageMult = Number.isFinite(unit.powerDamageMult) ? unit.powerDamageMult : 1.0;
+
+      const cycleBase = (unit.baseDamage * hitMult) + (basePoison * hitMult);
+      const cycleWithBleed = cycleBase * (1 + (baseBleed > 0 ? baseBleed : 0));
+      const effective = cycleWithBleed * powerDamageMult;
+
+      const dps = effective / unit.baseCooldown;
+      return (dps * unit.baseRange / 100);
+    }
+
     function computeAndRender() {
       if (!currentUnit || !Number.isFinite(currentUnit.baseCooldown)) {
         calcPower.textContent = "-";
@@ -796,7 +817,64 @@ const pageTitle = "Unit Arcade";
 
       const level = Number(levelSel.value || "1");
       const isShiny = Number(shinySel.value || "0") === 1;
+      const lvl = Math.max(0, level - 1);
+      const placements = parsePlacements(currentUnit.placements);
 
+      const isBooster = !!(currentUnit.boosterType && Number.isFinite(currentUnit.baseBoostPct));
+
+      // BOOSTER MODE: enchants/chips do not affect boost% or output at all
+      if (isBooster) {
+        // 15% at level 1
+        // +0.075% per level-up (lvl = level-1)
+        // level 100 => 15% + 99*0.075% = 22.425%
+        let boostPct = currentUnit.baseBoostPct + (lvl * 0.00075);
+
+        // shiny boosts booster by +25% (15% -> 18.75%)
+        if (isShiny) boostPct *= 1.25;
+
+        const targetName = buffTargetSel.value;
+        const target = UNIT_DATA[targetName];
+
+        if (!target || target.attackType === "Booster") {
+          calcPower.textContent = "-";
+          calcDamageLabel.textContent = "BOOST %";
+          calcDamage.textContent = fmt(boostPct * 100, 3) + "%";
+          calcCooldown.textContent = "-";
+          calcRange.textContent = "-";
+          calcNote.textContent = "Pick a valid buff target.";
+          return;
+        }
+
+        const baseP = basePowerPerPlacement(target);
+
+        // Crying Soul buffs damage, Endo Plush buffs range.
+        // We convert that into "added POWER per placement" by recomputing power with that one stat buffed.
+        // (Still using base stats and innate mechanics only, no enchants/chips.)
+        let boostedP = baseP;
+
+        if (currentUnit.boosterType === "damage") {
+          // POWER is linear in damage, so multiply by (1+boostPct)
+          boostedP = baseP * (1 + boostPct);
+        } else if (currentUnit.boosterType === "range") {
+          // POWER is linear in range, so multiply by (1+boostPct)
+          boostedP = baseP * (1 + boostPct);
+        } else {
+          boostedP = baseP * (1 + boostPct);
+        }
+
+        const addedPerPlacement = boostedP - baseP;
+
+        calcDamageLabel.textContent = "BOOST %";
+        calcDamage.textContent = fmt(boostPct * 100, 3) + "%";
+
+        calcPower.textContent = fmt(addedPerPlacement, 3);
+        calcCooldown.textContent = "-";
+        calcRange.textContent = "-";
+        calcNote.textContent = `POWER shows added POWER per placement for ${targetName}. (Enchants ignored for boosters)`;
+        return;
+      }
+
+      // NORMAL MODE: keep your existing scaling rules
       const dmgMult = { value: 1 };
       const cdMult = { value: 1 };
       const rngMult = { value: 1 };
@@ -810,8 +888,6 @@ const pageTitle = "Unit Arcade";
         burn: 0,
         mimic: 0
       };
-
-      const lvl = Math.max(0, level - 1);
 
       // Level scaling: each level gives 2% of Shiny bonuses
       dmgMult.value *= 1 + lvl * 0.006;
@@ -830,52 +906,6 @@ const pageTitle = "Unit Arcade";
       applyEnchant(enchantSel.value, dmgMult, cdMult, rngMult, statusBonus);
       applyChip(chipSel.value, dmgMult, cdMult, rngMult, statusBonus);
 
-      const placements = parsePlacements(currentUnit.placements);
-
-      // Booster mode (Crying Soul / Endo Plush)
-      const isBooster = !!(currentUnit.boosterType && Number.isFinite(currentUnit.baseBoostPct));
-      if (isBooster) {
-        // Base: 15% at level 1.
-        // Each level-up adds 0.075% (because 2% of shiny's +3.75% booster increase per level = 0.075%).
-        // At level 100: 15% + 99 * 0.075% = 22.425%
-        let boostPct = currentUnit.baseBoostPct + (lvl * 0.00075);
-
-        // Shiny boosters get +25% on their boost (15% -> 18.75%)
-        if (isShiny) boostPct *= 1.25;
-
-        // Target unit baseline per-placement POWER under the current options
-        const targetName = buffTargetSel.value;
-        const target = UNIT_DATA[targetName];
-
-        if (!target || target.attackType === "Booster" || !Number.isFinite(target.baseDamage) || !Number.isFinite(target.baseCooldown) || !Number.isFinite(target.baseRange)) {
-          calcPower.textContent = "-";
-          calcDamageLabel.textContent = "BOOST %";
-          calcDamage.textContent = fmt(boostPct * 100, 3) + "%";
-          calcCooldown.textContent = "-";
-          calcRange.textContent = "-";
-          calcNote.textContent = "Pick a valid buff target.";
-          return;
-        }
-
-        const targetDamage = target.baseDamage * dmgMult.value;
-        const targetCooldown = Math.max(0.05, target.baseCooldown * cdMult.value);
-        const targetRange = target.baseRange * rngMult.value;
-
-        const targetPerPlacementPower = ((targetDamage / targetCooldown) * targetRange / 100);
-        const addedPerPlacement = targetPerPlacementPower * boostPct;
-
-        calcDamageLabel.textContent = "BOOST %";
-        calcDamage.textContent = fmt(boostPct * 100, 3) + "%";
-
-        calcPower.textContent = fmt(addedPerPlacement, 3);
-        calcCooldown.textContent = "-";
-        calcRange.textContent = "-";
-        calcNote.textContent = `POWER shows added POWER per placement for ${targetName}.`;
-
-        return;
-      }
-
-      // Normal attacker mode
       if (!Number.isFinite(currentUnit.baseDamage)) {
         calcPower.textContent = "-";
         calcDamageLabel.textContent = "DAMAGE";
