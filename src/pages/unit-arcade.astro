@@ -317,7 +317,7 @@ const pageTitle = "Unit Arcade";
       return hit || "";
     }
 
-    // ✅ Image path changed to /images/units/
+    // Images live in public/images/units => /images/units/...
     function trySetImage(unitId) {
       unitImgLabel.textContent = "No image";
       unitImg.style.display = "none";
@@ -362,6 +362,10 @@ const pageTitle = "Unit Arcade";
       return Number.isFinite(n) && n > 0 ? n : 1;
     }
 
+    // Shiny rules (max)
+    // +30% DMG, +20% RNG, -10% CD
+    // plus future-facing bonuses (stored for later bleed/poison modeling):
+    // +25% boost, +20% bleed, +20% poison, +10% slow/stun/burn/mimic
     function applyShiny(isShiny, dmgMultObj, cdMultObj, rngMultObj, statusBonusObj) {
       if (!isShiny) return;
 
@@ -382,10 +386,12 @@ const pageTitle = "Unit Arcade";
       const k = key || "none";
       if (k === "none") return;
 
+      // simple max-level enchants
       if (k === "damage3") dmgMultObj.value *= 1.25;
       if (k === "range3") rngMultObj.value *= 1.30;
       if (k === "cooldown3") cdMultObj.value *= 0.85;
 
+      // complex enchants (DMG/RNG/CD applied now; status stored for later)
       if (k === "pizza_party") { dmgMultObj.value *= 1.30; rngMultObj.value *= 1.20; cdMultObj.value *= 0.90; }
       if (k === "withered") { dmgMultObj.value *= 1.35; rngMultObj.value *= 1.35; cdMultObj.value *= 1.05; statusBonusObj.bleed += 0.05; }
       if (k === "encased") { dmgMultObj.value *= 1.30; rngMultObj.value *= 1.20; cdMultObj.value *= 0.90; statusBonusObj.slow += 0.10; }
@@ -422,11 +428,35 @@ const pageTitle = "Unit Arcade";
       const cdMult = { value: 1 };
       const rngMult = { value: 1 };
 
-      const statusBonus = { boost: 0, bleed: 0, poison: 0, slow: 0, stun: 0, burn: 0, mimic: 0 };
+      // Status bonuses tracked for future bleed/poison modeling.
+      const statusBonus = {
+        boost: 0,
+        bleed: 0,
+        poison: 0,
+        slow: 0,
+        stun: 0,
+        burn: 0,
+        mimic: 0
+      };
 
-      // placeholder level scaling (swap later if needed)
-      dmgMult.value *= 1 + Math.max(0, level - 1) * 0.06;
+      // ✅ LEVEL SCALING: each level gives 2% of Shiny bonuses
+      // Shiny bonuses: +30% DMG, +20% RNG, -10% CD, +25% boost,
+      // +20% bleed, +20% poison, +10% slow/stun/burn/mimic
+      const lvl = Math.max(0, level - 1);
 
+      dmgMult.value *= 1 + lvl * 0.006;  // 2% of 30% = 0.6% per level
+      rngMult.value *= 1 + lvl * 0.004;  // 2% of 20% = 0.4% per level
+      cdMult.value  *= 1 - lvl * 0.002;  // 2% of 10% = 0.2% per level decrease
+
+      statusBonus.boost  += lvl * 0.005; // 2% of 25% = 0.5% per level
+      statusBonus.bleed  += lvl * 0.004; // 0.4% per level
+      statusBonus.poison += lvl * 0.004; // 0.4% per level
+      statusBonus.slow   += lvl * 0.002; // 0.2% per level
+      statusBonus.stun   += lvl * 0.002;
+      statusBonus.burn   += lvl * 0.002;
+      statusBonus.mimic  += lvl * 0.002;
+
+      // Apply shiny first (max bonuses), then enchant and chip
       applyShiny(isShiny, dmgMult, cdMult, rngMult, statusBonus);
       applyEnchant(enchantSel.value, dmgMult, cdMult, rngMult, statusBonus);
       applyChip(chipSel.value, dmgMult, cdMult, rngMult, statusBonus);
@@ -446,7 +476,7 @@ const pageTitle = "Unit Arcade";
       calcRange.textContent = Number.isFinite(range) ? fmt(range, 1) : "-";
 
       calcNote.textContent =
-        "Shiny: +30% DMG, +20% RNG, -10% CD. POWER = (DPS × RNG / 100) × placements. Bleed/Poison will be added once we define unit rules.";
+        "Levels add 2% of Shiny bonuses per level. POWER = (DPS × RNG / 100) × placements. Bleed/Poison will be added once we define unit rules.";
     }
 
     function loadUnitFromInput(value) {
