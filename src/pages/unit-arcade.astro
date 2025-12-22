@@ -133,7 +133,6 @@ const pageTitle = "Unit Arcade";
       "Lamp"
     ];
 
-    // Keep minimal until you populate real data
     const UNIT_DATA = {
       "Golden Bonnie": {
         rarity: "Mythic",
@@ -171,7 +170,6 @@ const pageTitle = "Unit Arcade";
     const obtainVal = document.getElementById("obtainVal");
     const abilityVal = document.getElementById("abilityVal");
 
-    // ----- SCROLL LOCK (this kills that right-side scrollbar) -----
     function lockScroll() {
       htmlEl.classList.add("ua-lock");
       bodyEl.classList.add("ua-lock");
@@ -183,24 +181,16 @@ const pageTitle = "Unit Arcade";
       rootEl.classList.remove("ua-lock");
     }
 
-    // Start on search-only (no scrolling)
     infoView.style.display = "none";
     searchView.style.display = "grid";
     lockScroll();
 
-    // ----- DROPDOWN CONTROL (inline display so it cannot get “stuck”) -----
-    function openMenu(menuEl) {
-      menuEl.style.display = "block";
-    }
-    function closeMenu(menuEl) {
-      menuEl.style.display = "none";
-    }
+    function openMenu(menuEl) { menuEl.style.display = "flex"; }
+    function closeMenu(menuEl) { menuEl.style.display = "none"; }
     function closeAllMenus() {
       closeMenu(unitDropdown);
       closeMenu(unitDropdownTop);
     }
-
-    // Ensure menus start closed
     closeAllMenus();
 
     function filterUnits(query) {
@@ -271,10 +261,8 @@ const pageTitle = "Unit Arcade";
         }
       });
 
-      // If they click inside the dropdown, don't instantly close
       menuEl.addEventListener("mousedown", (e) => e.preventDefault());
 
-      // Click-away to close
       document.addEventListener(
         "mousedown",
         (e) => {
@@ -291,7 +279,6 @@ const pageTitle = "Unit Arcade";
       const unitName = (name || "").trim();
       if (!UNIT_NAMES.includes(unitName)) return;
 
-      // Switch views
       searchView.style.display = "none";
       infoView.style.display = "block";
       unlockScroll();
@@ -318,7 +305,6 @@ const pageTitle = "Unit Arcade";
   </script>
 
   <style>
-    /* FULL BACKGROUND */
     :global(body) { background: transparent !important; }
     :global(body::before) {
       content: "";
@@ -339,7 +325,6 @@ const pageTitle = "Unit Arcade";
       pointer-events: none;
     }
 
-    /* HARD scroll lock that works even with layout wrappers */
     :global(html.ua-lock),
     :global(body.ua-lock) {
       height: 100% !important;
@@ -406,14 +391,13 @@ const pageTitle = "Unit Arcade";
       height: 52px;
     }
 
-    /* the “bar” is gone */
     .ua-footnote {
       margin: 12px 0 0;
       font-size: 0.85rem;
       opacity: 0.7;
     }
 
-    /* DROPDOWN: lined up, 10 items visible, scroll inside */
+    /* DROPDOWN FIX: force vertical list */
     .ua-dropdown {
       display: none;
       position: absolute;
@@ -427,7 +411,6 @@ const pageTitle = "Unit Arcade";
       background: rgba(5, 8, 15, 0.94);
       backdrop-filter: blur(10px);
 
-      /* 10 items max-ish */
       max-height: 420px;
       overflow-y: auto;
       overflow-x: hidden;
@@ -435,10 +418,17 @@ const pageTitle = "Unit Arcade";
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
 
       padding: 10px;
+
+      /* THIS is the key: children stack */
+      flex-direction: column;
+      gap: 8px;
     }
 
     .ua-ddItem {
-      width: 100%;
+      /* THIS is the other key: no inline chips */
+      display: block !important;
+      width: 100% !important;
+
       border-radius: 12px;
       border: 1px solid rgba(180, 210, 255, 0.10);
       background: rgba(255, 255, 255, 0.04);
@@ -451,9 +441,8 @@ const pageTitle = "Unit Arcade";
 
       text-align: center;
       padding: 12px 12px;
-      margin: 0;
+      margin: 0 !important;
     }
-    .ua-ddItem + .ua-ddItem { margin-top: 8px; }
 
     .ua-ddItem:hover {
       background: rgba(180, 210, 255, 0.10);
@@ -467,7 +456,7 @@ const pageTitle = "Unit Arcade";
       font-weight: 800;
     }
 
-    /* INFO VIEW (unchanged styling, but kept here so file is self contained) */
+    /* INFO VIEW */
     .ua-infoWrap { padding-bottom: 72px; }
     .ua-infoTitle { margin: 0 0 6px; font-size: 2.2rem; font-weight: 900; }
     .ua-infoSub { margin: 0 0 18px; opacity: 0.85; }
