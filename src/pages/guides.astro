@@ -10,7 +10,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <header class="guides-hero">
       <h1 class="guides-title">Info &amp; Guides</h1>
       <p class="guides-sub">
-        Reference tools and quick, clear explanations for mechanics
+        Reference tools and quick, clear explanations for mechanics. No fluff, just answers.
       </p>
     </header>
 
@@ -484,7 +484,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       pointer-events: none;
     }
 
-    /* FLUSH IMAGE FRAME */
+    /* FLUSH IMAGE FRAME (NO CROPPING) */
     .box-media{
       position: relative;
       border-radius: 18px;
@@ -504,8 +504,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       display: block;
       border-radius: 0;
       filter: none;
-      object-fit: cover;
+      object-fit: contain;          /* <-- changed from cover to contain */
       object-position: center;
+      background: rgba(0,0,0,.22);  /* makes letterboxing look intentional */
     }
 
     .media-soon-tag{
