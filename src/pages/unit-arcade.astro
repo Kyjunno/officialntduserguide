@@ -94,7 +94,6 @@ const pageTitle = "Unit Arcade";
 
           <div class="ua-divider"></div>
 
-          <!-- Ability box: no "DESCRIPTION" label anymore -->
           <div class="ua-wide">
             <div class="ua-wideK">ABILITY</div>
             <div id="abilityVal" class="ua-wideV">No abilities listed yet.</div>
@@ -110,9 +109,7 @@ const pageTitle = "Unit Arcade";
             <div class="ua-calcControls">
               <label class="ua-control">
                 <span class="ua-controlK">Level</span>
-                <select id="levelSel" class="ua-select">
-                  <!-- 1..100 injected by script -->
-                </select>
+                <select id="levelSel" class="ua-select"></select>
               </label>
 
               <label class="ua-control">
@@ -127,12 +124,19 @@ const pageTitle = "Unit Arcade";
                 <span class="ua-controlK">Enchant</span>
                 <select id="enchantSel" class="ua-select">
                   <option value="none">None</option>
-                  <option value="dmg10">DMG +10%</option>
-                  <option value="dmg20">DMG +20%</option>
-                  <option value="cd10">CD -10%</option>
-                  <option value="cd20">CD -20%</option>
-                  <option value="rng10">RNG +10%</option>
-                  <option value="rng20">RNG +20%</option>
+                  <option value="damage3">Damage 3 (Max): +25% DMG</option>
+                  <option value="range3">Range 3 (Max): +30% RNG</option>
+                  <option value="cooldown3">Cooldown 3 (Max): -15% CD</option>
+
+                  <option value="pizza_party">Pizza Party: +30% DMG, +20% RNG, -10% CD</option>
+                  <option value="withered">Withered: +35% DMG, +35% RNG, +5% CD, +5% Bleed</option>
+                  <option value="encased">Encased: +30% DMG, +20% RNG, -10% CD, +10% Slow</option>
+                  <option value="fractured">Fractured: +65% DMG, +25% RNG, +5% CD, +20% Poison, +5% Slow</option>
+                  <option value="clockworks">Clockworks: +35% DMG, +20% RNG, -25% CD, +20% Stun, +5% Burn</option>
+                  <option value="diminished">Diminished: +135% DMG, +50% RNG, +35% CD, +15% Slow, +15% Bleed</option>
+                  <option value="charlottes_offering">Charlotte&apos;s Offering: +65% DMG, +75% RNG, -10% CD, +20% Burn, +5% Slow</option>
+                  <option value="help_wanted">Help Wanted: +75% DMG, +35% RNG, -5% CD, +15% Poison, +10% Stun, +5% Burn</option>
+                  <option value="springlocked">Springlocked: +100% DMG, +35% RNG, -10% CD, +25% Stun, +15% Bleed</option>
                 </select>
               </label>
 
@@ -148,7 +152,6 @@ const pageTitle = "Unit Arcade";
               </label>
             </div>
 
-            <!-- Output boxes: centered text -->
             <div class="ua-calcGrid">
               <div class="ua-calcStat ua-out">
                 <div class="ua-calcK">POWER</div>
@@ -204,7 +207,6 @@ const pageTitle = "Unit Arcade";
       "Lamp"
     ];
 
-    // Minimal starter data. Expand as you add real unit stats.
     const UNIT_DATA = {
       "Bear5": {
         id: "bear5",
@@ -274,7 +276,6 @@ const pageTitle = "Unit Arcade";
     let currentUnitName = "";
     let currentUnit = null;
 
-    // Build level options 1..100
     (function initLevels() {
       const frag = document.createDocumentFragment();
       for (let i = 1; i <= 100; i++) {
@@ -310,7 +311,6 @@ const pageTitle = "Unit Arcade";
       const raw = (input || "").trim();
       if (!raw) return "";
       if (UNIT_NAMES.includes(raw)) return raw;
-
       const n = normalizeName(raw);
       const hit = UNIT_NAMES.find(u => normalizeName(u) === n);
       return hit || "";
@@ -360,6 +360,37 @@ const pageTitle = "Unit Arcade";
       return Number.isFinite(n) && n > 0 ? n : 1;
     }
 
+    function applyEnchant(key, dmgMultObj, cdMultObj, rngMultObj) {
+      const k = key || "none";
+
+      // Default: no changes
+      if (k === "none") return;
+
+      // Simple max-level enchants
+      if (k === "damage3") dmgMultObj.value *= 1.25;
+      if (k === "range3") rngMultObj.value *= 1.30;
+      if (k === "cooldown3") cdMultObj.value *= 0.85;
+
+      // Complex enchants
+      if (k === "pizza_party") { dmgMultObj.value *= 1.30; rngMultObj.value *= 1.20; cdMultObj.value *= 0.90; }
+      if (k === "withered") { dmgMultObj.value *= 1.35; rngMultObj.value *= 1.35; cdMultObj.value *= 1.05; }
+      if (k === "encased") { dmgMultObj.value *= 1.30; rngMultObj.value *= 1.20; cdMultObj.value *= 0.90; }
+      if (k === "fractured") { dmgMultObj.value *= 1.65; rngMultObj.value *= 1.25; cdMultObj.value *= 1.05; }
+      if (k === "clockworks") { dmgMultObj.value *= 1.35; rngMultObj.value *= 1.20; cdMultObj.value *= 0.75; }
+      if (k === "diminished") { dmgMultObj.value *= 2.35; rngMultObj.value *= 1.50; cdMultObj.value *= 1.35; }
+      if (k === "charlottes_offering") { dmgMultObj.value *= 1.65; rngMultObj.value *= 1.75; cdMultObj.value *= 0.90; }
+      if (k === "help_wanted") { dmgMultObj.value *= 1.75; rngMultObj.value *= 1.35; cdMultObj.value *= 0.95; }
+      if (k === "springlocked") { dmgMultObj.value *= 2.00; rngMultObj.value *= 1.35; cdMultObj.value *= 0.90; }
+    }
+
+    function applyChip(key, dmgMultObj, cdMultObj, rngMultObj) {
+      const k = key || "none";
+      if (k === "dmg15") dmgMultObj.value *= 1.15;
+      if (k === "dmg30") dmgMultObj.value *= 1.30;
+      if (k === "cd15") cdMultObj.value *= 0.85;
+      if (k === "rng15") rngMultObj.value *= 1.15;
+    }
+
     function computeAndRender() {
       if (!currentUnit || !Number.isFinite(currentUnit.baseDamage) || !Number.isFinite(currentUnit.baseCooldown)) {
         calcPower.textContent = "-";
@@ -373,39 +404,23 @@ const pageTitle = "Unit Arcade";
       const level = Number(levelSel.value || "1");
       const shiny = Number(shinySel.value || "0") === 1;
 
-      let dmgMult = 1;
-      let cdMult = 1;
-      let rngMult = 1;
+      const dmgMult = { value: 1 };
+      const cdMult = { value: 1 };
+      const rngMult = { value: 1 };
 
-      // Placeholder scaling (you’ll replace with real rules later)
-      dmgMult *= 1 + Math.max(0, level - 1) * 0.06;
-      if (shiny) dmgMult *= 1.15;
+      dmgMult.value *= 1 + Math.max(0, level - 1) * 0.06;
+      if (shiny) dmgMult.value *= 1.15;
 
-      function applyModifier(key) {
-        if (key === "dmg10") dmgMult *= 1.10;
-        if (key === "dmg20") dmgMult *= 1.20;
-        if (key === "cd10") cdMult *= 0.90;
-        if (key === "cd20") cdMult *= 0.80;
-        if (key === "rng10") rngMult *= 1.10;
-        if (key === "rng20") rngMult *= 1.20;
+      applyEnchant(enchantSel.value, dmgMult, cdMult, rngMult);
+      applyChip(chipSel.value, dmgMult, cdMult, rngMult);
 
-        if (key === "dmg15") dmgMult *= 1.15;
-        if (key === "dmg30") dmgMult *= 1.30;
-        if (key === "cd15") cdMult *= 0.85;
-        if (key === "rng15") rngMult *= 1.15;
-      }
-
-      applyModifier(enchantSel.value);
-      applyModifier(chipSel.value);
-
-      const damage = currentUnit.baseDamage * dmgMult;
-      const cooldown = Math.max(0.05, currentUnit.baseCooldown * cdMult);
-      const range = (Number.isFinite(currentUnit.baseRange) ? currentUnit.baseRange : 0) * rngMult;
+      const damage = currentUnit.baseDamage * dmgMult.value;
+      const cooldown = Math.max(0.05, currentUnit.baseCooldown * cdMult.value);
+      const range = (Number.isFinite(currentUnit.baseRange) ? currentUnit.baseRange : 0) * rngMult.value;
 
       const dps = damage / cooldown;
       const placements = parsePlacements(currentUnit.placements);
 
-      // POWER = (DPS * RANGE / 100) * placements
       const power = (dps * range / 100) * placements;
 
       calcPower.textContent = fmt(power, 2);
@@ -413,7 +428,7 @@ const pageTitle = "Unit Arcade";
       calcCooldown.textContent = fmt(cooldown, 3);
       calcRange.textContent = Number.isFinite(range) ? fmt(range, 1) : "-";
 
-      calcNote.textContent = "These formulas are placeholders. Once you paste your real unit-machine rules, we swap them in.";
+      calcNote.textContent = "POWER = (DPS × RANGE / 100) × placements. Status effects from enchants are not modeled yet.";
     }
 
     function loadUnitFromInput(value) {
@@ -442,7 +457,6 @@ const pageTitle = "Unit Arcade";
       placementsVal.textContent = data.placements || "Not set";
       obtainVal.textContent = data.obtainability || "Not set yet.";
 
-      // Ability format: "Name: Description"
       const aName = (data.abilityName || "").trim();
       const aDesc = (data.abilityDesc || "").trim();
       if (aName && aDesc) abilityVal.textContent = `${aName}: ${aDesc}`;
@@ -765,7 +779,6 @@ const pageTitle = "Unit Arcade";
       padding: 12px;
     }
 
-    /* Output boxes centered */
     .ua-out { text-align: center; }
 
     .ua-calcK {
