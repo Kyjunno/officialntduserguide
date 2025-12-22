@@ -94,7 +94,6 @@ const pageTitle = "Unit Arcade";
 
           <div class="ua-divider"></div>
 
-          <!-- Ability box: single label, value formatted "Name: Description" -->
           <div class="ua-wide">
             <div class="ua-wideK">ABILITY</div>
             <div id="abilityVal" class="ua-wideV">No abilities listed yet.</div>
@@ -153,7 +152,6 @@ const pageTitle = "Unit Arcade";
               </label>
             </div>
 
-            <!-- Output boxes: centered text -->
             <div class="ua-calcGrid">
               <div class="ua-calcStat ua-out">
                 <div class="ua-calcK">POWER</div>
@@ -209,21 +207,19 @@ const pageTitle = "Unit Arcade";
       "Lamp"
     ];
 
-    // Minimal starter data. Expand as you add real unit stats.
-    // For later bleed/poison math, we'll add per-unit fields once you describe them.
     const UNIT_DATA = {
       "Bear5": {
         id: "bear5",
-        rarity: "Uncommon",
-        attackType: "Single",
-        placementPrice: "Not set",
-        placements: "6",
-        obtainability: "Not set yet.",
-        abilityName: "NO PASSIVE",
-        abilityDesc: "This unit has no active passive :(",
-        baseDamage: 35.35,
-        baseCooldown: 2.5,
-        baseRange: 20.0
+        rarity: "Other",
+        attackType: "AOE",
+        placementPrice: "$555",
+        placements: "1",
+        obtainability: "Bear5 presents.",
+        abilityName: "Mimic",
+        abilityDesc: "Mimics the highest DPS on your team with a 1.25x stat modifier.",
+        baseDamage: 555,
+        baseCooldown: 0.5,
+        baseRange: 20
       },
       "Golden Bonnie": {
         id: "golden-bonnie",
@@ -280,7 +276,6 @@ const pageTitle = "Unit Arcade";
     let currentUnitName = "";
     let currentUnit = null;
 
-    // Build level options 1..100
     (function initLevels() {
       const frag = document.createDocumentFragment();
       for (let i = 1; i <= 100; i++) {
@@ -312,7 +307,6 @@ const pageTitle = "Unit Arcade";
       return (s || "").trim().toLowerCase();
     }
 
-    // exact match or case-insensitive exact match
     function resolveUnitName(input) {
       const raw = (input || "").trim();
       if (!raw) return "";
@@ -323,6 +317,7 @@ const pageTitle = "Unit Arcade";
       return hit || "";
     }
 
+    // ✅ Image path changed to /images/units/
     function trySetImage(unitId) {
       unitImgLabel.textContent = "No image";
       unitImg.style.display = "none";
@@ -332,9 +327,9 @@ const pageTitle = "Unit Arcade";
       if (!unitId) return;
 
       const candidates = [
-        `/units/${unitId}.png`,
-        `/units/${unitId}.webp`,
-        `/units/${unitId}.jpg`
+        `/images/units/${unitId}.png`,
+        `/images/units/${unitId}.webp`,
+        `/images/units/${unitId}.jpg`
       ];
 
       let idx = 0;
@@ -367,10 +362,6 @@ const pageTitle = "Unit Arcade";
       return Number.isFinite(n) && n > 0 ? n : 1;
     }
 
-    // Shiny rules (max)
-    // +30% DMG, +20% RNG, -10% CD
-    // plus future-facing bonuses (we store these for later bleed/poison modeling):
-    // +25% boost, +20% bleed, +20% poison, +10% slow/stun/burn/mimic
     function applyShiny(isShiny, dmgMultObj, cdMultObj, rngMultObj, statusBonusObj) {
       if (!isShiny) return;
 
@@ -391,12 +382,10 @@ const pageTitle = "Unit Arcade";
       const k = key || "none";
       if (k === "none") return;
 
-      // simple max-level enchants
       if (k === "damage3") dmgMultObj.value *= 1.25;
       if (k === "range3") rngMultObj.value *= 1.30;
       if (k === "cooldown3") cdMultObj.value *= 0.85;
 
-      // complex enchants (DMG/RNG/CD applied now; status stored for later)
       if (k === "pizza_party") { dmgMultObj.value *= 1.30; rngMultObj.value *= 1.20; cdMultObj.value *= 0.90; }
       if (k === "withered") { dmgMultObj.value *= 1.35; rngMultObj.value *= 1.35; cdMultObj.value *= 1.05; statusBonusObj.bleed += 0.05; }
       if (k === "encased") { dmgMultObj.value *= 1.30; rngMultObj.value *= 1.20; cdMultObj.value *= 0.90; statusBonusObj.slow += 0.10; }
@@ -433,21 +422,11 @@ const pageTitle = "Unit Arcade";
       const cdMult = { value: 1 };
       const rngMult = { value: 1 };
 
-      // Status bonuses are tracked for future bleed/poison modeling.
-      const statusBonus = {
-        boost: 0,
-        bleed: 0,
-        poison: 0,
-        slow: 0,
-        stun: 0,
-        burn: 0,
-        mimic: 0
-      };
+      const statusBonus = { boost: 0, bleed: 0, poison: 0, slow: 0, stun: 0, burn: 0, mimic: 0 };
 
-      // Placeholder level scaling (replace with your real unit-machine rules later)
+      // placeholder level scaling (swap later if needed)
       dmgMult.value *= 1 + Math.max(0, level - 1) * 0.06;
 
-      // Apply shiny (new rules) first, then enchant and chip
       applyShiny(isShiny, dmgMult, cdMult, rngMult, statusBonus);
       applyEnchant(enchantSel.value, dmgMult, cdMult, rngMult, statusBonus);
       applyChip(chipSel.value, dmgMult, cdMult, rngMult, statusBonus);
@@ -459,8 +438,6 @@ const pageTitle = "Unit Arcade";
       const dps = damage / cooldown;
       const placements = parsePlacements(currentUnit.placements);
 
-      // POWER = (DPS * RANGE / 100) * placements
-      // Note: bleed/poison modeling will be added once you define per-unit rules.
       const power = (dps * range / 100) * placements;
 
       calcPower.textContent = fmt(power, 2);
@@ -530,7 +507,6 @@ const pageTitle = "Unit Arcade";
   <style>
     :global(body) { background: transparent !important; }
 
-    /* Full-page background with blur */
     :global(body::before) {
       content: "";
       position: fixed;
@@ -553,7 +529,6 @@ const pageTitle = "Unit Arcade";
       pointer-events: none;
     }
 
-    /* No scroll until a unit is selected */
     :global(html.ua-lock),
     :global(body.ua-lock) {
       height: 100% !important;
@@ -652,7 +627,6 @@ const pageTitle = "Unit Arcade";
       opacity: 0.75;
     }
 
-    /* INFO VIEW */
     .ua-infoWrap { padding-bottom: 72px; }
     .ua-infoTitle { margin: 0 0 6px; font-size: 2.2rem; font-weight: 900; }
     .ua-infoSub { margin: 0 0 18px; opacity: 0.85; }
@@ -764,7 +738,6 @@ const pageTitle = "Unit Arcade";
 
     .ua-wideV { font-weight: 700; opacity: 0.9; }
 
-    /* CALCULATOR */
     .ua-calc { margin-top: 20px; }
 
     .ua-calcTitle {
@@ -824,7 +797,6 @@ const pageTitle = "Unit Arcade";
       padding: 12px;
     }
 
-    /* Output boxes centered */
     .ua-out { text-align: center; }
 
     .ua-calcK {
