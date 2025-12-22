@@ -1,517 +1,512 @@
 ---
-import Layout from "../layouts/Layout.astro";
-
 const title = "Unit Arcade";
 const description = "A tiny arcade mini-game for your unit wiki.";
 ---
 
-<Layout title={title} description={description}>
-  <main class="wrap">
-    <header class="top">
-      <h1>Unit Arcade</h1>
-      <p>
-        Move with A/D or ←/→. Dodge the falling blocks. Press Space to pause.
-      </p>
-    </header>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
 
-    <section class="panel">
-      <div class="hud">
-        <div class="hud-left">
-          <div class="stat">
-            <span class="label">Score</span>
-            <span id="score" class="value">0</span>
-          </div>
-          <div class="stat">
-            <span class="label">Best</span>
-            <span id="best" class="value">0</span>
-          </div>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg0: #0b0d12;
+        --bg1: #0f1320;
+        --card: rgba(255,255,255,0.05);
+        --line: rgba(255,255,255,0.12);
+        --text: rgba(255,255,255,0.92);
+        --muted: rgba(255,255,255,0.72);
+      }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(900px 520px at 25% 20%, rgba(120, 200, 255, 0.14), transparent 60%),
+          radial-gradient(700px 420px at 80% 70%, rgba(255, 120, 200, 0.10), transparent 60%),
+          linear-gradient(180deg, var(--bg0), var(--bg1));
+        min-height: 100vh;
+      }
+
+      a { color: inherit; }
+
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 16px 60px;
+      }
+
+      .top {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+
+      .top h1 {
+        font-size: clamp(28px, 3vw, 44px);
+        margin: 0;
+        letter-spacing: 0.2px;
+      }
+
+      .top p {
+        margin: 6px 0 0;
+        opacity: 0.85;
+        line-height: 1.4;
+        max-width: 62ch;
+      }
+
+      .nav {
+        display: flex;
+        gap: 10px;
+        opacity: 0.9;
+        font-weight: 700;
+      }
+
+      .nav a {
+        text-decoration: none;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.04);
+        padding: 9px 12px;
+        border-radius: 12px;
+        transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+      }
+
+      .nav a:hover {
+        transform: translateY(-1px);
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(255,255,255,0.22);
+      }
+
+      .panel {
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 18px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.03);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      }
+
+      .hud {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        background: rgba(0,0,0,0.25);
+        backdrop-filter: blur(8px);
+      }
+
+      .hud-left {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .stat {
+        display: grid;
+        gap: 2px;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.04);
+        min-width: 92px;
+      }
+
+      .label { font-size: 12px; opacity: 0.75; }
+      .value { font-size: 18px; font-weight: 800; letter-spacing: 0.2px; }
+
+      .hud-right { display: flex; gap: 10px; }
+
+      .btn {
+        appearance: none;
+        border: 1px solid rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.06);
+        color: inherit;
+        padding: 9px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        background: rgba(255,255,255,0.10);
+        border-color: rgba(255,255,255,0.26);
+      }
+
+      .btn:active { transform: translateY(0px); }
+
+      .btn.primary {
+        border-color: rgba(120, 200, 255, 0.5);
+        background: rgba(120, 200, 255, 0.16);
+      }
+
+      .stage {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background:
+          linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.35));
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        outline: none;
+      }
+
+      .overlay {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: rgba(0,0,0,0.45);
+        backdrop-filter: blur(7px);
+      }
+
+      .overlay.hidden { display: none; }
+
+      .overlay-card {
+        width: min(520px, 92%);
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(20, 20, 28, 0.80);
+        box-shadow: 0 18px 60px rgba(0,0,0,0.5);
+        padding: 18px 18px 14px;
+      }
+
+      .overlay-card h2 { margin: 0 0 6px; font-size: 22px; }
+      .overlay-card p { margin: 0 0 12px; opacity: 0.88; line-height: 1.4; }
+
+      .overlay-actions { display: flex; gap: 10px; margin-top: 10px; }
+
+      .overlay-hint { margin-top: 14px; font-size: 12px; opacity: 0.65; }
+    </style>
+  </head>
+
+  <body>
+    <main class="wrap">
+      <header class="top">
+        <div>
+          <h1>Unit Arcade</h1>
+          <p>
+            Move with A/D or ←/→. Dodge the falling blocks. Press Space to pause.
+          </p>
         </div>
 
-        <div class="hud-right">
-          <button id="btnStart" class="btn primary" type="button">Start</button>
-          <button id="btnReset" class="btn" type="button">Reset</button>
-        </div>
-      </div>
+        <nav class="nav" aria-label="Site">
+          <a href="/">Home</a>
+          <a href="/units">Units</a>
+        </nav>
+      </header>
 
-      <div class="stage">
-        <canvas id="arcade" width="960" height="540" aria-label="Unit Arcade game canvas"></canvas>
-
-        <div id="overlay" class="overlay">
-          <div class="overlay-card">
-            <h2 id="overlayTitle">Ready?</h2>
-            <p id="overlayText">Hit Start to play.</p>
-            <div class="overlay-actions">
-              <button id="btnOverlayStart" class="btn primary" type="button">Start</button>
+      <section class="panel">
+        <div class="hud">
+          <div class="hud-left">
+            <div class="stat">
+              <span class="label">Score</span>
+              <span id="score" class="value">0</span>
             </div>
-            <p class="overlay-hint">Tip: try to survive long enough to “earn” a new unit unlock screen later.</p>
+            <div class="stat">
+              <span class="label">Best</span>
+              <span id="best" class="value">0</span>
+            </div>
+          </div>
+
+          <div class="hud-right">
+            <button id="btnStart" class="btn primary" type="button">Start</button>
+            <button id="btnReset" class="btn" type="button">Reset</button>
           </div>
         </div>
-      </div>
-    </section>
-  </main>
 
-  <style>
-    .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 28px 16px 60px;
-    }
+        <div class="stage">
+          <canvas id="arcade" width="960" height="540" aria-label="Unit Arcade game canvas"></canvas>
 
-    .top h1 {
-      font-size: clamp(28px, 3vw, 44px);
-      margin: 0 0 6px;
-      letter-spacing: 0.2px;
-    }
+          <div id="overlay" class="overlay">
+            <div class="overlay-card">
+              <h2 id="overlayTitle">Ready?</h2>
+              <p id="overlayText">Hit Start to play.</p>
+              <div class="overlay-actions">
+                <button id="btnOverlayStart" class="btn primary" type="button">Start</button>
+              </div>
+              <p class="overlay-hint">Tip: later you can tie this into unit unlocks or lore drops.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
 
-    .top p {
-      margin: 0 0 18px;
-      opacity: 0.85;
-      line-height: 1.4;
-    }
+    <script>
+      const canvas = document.getElementById("arcade");
+      const scoreEl = document.getElementById("score");
+      const bestEl = document.getElementById("best");
+      const overlay = document.getElementById("overlay");
+      const overlayTitle = document.getElementById("overlayTitle");
+      const overlayText = document.getElementById("overlayText");
+      const btnStart = document.getElementById("btnStart");
+      const btnReset = document.getElementById("btnReset");
+      const btnOverlayStart = document.getElementById("btnOverlayStart");
 
-    .panel {
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 18px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.03);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
-    }
+      if (!(canvas instanceof HTMLCanvasElement)) throw new Error("Canvas #arcade not found.");
 
-    .hud {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: rgba(0,0,0,0.25);
-      backdrop-filter: blur(8px);
-    }
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("2D context not available.");
 
-    .hud-left {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .stat {
-      display: grid;
-      gap: 2px;
-      padding: 8px 10px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.04);
-      min-width: 92px;
-    }
-
-    .label {
-      font-size: 12px;
-      opacity: 0.75;
-    }
-
-    .value {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-    }
-
-    .hud-right {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn {
-      appearance: none;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.06);
-      color: inherit;
-      padding: 9px 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      background: rgba(255,255,255,0.10);
-      border-color: rgba(255,255,255,0.26);
-    }
-
-    .btn:active {
-      transform: translateY(0px);
-    }
-
-    .btn.primary {
-      border-color: rgba(120, 200, 255, 0.5);
-      background: rgba(120, 200, 255, 0.16);
-    }
-
-    .stage {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background:
-        radial-gradient(900px 420px at 30% 30%, rgba(120, 200, 255, 0.14), transparent 60%),
-        radial-gradient(700px 380px at 80% 70%, rgba(255, 120, 200, 0.10), transparent 60%),
-        linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.35));
-    }
-
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      outline: none;
-    }
-
-    .overlay {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      background: rgba(0,0,0,0.45);
-      backdrop-filter: blur(7px);
-    }
-
-    .overlay.hidden {
-      display: none;
-    }
-
-    .overlay-card {
-      width: min(520px, 92%);
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(20, 20, 28, 0.80);
-      box-shadow: 0 18px 60px rgba(0,0,0,0.5);
-      padding: 18px 18px 14px;
-    }
-
-    .overlay-card h2 {
-      margin: 0 0 6px;
-      font-size: 22px;
-    }
-
-    .overlay-card p {
-      margin: 0 0 12px;
-      opacity: 0.88;
-      line-height: 1.4;
-    }
-
-    .overlay-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .overlay-hint {
-      margin-top: 14px;
-      font-size: 12px;
-      opacity: 0.65;
-    }
-  </style>
-
-  <script>
-    // This entire script runs in the browser only.
-    // No TypeScript syntax here, so Astro/Vite won't choke during build.
-
-    const canvas = document.getElementById("arcade");
-    const scoreEl = document.getElementById("score");
-    const bestEl = document.getElementById("best");
-    const overlay = document.getElementById("overlay");
-    const overlayTitle = document.getElementById("overlayTitle");
-    const overlayText = document.getElementById("overlayText");
-    const btnStart = document.getElementById("btnStart");
-    const btnReset = document.getElementById("btnReset");
-    const btnOverlayStart = document.getElementById("btnOverlayStart");
-
-    if (!(canvas instanceof HTMLCanvasElement)) {
-      throw new Error("Canvas #arcade not found.");
-    }
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) throw new Error("2D context not available.");
-
-    // HiDPI handling so it stays crisp.
-    function resizeCanvasToDisplaySize() {
-      const rect = canvas.getBoundingClientRect();
-      const dpr = Math.max(1, window.devicePixelRatio || 1);
-
-      const w = Math.round(rect.width * dpr);
-      const h = Math.round(rect.height * dpr);
-
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w;
-        canvas.height = h;
-      }
-    }
-
-    const storageKey = "unitArcadeBestScore";
-    const bestScoreStored = Number(localStorage.getItem(storageKey) || "0");
-    let bestScore = Number.isFinite(bestScoreStored) ? bestScoreStored : 0;
-    bestEl.textContent = String(bestScore);
-
-    const keys = new Set();
-
-    window.addEventListener("keydown", (e) => {
-      if (["ArrowLeft", "ArrowRight", "a", "d", "A", "D", " "].includes(e.key)) {
-        e.preventDefault();
-      }
-      keys.add(e.key);
-
-      if (e.key === " ") togglePause();
-    });
-
-    window.addEventListener("keyup", (e) => keys.delete(e.key));
-    window.addEventListener("resize", resizeCanvasToDisplaySize);
-
-    const rng = (min, max) => min + Math.random() * (max - min);
-
-    const state = {
-      running: false,
-      paused: false,
-      time: 0,
-      score: 0,
-      lastSpawn: 0,
-      spawnEvery: 0.65,
-      speed: 260,
-      player: { x: 0.5, y: 0.86, w: 0.06, h: 0.06, vx: 0 },
-      blocks: []
-    };
-
-    function resetGame() {
-      state.running = false;
-      state.paused = false;
-      state.time = 0;
-      state.score = 0;
-      state.lastSpawn = 0;
-      state.spawnEvery = 0.65;
-      state.speed = 260;
-      state.blocks = [];
-      state.player.x = 0.5;
-      state.player.vx = 0;
-
-      scoreEl.textContent = "0";
-      showOverlay("Ready?", "Hit Start to play.");
-      drawFrame(0);
-    }
-
-    function startGame() {
-      state.running = true;
-      state.paused = false;
-      hideOverlay();
-    }
-
-    function togglePause() {
-      if (!state.running) return;
-      state.paused = !state.paused;
-
-      if (state.paused) {
-        showOverlay("Paused", "Press Space to resume.");
-      } else {
-        hideOverlay();
-      }
-    }
-
-    function showOverlay(title, text) {
-      overlayTitle.textContent = title;
-      overlayText.textContent = text;
-      overlay.classList.remove("hidden");
-    }
-
-    function hideOverlay() {
-      overlay.classList.add("hidden");
-    }
-
-    function endGame() {
-      state.running = false;
-
-      if (state.score > bestScore) {
-        bestScore = state.score;
-        bestEl.textContent = String(bestScore);
-        localStorage.setItem(storageKey, String(bestScore));
-      }
-
-      showOverlay("Game Over", "Hit Start to try again.");
-    }
-
-    function spawnBlock() {
-      // Blocks are in normalized coordinates (0..1), then mapped to pixels each frame.
-      const w = rng(0.035, 0.09);
-      const h = rng(0.04, 0.12);
-      const x = rng(w * 0.6, 1 - w * 0.6);
-      const y = -h;
-
-      state.blocks.push({
-        x,
-        y,
-        w,
-        h,
-        vy: rng(0.22, 0.45) // normalized speed factor
-      });
-    }
-
-    function intersects(a, b) {
-      return !(
-        a.x + a.w < b.x ||
-        a.x > b.x + b.w ||
-        a.y + a.h < b.y ||
-        a.y > b.y + b.h
-      );
-    }
-
-    function update(dt) {
-      if (!state.running || state.paused) return;
-
-      state.time += dt;
-
-      // Difficulty ramps up over time.
-      state.spawnEvery = Math.max(0.28, 0.65 - state.time * 0.01);
-      state.speed = Math.min(520, 260 + state.time * 7);
-
-      // Player movement (normalized coordinate space).
-      const left = keys.has("ArrowLeft") || keys.has("a") || keys.has("A");
-      const right = keys.has("ArrowRight") || keys.has("d") || keys.has("D");
-
-      const accel = 3.2;
-      const maxV = 1.2;
-
-      if (left) state.player.vx -= accel * dt;
-      if (right) state.player.vx += accel * dt;
-      if (!left && !right) state.player.vx *= Math.pow(0.0008, dt);
-
-      state.player.vx = Math.max(-maxV, Math.min(maxV, state.player.vx));
-      state.player.x += state.player.vx * dt;
-
-      const halfW = state.player.w * 0.5;
-      state.player.x = Math.max(halfW, Math.min(1 - halfW, state.player.x));
-
-      // Spawn blocks.
-      if (state.time - state.lastSpawn > state.spawnEvery) {
-        state.lastSpawn = state.time;
-        spawnBlock();
-      }
-
-      // Move blocks and check collision.
-      const playerRect = {
-        x: state.player.x - state.player.w / 2,
-        y: state.player.y - state.player.h / 2,
-        w: state.player.w,
-        h: state.player.h
-      };
-
-      for (const block of state.blocks) {
-        block.y += block.vy * dt * (state.speed / 260);
-
-        const blockRect = { x: block.x - block.w / 2, y: block.y - block.h / 2, w: block.w, h: block.h };
-        if (intersects(playerRect, blockRect)) {
-          endGame();
-          return;
+      function resizeCanvasToDisplaySize() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        const w = Math.round(rect.width * dpr);
+        const h = Math.round(rect.height * dpr);
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w;
+          canvas.height = h;
         }
       }
 
-      // Remove offscreen blocks, increment score.
-      const before = state.blocks.length;
-      state.blocks = state.blocks.filter(b => b.y - b.h / 2 < 1.15);
-      const removed = before - state.blocks.length;
+      const storageKey = "unitArcadeBestScore";
+      const bestScoreStored = Number(localStorage.getItem(storageKey) || "0");
+      let bestScore = Number.isFinite(bestScoreStored) ? bestScoreStored : 0;
+      bestEl.textContent = String(bestScore);
 
-      if (removed > 0) {
-        state.score += removed;
-        scoreEl.textContent = String(state.score);
+      const keys = new Set();
+
+      window.addEventListener("keydown", (e) => {
+        if (["ArrowLeft", "ArrowRight", "a", "d", "A", "D", " "].includes(e.key)) e.preventDefault();
+        keys.add(e.key);
+        if (e.key === " ") togglePause();
+      });
+
+      window.addEventListener("keyup", (e) => keys.delete(e.key));
+      window.addEventListener("resize", resizeCanvasToDisplaySize);
+
+      const rng = (min, max) => min + Math.random() * (max - min);
+
+      const state = {
+        running: false,
+        paused: false,
+        time: 0,
+        score: 0,
+        lastSpawn: 0,
+        spawnEvery: 0.65,
+        speed: 260,
+        player: { x: 0.5, y: 0.86, w: 0.06, h: 0.06, vx: 0 },
+        blocks: []
+      };
+
+      function resetGame() {
+        state.running = false;
+        state.paused = false;
+        state.time = 0;
+        state.score = 0;
+        state.lastSpawn = 0;
+        state.spawnEvery = 0.65;
+        state.speed = 260;
+        state.blocks = [];
+        state.player.x = 0.5;
+        state.player.vx = 0;
+
+        scoreEl.textContent = "0";
+        showOverlay("Ready?", "Hit Start to play.");
+        drawFrame();
       }
-    }
 
-    function drawFrame() {
-      resizeCanvasToDisplaySize();
-
-      const w = canvas.width;
-      const h = canvas.height;
-
-      // Background
-      ctx.clearRect(0, 0, w, h);
-
-      // Soft scanline vibe
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = "rgba(0,0,0,0.25)";
-      ctx.fillRect(0, 0, w, h);
-
-      // Grid
-      ctx.globalAlpha = 0.35;
-      ctx.strokeStyle = "rgba(255,255,255,0.12)";
-      ctx.lineWidth = 1;
-
-      const step = Math.max(28, Math.floor(w / 22));
-      for (let x = 0; x <= w; x += step) {
-        ctx.beginPath();
-        ctx.moveTo(x + 0.5, 0);
-        ctx.lineTo(x + 0.5, h);
-        ctx.stroke();
-      }
-      for (let y = 0; y <= h; y += step) {
-        ctx.beginPath();
-        ctx.moveTo(0, y + 0.5);
-        ctx.lineTo(w, y + 0.5);
-        ctx.stroke();
+      function startGame() {
+        state.running = true;
+        state.paused = false;
+        hideOverlay();
       }
 
-      // Convert normalized coords to pixels
-      const px = (nx) => nx * w;
-      const py = (ny) => ny * h;
+      function togglePause() {
+        if (!state.running) return;
+        state.paused = !state.paused;
+        if (state.paused) showOverlay("Paused", "Press Space to resume.");
+        else hideOverlay();
+      }
 
-      // Blocks
-      ctx.globalAlpha = 1;
-      for (const b of state.blocks) {
-        const bw = px(b.w);
-        const bh = py(b.h);
-        const bx = px(b.x) - bw / 2;
-        const by = py(b.y) - bh / 2;
+      function showOverlay(title, text) {
+        overlayTitle.textContent = title;
+        overlayText.textContent = text;
+        overlay.classList.remove("hidden");
+      }
 
-        ctx.fillStyle = "rgba(255, 110, 180, 0.90)";
-        ctx.fillRect(bx, by, bw, bh);
+      function hideOverlay() {
+        overlay.classList.add("hidden");
+      }
 
-        ctx.strokeStyle = "rgba(255,255,255,0.35)";
+      function endGame() {
+        state.running = false;
+
+        if (state.score > bestScore) {
+          bestScore = state.score;
+          bestEl.textContent = String(bestScore);
+          localStorage.setItem(storageKey, String(bestScore));
+        }
+
+        showOverlay("Game Over", "Hit Start to try again.");
+      }
+
+      function spawnBlock() {
+        const w = rng(0.035, 0.09);
+        const h = rng(0.04, 0.12);
+        const x = rng(w * 0.6, 1 - w * 0.6);
+        const y = -h;
+
+        state.blocks.push({ x, y, w, h, vy: rng(0.22, 0.45) });
+      }
+
+      function intersects(a, b) {
+        return !(a.x + a.w < b.x || a.x > b.x + b.w || a.y + a.h < b.y || a.y > b.y + b.h);
+      }
+
+      function update(dt) {
+        if (!state.running || state.paused) return;
+
+        state.time += dt;
+
+        state.spawnEvery = Math.max(0.28, 0.65 - state.time * 0.01);
+        state.speed = Math.min(520, 260 + state.time * 7);
+
+        const left = keys.has("ArrowLeft") || keys.has("a") || keys.has("A");
+        const right = keys.has("ArrowRight") || keys.has("d") || keys.has("D");
+
+        const accel = 3.2;
+        const maxV = 1.2;
+
+        if (left) state.player.vx -= accel * dt;
+        if (right) state.player.vx += accel * dt;
+        if (!left && !right) state.player.vx *= Math.pow(0.0008, dt);
+
+        state.player.vx = Math.max(-maxV, Math.min(maxV, state.player.vx));
+        state.player.x += state.player.vx * dt;
+
+        const halfW = state.player.w * 0.5;
+        state.player.x = Math.max(halfW, Math.min(1 - halfW, state.player.x));
+
+        if (state.time - state.lastSpawn > state.spawnEvery) {
+          state.lastSpawn = state.time;
+          spawnBlock();
+        }
+
+        const playerRect = {
+          x: state.player.x - state.player.w / 2,
+          y: state.player.y - state.player.h / 2,
+          w: state.player.w,
+          h: state.player.h
+        };
+
+        for (const block of state.blocks) {
+          block.y += block.vy * dt * (state.speed / 260);
+          const blockRect = { x: block.x - block.w / 2, y: block.y - block.h / 2, w: block.w, h: block.h };
+          if (intersects(playerRect, blockRect)) {
+            endGame();
+            return;
+          }
+        }
+
+        const before = state.blocks.length;
+        state.blocks = state.blocks.filter(b => b.y - b.h / 2 < 1.15);
+        const removed = before - state.blocks.length;
+
+        if (removed > 0) {
+          state.score += removed;
+          scoreEl.textContent = String(state.score);
+        }
+      }
+
+      function drawFrame() {
+        resizeCanvasToDisplaySize();
+
+        const w = canvas.width;
+        const h = canvas.height;
+
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "rgba(0,0,0,0.25)";
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.globalAlpha = 0.35;
+        ctx.strokeStyle = "rgba(255,255,255,0.12)";
+        ctx.lineWidth = 1;
+
+        const step = Math.max(28, Math.floor(w / 22));
+        for (let x = 0; x <= w; x += step) {
+          ctx.beginPath();
+          ctx.moveTo(x + 0.5, 0);
+          ctx.lineTo(x + 0.5, h);
+          ctx.stroke();
+        }
+        for (let y = 0; y <= h; y += step) {
+          ctx.beginPath();
+          ctx.moveTo(0, y + 0.5);
+          ctx.lineTo(w, y + 0.5);
+          ctx.stroke();
+        }
+
+        const px = (nx) => nx * w;
+        const py = (ny) => ny * h;
+
+        for (const b of state.blocks) {
+          const bw = px(b.w);
+          const bh = py(b.h);
+          const bx = px(b.x) - bw / 2;
+          const by = py(b.y) - bh / 2;
+
+          ctx.fillStyle = "rgba(255, 110, 180, 0.90)";
+          ctx.fillRect(bx, by, bw, bh);
+
+          ctx.strokeStyle = "rgba(255,255,255,0.35)";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(bx, by, bw, bh);
+        }
+
+        const p = state.player;
+        const pw = px(p.w);
+        const ph = py(p.h);
+        const px0 = px(p.x) - pw / 2;
+        const py0 = py(p.y) - ph / 2;
+
+        ctx.fillStyle = "rgba(120, 200, 255, 0.95)";
+        ctx.fillRect(px0, py0, pw, ph);
+
+        ctx.strokeStyle = "rgba(255,255,255,0.45)";
         ctx.lineWidth = 2;
-        ctx.strokeRect(bx, by, bw, bh);
+        ctx.strokeRect(px0, py0, pw, ph);
+
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = "rgba(255,255,255,0.25)";
+        ctx.fillRect(px0 + pw * 0.15, py0 + ph, pw * 0.7, ph * 0.25);
+        ctx.globalAlpha = 1;
       }
 
-      // Player
-      const p = state.player;
-      const pw = px(p.w);
-      const ph = py(p.h);
-      const px0 = px(p.x) - pw / 2;
-      const py0 = py(p.y) - ph / 2;
+      let last = performance.now();
+      function loop(now) {
+        const dt = Math.min(0.033, (now - last) / 1000);
+        last = now;
 
-      ctx.fillStyle = "rgba(120, 200, 255, 0.95)";
-      ctx.fillRect(px0, py0, pw, ph);
+        update(dt);
+        drawFrame();
 
-      ctx.strokeStyle = "rgba(255,255,255,0.45)";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(px0, py0, pw, ph);
+        requestAnimationFrame(loop);
+      }
 
-      // Little “thruster” effect
-      ctx.globalAlpha = 0.8;
-      ctx.fillStyle = "rgba(255,255,255,0.25)";
-      ctx.fillRect(px0 + pw * 0.15, py0 + ph, pw * 0.7, ph * 0.25);
-      ctx.globalAlpha = 1;
-    }
+      btnStart.addEventListener("click", startGame);
+      btnOverlayStart.addEventListener("click", startGame);
+      btnReset.addEventListener("click", resetGame);
 
-    let last = performance.now();
-    function loop(now) {
-      const dt = Math.min(0.033, (now - last) / 1000);
-      last = now;
-
-      update(dt);
-      drawFrame();
-
+      resetGame();
       requestAnimationFrame(loop);
-    }
-
-    btnStart.addEventListener("click", () => startGame());
-    btnOverlayStart.addEventListener("click", () => startGame());
-    btnReset.addEventListener("click", () => resetGame());
-
-    // Initialize
-    resetGame();
-    requestAnimationFrame(loop);
-  </script>
-</Layout>
+    </script>
+  </body>
+</html>
