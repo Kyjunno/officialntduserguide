@@ -1,19 +1,4 @@
 ---
-/**
- * src/pages/unit-arcade.astro
- * This version PRESERVES your top nav by using your Layout.
- *
- * IMPORTANT:
- * 1) Change the import path for Layout to match your project.
- *    Common: "../layouts/Layout.astro" or "../../layouts/Layout.astro"
- * 2) Put the background image here:
- *    /public/images/unit-arcade-bg.png
- * 3) Unit images go here:
- *    /public/images/units/<slug>.png
- */
-
-import Layout from "../layouts/Layout.astro"; // <-- CHANGE THIS PATH IF NEEDED
-
 const units = [
   { name: "Bear5", slug: "bear5" },
   { name: "Test Dummy Endo", slug: "test-dummy-endo" },
@@ -43,381 +28,333 @@ const units = [
 ];
 ---
 
-<Layout title="Unit Arcade">
-  <style>
-    /* IMPORTANT:
-      Do NOT globally kill scrollbars on the whole site.
-      Only affect this page container.
-    */
+<style>
+  .uaPage {
+    min-height: 100vh;
+    padding: 24px 18px 60px;
+    display: flex;
+    justify-content: center;
 
-    .uaPage {
-      min-height: calc(100vh - 84px); /* keeps room for your navbar */
-      padding: 24px 18px 60px;
-      display: flex;
-      justify-content: center;
+    background-image:
+      radial-gradient(1200px 700px at 15% 20%, rgba(10, 25, 55, 0.65), rgba(0,0,0,0)),
+      radial-gradient(1000px 600px at 85% 30%, rgba(60, 25, 90, 0.55), rgba(0,0,0,0)),
+      linear-gradient(to bottom, rgba(5, 8, 16, 0.45), rgba(5, 8, 16, 0.70)),
+      url("/images/unit-arcade-bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 
-      background-image:
-        radial-gradient(1200px 700px at 15% 20%, rgba(10, 25, 55, 0.65), rgba(0,0,0,0)),
-        radial-gradient(1000px 600px at 85% 30%, rgba(60, 25, 90, 0.55), rgba(0,0,0,0)),
-        linear-gradient(to bottom, rgba(5, 8, 16, 0.45), rgba(5, 8, 16, 0.70)),
-        url("/images/unit-arcade-bg.png");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
+  .uaWrap {
+    width: min(1100px, 100%);
+  }
 
-    /* This wrapper controls whether page scroll exists */
-    .uaWrap {
-      width: min(1100px, 100%);
-    }
+  .uaWrap.noScroll {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
 
-    /* When there is NO selection, we remove scroll for this page */
-    .uaWrap.noScroll {
-      height: calc(100vh - 84px);
-      overflow: hidden;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-    }
+  .uaWrap.canScroll {
+    overflow: visible;
+    height: auto;
+  }
 
-    /* When selected, allow page to scroll */
-    .uaWrap.canScroll {
-      overflow: visible;
-      height: auto;
-    }
+  .centerCard {
+    width: min(720px, 100%);
+    margin: 120px auto 0;
+    border-radius: 18px;
+    padding: 22px 22px 18px;
+    background: rgba(10, 12, 18, 0.60);
+    border: 1px solid rgba(140, 170, 255, 0.25);
+    box-shadow: 0 12px 50px rgba(0,0,0,0.55);
+    backdrop-filter: blur(10px);
+  }
 
-    .centerCard {
-      width: min(720px, 100%);
-      margin: 120px auto 0;
-      border-radius: 18px;
-      padding: 22px 22px 18px;
-      background: rgba(10, 12, 18, 0.60);
-      border: 1px solid rgba(140, 170, 255, 0.25);
-      box-shadow: 0 12px 50px rgba(0,0,0,0.55);
-      backdrop-filter: blur(10px);
-    }
+  .centerTitle {
+    margin: 0 0 6px;
+    text-align: center;
+    font-size: clamp(28px, 3.4vw, 42px);
+    color: rgba(240,245,255,0.95);
+    font-weight: 800;
+  }
 
-    .centerTitle {
-      margin: 0 0 6px;
-      text-align: center;
-      font-size: clamp(28px, 3.4vw, 42px);
-      color: rgba(240,245,255,0.95);
-      font-weight: 800;
-    }
+  .centerSub {
+    margin: 0 0 16px;
+    text-align: center;
+    color: rgba(200,210,225,0.9);
+    font-size: 14px;
+  }
 
-    .centerSub {
-      margin: 0 0 16px;
-      text-align: center;
-      color: rgba(200,210,225,0.9);
-      font-size: 14px;
-    }
+  .searchWrap { position: relative; }
 
-    .searchWrap {
-      position: relative;
-    }
+  .searchInput {
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(8,10,15,0.65);
+    border: 1px solid rgba(140,170,255,0.22);
+    color: rgba(240,245,255,0.95);
+    padding: 0 14px;
+    outline: none;
+    font-size: 14px;
+  }
 
-    .searchInput {
-      width: 100%;
-      height: 44px;
-      border-radius: 12px;
-      background: rgba(8,10,15,0.65);
-      border: 1px solid rgba(140,170,255,0.22);
-      color: rgba(240,245,255,0.95);
-      padding: 0 14px;
-      outline: none;
-      font-size: 14px;
-    }
+  .searchInput::placeholder { color: rgba(190,200,215,0.55); }
 
-    .searchInput::placeholder {
-      color: rgba(190,200,215,0.55);
-    }
+  .dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 52px;
+    z-index: 9999;
 
-    /* Dropdown aligned to search bar */
-    .dropdown {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 52px;
-      z-index: 9999;
+    border-radius: 14px;
+    background: rgba(8,10,15,0.92);
+    border: 1px solid rgba(140,170,255,0.22);
+    box-shadow: 0 16px 60px rgba(0,0,0,0.65);
+    overflow: hidden;
+  }
 
-      border-radius: 14px;
-      background: rgba(8,10,15,0.92);
-      border: 1px solid rgba(140,170,255,0.22);
-      box-shadow: 0 16px 60px rgba(0,0,0,0.65);
-      overflow: hidden;
-    }
+  .dropdown.hidden { display: none; }
 
-    .dropdown.hidden {
-      display: none;
-    }
+  .dropdownList {
+    max-height: 420px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
 
-    /* 10 items visible, scroll inside */
-    .dropdownList {
-      max-height: 420px;
-      overflow-y: auto;
-      scrollbar-width: thin;
-    }
+  .ddItem {
+    padding: 14px 14px;
+    text-align: center;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+    color: rgba(240,245,255,0.92);
+    font-size: 16px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid rgba(140,170,255,0.10);
+  }
 
-    .ddItem {
-      padding: 14px 14px;
-      text-align: center;
-      font-weight: 900;
-      letter-spacing: 0.4px;
-      color: rgba(240,245,255,0.92);
-      font-size: 16px;
-      cursor: pointer;
-      user-select: none;
-      border-bottom: 1px solid rgba(140,170,255,0.10);
-    }
+  .ddItem:last-child { border-bottom: none; }
 
-    .ddItem:last-child { border-bottom: none; }
+  .ddItem:hover { background: rgba(40,70,160,0.18); }
 
-    .ddItem:hover {
-      background: rgba(40,70,160,0.18);
-    }
+  .hint {
+    margin-top: 10px;
+    color: rgba(190,205,225,0.65);
+    font-size: 12px;
+    text-align: center;
+  }
 
-    .hint {
-      margin-top: 10px;
-      color: rgba(190,205,225,0.65);
-      font-size: 12px;
-      text-align: center;
-    }
+  .details { margin-top: 24px; display: none; }
+  .details.show { display: block; }
 
-    /* Details area shows after selection */
-    .details {
-      margin-top: 24px;
-      display: none;
-    }
-    .details.show {
-      display: block;
-    }
+  .panel {
+    border-radius: 18px;
+    padding: 18px;
+    background: rgba(10,12,18,0.62);
+    border: 1px solid rgba(140,170,255,0.22);
+    box-shadow: 0 12px 50px rgba(0,0,0,0.55);
+    backdrop-filter: blur(10px);
+  }
 
-    .panel {
-      border-radius: 18px;
-      padding: 18px;
-      background: rgba(10,12,18,0.62);
-      border: 1px solid rgba(140,170,255,0.22);
-      box-shadow: 0 12px 50px rgba(0,0,0,0.55);
-      backdrop-filter: blur(10px);
-    }
+  .topGrid {
+    display: grid;
+    grid-template-columns: 460px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
 
-    .topGrid {
-      display: grid;
-      grid-template-columns: 460px 1fr;
-      gap: 16px;
-      align-items: start;
-    }
+  @media (max-width: 980px) {
+    .topGrid { grid-template-columns: 1fr; }
+    .centerCard { margin-top: 70px; }
+  }
 
-    @media (max-width: 980px) {
-      .topGrid { grid-template-columns: 1fr; }
-      .centerCard { margin-top: 70px; }
-    }
+  .imgBox {
+    border-radius: 18px;
+    border: 1px solid rgba(140,170,255,0.22);
+    background: rgba(8,10,15,0.60);
+    overflow: hidden;
+    height: 360px;
+    position: relative;
+  }
 
-    .imgBox {
-      border-radius: 18px;
-      border: 1px solid rgba(140,170,255,0.22);
-      background: rgba(8,10,15,0.60);
-      overflow: hidden;
-      height: 360px;
-      position: relative;
-    }
+  .imgBox img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: 18px;
+    box-sizing: border-box;
+  }
 
-    .imgBox img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-      padding: 18px;
-      box-sizing: border-box;
-    }
+  .noImg {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: rgba(210,220,235,0.75);
+    font-weight: 700;
+  }
 
-    .noImg {
-      height: 100%;
-      display: grid;
-      place-items: center;
-      color: rgba(210,220,235,0.75);
-      font-weight: 700;
-    }
+  .metaGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
 
-    .metaGrid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
+  .metaCard {
+    border-radius: 14px;
+    border: 1px solid rgba(140,170,255,0.18);
+    background: rgba(8,10,15,0.55);
+    padding: 12px;
+  }
 
-    .metaCard {
-      border-radius: 14px;
-      border: 1px solid rgba(140,170,255,0.18);
-      background: rgba(8,10,15,0.55);
-      padding: 12px;
-    }
+  .metaLabel {
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: rgba(190,205,225,0.65);
+    margin-bottom: 6px;
+    font-weight: 800;
+  }
 
-    .metaLabel {
-      font-size: 11px;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-      color: rgba(190,205,225,0.65);
-      margin-bottom: 6px;
-      font-weight: 800;
-    }
+  .metaValue {
+    font-size: 14px;
+    color: rgba(240,245,255,0.92);
+    font-weight: 900;
+  }
+</style>
 
-    .metaValue {
-      font-size: 14px;
-      color: rgba(240,245,255,0.92);
-      font-weight: 900;
-    }
-  </style>
+<div class="uaPage">
+  <div class="uaWrap noScroll" id="uaWrap">
+    <div style="width: 100%;">
+      <div class="centerCard">
+        <h1 class="centerTitle">Unit Arcade</h1>
+        <p class="centerSub">Type a unit name and pick from the dropdown.</p>
 
-  <div class="uaPage">
-    <div class="uaWrap noScroll" id="uaWrap">
-      <div style="width: 100%;">
-        <div class="centerCard">
-          <h1 class="centerTitle">Unit Arcade</h1>
-          <p class="centerSub">Type a unit name and pick from the dropdown.</p>
-
-          <div class="searchWrap" id="searchWrap">
-            <input id="unitSearch" class="searchInput" placeholder="Search units..." autocomplete="off" />
-            <div id="dropdown" class="dropdown hidden" role="listbox" aria-label="Unit dropdown">
-              <div id="dropdownList" class="dropdownList"></div>
-            </div>
+        <div class="searchWrap" id="searchWrap">
+          <input id="unitSearch" class="searchInput" placeholder="Search units..." autocomplete="off" />
+          <div id="dropdown" class="dropdown hidden">
+            <div id="dropdownList" class="dropdownList"></div>
           </div>
-
-          <div class="hint">Click the search bar to browse units.</div>
         </div>
 
-        <div class="details" id="details">
-          <div class="panel">
-            <div class="topGrid">
-              <div class="imgBox">
-                <div class="noImg" id="noImg">No image</div>
-                <img id="unitImg" alt="Selected unit image" style="display:none;" />
-              </div>
+        <div class="hint">Click the search bar to browse units.</div>
+      </div>
 
-              <div class="metaGrid">
-                <div class="metaCard">
-                  <div class="metaLabel">Unit</div>
-                  <div class="metaValue" id="metaName">Not set</div>
-                </div>
-                <div class="metaCard">
-                  <div class="metaLabel">Image path</div>
-                  <div class="metaValue" id="metaPath">Not set</div>
-                </div>
-                <div class="metaCard">
-                  <div class="metaLabel">Rarity</div>
-                  <div class="metaValue">Not set</div>
-                </div>
-                <div class="metaCard">
-                  <div class="metaLabel">Attack type</div>
-                  <div class="metaValue">Not set</div>
-                </div>
+      <div class="details" id="details">
+        <div class="panel">
+          <div class="topGrid">
+            <div class="imgBox">
+              <div class="noImg" id="noImg">No image</div>
+              <img id="unitImg" alt="Selected unit image" style="display:none;" />
+            </div>
+
+            <div class="metaGrid">
+              <div class="metaCard">
+                <div class="metaLabel">Unit</div>
+                <div class="metaValue" id="metaName">Not set</div>
+              </div>
+              <div class="metaCard">
+                <div class="metaLabel">Image path</div>
+                <div class="metaValue" id="metaPath">Not set</div>
+              </div>
+              <div class="metaCard">
+                <div class="metaLabel">Rarity</div>
+                <div class="metaValue">Not set</div>
+              </div>
+              <div class="metaCard">
+                <div class="metaLabel">Attack type</div>
+                <div class="metaValue">Not set</div>
               </div>
             </div>
           </div>
-
-          <!-- You said you'll want a BIG calculator panel under this.
-               We’ll add that next once you confirm this UX is stable again. -->
         </div>
+
+        <!-- Calculator panel will go here next -->
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    const units = JSON.parse(`${JSON.stringify(units)}`);
+<script>
+  const units = JSON.parse(`${JSON.stringify(units)}`);
 
-    const uaWrap = document.getElementById("uaWrap");
-    const searchWrap = document.getElementById("searchWrap");
-    const unitSearch = document.getElementById("unitSearch");
-    const dropdown = document.getElementById("dropdown");
-    const dropdownList = document.getElementById("dropdownList");
+  const uaWrap = document.getElementById("uaWrap");
+  const searchWrap = document.getElementById("searchWrap");
+  const unitSearch = document.getElementById("unitSearch");
+  const dropdown = document.getElementById("dropdown");
+  const dropdownList = document.getElementById("dropdownList");
 
-    const details = document.getElementById("details");
-    const unitImg = document.getElementById("unitImg");
-    const noImg = document.getElementById("noImg");
+  const details = document.getElementById("details");
+  const unitImg = document.getElementById("unitImg");
+  const noImg = document.getElementById("noImg");
 
-    const metaName = document.getElementById("metaName");
-    const metaPath = document.getElementById("metaPath");
+  const metaName = document.getElementById("metaName");
+  const metaPath = document.getElementById("metaPath");
 
-    function openDropdown() {
-      dropdown.classList.remove("hidden");
-    }
-    function closeDropdown() {
-      dropdown.classList.add("hidden");
-    }
+  function openDropdown() { dropdown.classList.remove("hidden"); }
+  function closeDropdown() { dropdown.classList.add("hidden"); }
 
-    function filteredUnits(query) {
-      const q = (query || "").trim().toLowerCase();
-      if (!q) return units;
-      return units.filter(u => u.name.toLowerCase().includes(q));
-    }
+  function filteredUnits(query) {
+    const q = (query || "").trim().toLowerCase();
+    if (!q) return units;
+    return units.filter(u => u.name.toLowerCase().includes(q));
+  }
 
-    function renderDropdown() {
-      const list = filteredUnits(unitSearch.value).slice(0, 10);
+  function renderDropdown() {
+    const list = filteredUnits(unitSearch.value).slice(0, 10);
 
-      if (list.length === 0) {
-        dropdownList.innerHTML = '<div class="ddItem" style="opacity:.6;cursor:default;">No matches</div>';
-        return;
-      }
-
-      dropdownList.innerHTML = list
-        .map(u => `<div class="ddItem" data-name="${u.name}">${u.name}</div>`)
-        .join("");
+    if (list.length === 0) {
+      dropdownList.innerHTML = '<div class="ddItem" style="opacity:.6;cursor:default;">No matches</div>';
+      return;
     }
 
-    // Open dropdown on click/focus, like you asked
-    unitSearch.addEventListener("focus", () => {
-      renderDropdown();
-      openDropdown();
-    });
+    dropdownList.innerHTML = list
+      .map(u => `<div class="ddItem" data-name="${u.name}">${u.name}</div>`)
+      .join("");
+  }
 
-    unitSearch.addEventListener("click", () => {
-      renderDropdown();
-      openDropdown();
-    });
+  unitSearch.addEventListener("focus", () => { renderDropdown(); openDropdown(); });
+  unitSearch.addEventListener("click", () => { renderDropdown(); openDropdown(); });
+  unitSearch.addEventListener("input", () => { renderDropdown(); openDropdown(); });
 
-    unitSearch.addEventListener("input", () => {
-      renderDropdown();
-      openDropdown();
-    });
+  document.addEventListener("mousedown", (e) => {
+    if (!searchWrap.contains(e.target)) closeDropdown();
+  });
 
-    // Click outside closes dropdown
-    document.addEventListener("mousedown", (e) => {
-      if (!searchWrap.contains(e.target)) closeDropdown();
-    });
+  dropdownList.addEventListener("mousedown", (e) => {
+    const item = e.target.closest(".ddItem");
+    if (!item) return;
 
-    // Select item
-    dropdownList.addEventListener("mousedown", (e) => {
-      const item = e.target.closest(".ddItem");
-      if (!item) return;
+    const name = item.getAttribute("data-name");
+    const u = units.find(x => x.name === name);
+    if (!u) return;
 
-      const name = item.getAttribute("data-name");
-      if (!name) return;
+    unitSearch.value = name;
+    closeDropdown();
 
-      const u = units.find(x => x.name === name);
-      if (!u) return;
+    details.classList.add("show");
+    uaWrap.classList.remove("noScroll");
+    uaWrap.classList.add("canScroll");
 
-      unitSearch.value = name;
-      closeDropdown();
+    const imgPath = `/images/units/${u.slug}.png`;
+    metaName.textContent = u.name;
+    metaPath.textContent = imgPath;
 
-      // Reveal details + allow page scroll
-      details.classList.add("show");
-      uaWrap.classList.remove("noScroll");
-      uaWrap.classList.add("canScroll");
+    unitImg.src = imgPath;
 
-      const imgPath = `/images/units/${u.slug}.png`;
-      metaName.textContent = u.name;
-      metaPath.textContent = imgPath;
+    unitImg.onload = () => {
+      noImg.style.display = "none";
+      unitImg.style.display = "block";
+    };
 
-      unitImg.src = imgPath;
-
-      unitImg.onload = () => {
-        noImg.style.display = "none";
-        unitImg.style.display = "block";
-      };
-
-      unitImg.onerror = () => {
-        unitImg.style.display = "none";
-        noImg.style.display = "grid";
-      };
-    });
-  </script>
-</Layout>
+    unitImg.onerror = () => {
+      unitImg.style.display = "none";
+      noImg.style.display = "grid";
+    };
+  });
+</script>
