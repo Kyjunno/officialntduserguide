@@ -58,7 +58,7 @@ const UNIT_NAMES = [
           </button>
         </div>
 
-        <div id="hint" class="ua-hint">Start typing to see units.</div>
+        <div id="hint" class="ua-hint">Click the search bar to browse units.</div>
       </div>
     </section>
 
@@ -86,7 +86,7 @@ const UNIT_NAMES = [
               <div id="dropdownTop" class="ua-dropdown ua-hidden" role="listbox" aria-label="Unit results"></div>
             </div>
 
-            <div class="ua-help">Choose a unit from the dropdown to load details.</div>
+            <div class="ua-help">Click the search bar to browse, or type to filter.</div>
           </div>
 
           <div class="ua-imageBox">
@@ -210,6 +210,11 @@ const UNIT_NAMES = [
     </section>
   </main>
 
+  <!-- embed unit names as JSON so inline script can read them safely -->
+  <script id="ua-unit-names" type="application/json" is:inline>
+    {JSON.stringify(UNIT_NAMES)}
+  </script>
+
   <script is:inline>
     const UNIT_NAMES = JSON.parse(document.getElementById("ua-unit-names").textContent);
 
@@ -218,14 +223,6 @@ const UNIT_NAMES = [
         rarity: "Mythic",
         attackType: "Pierce + Poison",
         placementPrice: "$4,500",
-        placements: "2",
-        obtainability: "Not set yet.",
-        ability: "Not set yet."
-      },
-      "Bonnie": {
-        rarity: "Common",
-        attackType: "Cone AOE (25%)",
-        placementPrice: "$150",
         placements: "2",
         obtainability: "Not set yet.",
         ability: "Not set yet."
@@ -260,10 +257,12 @@ const UNIT_NAMES = [
 
     function lockScroll() {
       document.body.classList.add("ua-lockScroll");
+      document.documentElement.classList.add("ua-lockScroll");
     }
 
     function unlockScroll() {
       document.body.classList.remove("ua-lockScroll");
+      document.documentElement.classList.remove("ua-lockScroll");
     }
 
     function matches(query, name) {
@@ -301,28 +300,37 @@ const UNIT_NAMES = [
       menuEl.classList.add("ua-hidden");
     }
 
+    // showAllIfEmpty=true means clicking/focusing an empty input shows the first 10 units
     function attachAutocomplete(inputEl, menuEl, onPick) {
-      function update() {
+      function update(showAllIfEmpty = false) {
         const q = normalize(inputEl.value);
+
+        let filtered = [];
         if (!q) {
-          hideMenu(menuEl);
-          return;
+          if (!showAllIfEmpty) {
+            hideMenu(menuEl);
+            return;
+          }
+          filtered = UNIT_NAMES.slice(0, 10);
+        } else {
+          filtered = UNIT_NAMES.filter((n) => matches(q, n)).slice(0, 10);
         }
 
-        const filtered = UNIT_NAMES.filter((n) => matches(q, n)).slice(0, 10);
         renderDropdown(menuEl, filtered, (name) => {
           inputEl.value = name;
           hideMenu(menuEl);
           onPick(name);
         });
+
         showMenu(menuEl);
       }
 
-      inputEl.addEventListener("input", update);
+      // Type to filter
+      inputEl.addEventListener("input", () => update(false));
 
-      inputEl.addEventListener("focus", () => {
-        if (normalize(inputEl.value)) update();
-      });
+      // Click/focus to open even when empty
+      inputEl.addEventListener("focus", () => update(true));
+      inputEl.addEventListener("click", () => update(true));
 
       inputEl.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
@@ -380,20 +388,11 @@ const UNIT_NAMES = [
 
     goBtn.addEventListener("click", openFromCenter);
 
-    unitInput.addEventListener("input", () => {
-      hint.textContent = "Start typing to see units.";
-    });
-
     // Start locked (no page scroll) until a unit is selected
     lockScroll();
 
     attachAutocomplete(unitInput, dropdownCenter, loadUnit);
     attachAutocomplete(unitInputTop, dropdownTop, loadUnit);
-  </script>
-
-  <!-- embed unit names as JSON so the inline script can read them safely -->
-  <script id="ua-unit-names" type="application/json" is:inline>
-    {JSON.stringify(UNIT_NAMES)}
   </script>
 
   <style>
@@ -418,14 +417,26 @@ const UNIT_NAMES = [
       position: fixed;
       inset: 0;
       z-index: -1;
-      background: linear-gradient(rgba(5, 10, 20, 0.55), rgba(5, 10, 20, 0.55));
+      background: linear-gradient(rgba(5, 10, 20, 0.45), rgba(5, 10, 20, 0.45));
       pointer-events: none;
     }
 
-    /* This kills the page scrollbar until we show the info screen */
+    /* LOCK SCROLL (kills the right-side page scrollbar on the search screen) */
+    :global(html.ua-lockScroll),
     :global(body.ua-lockScroll) {
       overflow: hidden !important;
-      height: 100vh;
+      height: 100%;
+    }
+
+    /* Also hide the scrollbar visually while locked (extra safety) */
+    :global(html.ua-lockScroll::-webkit-scrollbar),
+    :global(body.ua-lockScroll::-webkit-scrollbar) {
+      width: 0px;
+      height: 0px;
+    }
+    :global(html.ua-lockScroll),
+    :global(body.ua-lockScroll) {
+      scrollbar-width: none;
     }
 
     .ua-wrap {
@@ -475,7 +486,6 @@ const UNIT_NAMES = [
       margin: 0 auto;
     }
 
-    /* wrapper so dropdown can align perfectly with input */
     .ua-field {
       position: relative;
       width: 100%;
@@ -566,7 +576,7 @@ const UNIT_NAMES = [
       color: inherit;
     }
 
-    /* Custom dropdown */
+    /* Custom dropdown aligned to the input */
     .ua-dropdown {
       position: absolute;
       top: calc(100% + 8px);
@@ -579,9 +589,10 @@ const UNIT_NAMES = [
       overflow: hidden;
       z-index: 50;
 
-      /* 10 items max visible, then internal scroll */
+      /* ~10 items visible then internal scroll */
       max-height: 360px;
       overflow-y: auto;
+
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
     }
 
