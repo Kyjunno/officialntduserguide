@@ -17,127 +17,153 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <main class="guides-stack" aria-label="Info and guides modules">
       <!-- 1) POWER List -->
       <section class="guide-box" aria-label="Power list">
-        <div class="box-top">
-          <div class="box-title">Nightshift Tower Defense POWER List By Clancy</div>
-          <div class="box-badge">Google Sheet</div>
-        </div>
-        <div class="box-desc">
-          A living reference list that ranks and compares overall power. Best used alongside tier lists.
-        </div>
-        <div class="box-actions">
-          <a
-            class="box-btn"
-            href="https://docs.google.com/spreadsheets/d/19_xB9LuzibW8vKG2joLE2vmsCweJ0jj4QH5jqiz6pQg/edit?gid=0#gid=0"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Open Nightshift Tower Defense POWER List By Clancy in a new tab"
-          >
-            Open Sheet <span aria-hidden="true">↗</span>
-          </a>
+        <div class="box-row">
+          <div class="box-main">
+            <div class="box-title">Nightshift Tower Defense POWER List By Clancy</div>
+            <div class="box-desc">
+              A living reference list that ranks and compares overall power. Best used alongside tier lists.
+            </div>
+            <div class="box-actions">
+              <a
+                class="box-btn"
+                href="https://docs.google.com/spreadsheets/d/19_xB9LuzibW8vKG2joLE2vmsCweJ0jj4QH5jqiz6pQg/edit?gid=0#gid=0"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open Nightshift Tower Defense POWER List By Clancy in a new tab"
+              >
+                Open Sheet <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="box-media" aria-hidden="true">
+            <div class="media-label">Image slot</div>
+            <div class="media-sub">Drop a preview here later</div>
+          </div>
         </div>
       </section>
 
       <!-- 2) Enchant List -->
       <section class="guide-box" aria-label="Enchant list">
-        <div class="box-top">
-          <div class="box-title">Nightshift Tower Defense Enchant List By Clancy</div>
-          <div class="box-badge">Google Sheet</div>
-        </div>
-        <div class="box-desc">
-          A complete list of enchants and what they do. Great for quick lookup while building.
-        </div>
-        <div class="box-actions">
-          <a
-            class="box-btn"
-            href="https://docs.google.com/spreadsheets/d/1T9-y930-4v2L8QQ0Kgor9H-eWfngOdAtx7BNTniZKrs/edit?gid=0#gid=0"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Open Nightshift Tower Defense Enchant List By Clancy in a new tab"
-          >
-            Open Sheet <span aria-hidden="true">↗</span>
-          </a>
+        <div class="box-row">
+          <div class="box-main">
+            <div class="box-title">Nightshift Tower Defense Enchant List By Clancy</div>
+            <div class="box-desc">
+              A complete list of enchants and what they do. Great for quick lookup while building.
+            </div>
+            <div class="box-actions">
+              <a
+                class="box-btn"
+                href="https://docs.google.com/spreadsheets/d/1T9-y930-4v2L8QQ0Kgor9H-eWfngOdAtx7BNTniZKrs/edit?gid=0#gid=0"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open Nightshift Tower Defense Enchant List By Clancy in a new tab"
+              >
+                Open Sheet <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="box-media" aria-hidden="true">
+            <div class="media-label">Image slot</div>
+            <div class="media-sub">Drop a preview here later</div>
+          </div>
         </div>
       </section>
 
       <!-- 3) Chip List (Coming Soon) -->
       <section class="guide-box" aria-label="Chip list coming soon">
-        <div class="box-top">
-          <div class="box-title">Nightshift Tower Defense Chip List By Clancy</div>
-          <div class="box-badge soon">Coming Soon</div>
-        </div>
-        <div class="box-desc">
-          This will be the full chip reference sheet. It’s not live yet, but it’s planned for this hub.
-        </div>
-        <div class="box-actions">
-          <span class="box-btn disabled" aria-disabled="true">
-            Not available yet
-          </span>
+        <div class="box-row">
+          <div class="box-main">
+            <div class="box-title">Nightshift Tower Defense Chip List By Clancy</div>
+            <div class="box-desc">
+              This will be the full chip reference sheet. It’s not live yet, but it’s planned for this hub.
+            </div>
+            <div class="box-actions">
+              <span class="box-btn disabled" aria-disabled="true">Coming soon</span>
+            </div>
+          </div>
+
+          <div class="box-media" aria-hidden="true" data-soon="true">
+            <div class="media-label">Coming soon</div>
+            <div class="media-sub">Chip previews later</div>
+          </div>
         </div>
       </section>
 
       <!-- 4) Status Effects dropdown box -->
-      <section class="guide-box" aria-label="Status effects reference">
-        <div class="box-top">
-          <div class="box-title">Status Effects Reference</div>
-          <div class="box-badge">Interactive</div>
-        </div>
+      <section class="guide-box" aria-label="Status effects">
+        <div class="box-row">
+          <div class="box-main">
+            <div class="box-title">Status Effects</div>
+            <div class="box-desc">
+              Pick an effect and get a straight explanation of what it does, what scales, and what does not.
+            </div>
 
-        <div class="box-desc">
-          Pick an effect and get a straight explanation of what it does, what scales, and what does not.
-        </div>
+            <div class="picker-row">
+              <label class="picker-label" for="statusSelect">Status Effect</label>
+              <select id="statusSelect" class="picker-select" aria-label="Select a status effect">
+                <option value="poison">Poison</option>
+                <option value="bleed">Bleed</option>
+                <option value="burn">Burn</option>
+                <option value="slow">Slow</option>
+                <option value="stun">Stun</option>
+              </select>
+            </div>
 
-        <div class="picker-row">
-          <label class="picker-label" for="statusSelect">Status Effect</label>
-          <select id="statusSelect" class="picker-select" aria-label="Select a status effect">
-            <option value="poison">Poison</option>
-            <option value="bleed">Bleed</option>
-            <option value="burn">Burn</option>
-            <option value="slow">Slow</option>
-            <option value="stun">Stun</option>
-          </select>
-        </div>
-
-        <div id="statusPanel" class="info-panel" role="region" aria-label="Status effect details">
-          <div class="panel-title" id="statusTitle">Poison</div>
-          <div class="panel-text" id="statusText">
-            Poison stays on an enemy until it dies. Its damage is flat and does not scale with the unit’s damage unless an enchant
-            or effect explicitly says it increases poison.
+            <div id="statusPanel" class="info-panel" role="region" aria-label="Status effect details">
+              <div class="panel-title" id="statusTitle">Poison</div>
+              <div class="panel-text" id="statusText">
+                Poison stays on an enemy until it dies. Its damage is flat and does not scale with the unit’s damage unless an enchant
+                or effect explicitly says it increases poison.
+              </div>
+              <div class="panel-note" id="statusNote">
+                If something says “+% Poison,” that changes poison. A normal “+% Damage” does not.
+              </div>
+            </div>
           </div>
-          <div class="panel-note" id="statusNote">
-            If something says “+% Poison,” that changes poison. A normal “+% Damage” does not.
+
+          <div class="box-media" aria-hidden="true">
+            <div class="media-label">Image slot</div>
+            <div class="media-sub">Status icon or chart</div>
           </div>
         </div>
       </section>
 
       <!-- 5) Enchants dropdown box -->
-      <section class="guide-box" aria-label="Enchant reference">
-        <div class="box-top">
-          <div class="box-title">Enchants Reference</div>
-          <div class="box-badge">Interactive</div>
-        </div>
+      <section class="guide-box" aria-label="Enchants">
+        <div class="box-row">
+          <div class="box-main">
+            <div class="box-title">Enchants</div>
+            <div class="box-desc">
+              Pick an enchant to see what it changes in plain English. This is the quick answer box, not the full list.
+            </div>
 
-        <div class="box-desc">
-          Pick an enchant to see what it changes in plain English. This is the quick answer box, not the full list.
-        </div>
+            <div class="picker-row">
+              <label class="picker-label" for="enchantSelect">Enchant</label>
+              <select id="enchantSelect" class="picker-select" aria-label="Select an enchant">
+                <option value="damagePct">+% Damage</option>
+                <option value="poisonPct">+% Poison</option>
+                <option value="bleedPct">+% Bleed</option>
+                <option value="cooldownPct">-% Cooldown</option>
+                <option value="rangeFlat">+ Range</option>
+              </select>
+            </div>
 
-        <div class="picker-row">
-          <label class="picker-label" for="enchantSelect">Enchant</label>
-          <select id="enchantSelect" class="picker-select" aria-label="Select an enchant">
-            <option value="damagePct">+% Damage</option>
-            <option value="poisonPct">+% Poison</option>
-            <option value="bleedPct">+% Bleed</option>
-            <option value="cooldownPct">-% Cooldown</option>
-            <option value="rangeFlat">+ Range</option>
-          </select>
-        </div>
-
-        <div id="enchantPanel" class="info-panel" role="region" aria-label="Enchant details">
-          <div class="panel-title" id="enchantTitle">+% Damage</div>
-          <div class="panel-text" id="enchantText">
-            Increases the unit’s damage. This will also increase any effects that scale from damage, like bleed.
+            <div id="enchantPanel" class="info-panel" role="region" aria-label="Enchant details">
+              <div class="panel-title" id="enchantTitle">+% Damage</div>
+              <div class="panel-text" id="enchantText">
+                Increases the unit’s damage. This will also increase any effects that scale from damage, like bleed.
+              </div>
+              <div class="panel-note" id="enchantNote">
+                It does not increase poison damage unless something explicitly says it affects poison.
+              </div>
+            </div>
           </div>
-          <div class="panel-note" id="enchantNote">
-            It does not increase poison damage unless something explicitly says it affects poison.
+
+          <div class="box-media" aria-hidden="true">
+            <div class="media-label">Image slot</div>
+            <div class="media-sub">Enchant icon or chart</div>
           </div>
         </div>
       </section>
@@ -163,23 +189,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       burn: {
         title: "Burn",
         text:
-          "Burn deals damage over time. If your game treats burn as scaling or flat, put the exact rule here so players don’t have to guess.",
+          "Burn deals damage over time. Replace this with the confirmed rule for whether burn is flat or scales, and how it refreshes or stacks.",
         note:
-          "Replace this note with the real burn rule once you confirm it from tooltips or testing.",
+          "Fill this in once you confirm burn from tooltips or testing.",
       },
       slow: {
         title: "Slow",
         text:
-          "Slow reduces enemy movement speed for a duration. If it stacks, refreshes, or has a cap, define that here in one clear sentence.",
+          "Slow reduces enemy movement speed for a duration. Replace this with your confirmed stacking, refresh, and cap rules.",
         note:
-          "Replace this note with your confirmed stacking and refresh rules for slow.",
+          "Fill this in once you confirm slow behavior.",
       },
       stun: {
         title: "Stun",
         text:
-          "Stun prevents an enemy from acting or moving for a duration. If it has diminishing returns, immunity windows, or caps, define them here.",
+          "Stun prevents an enemy from acting or moving for a duration. Replace this with your confirmed immunity, cap, or diminishing rules (if any).",
         note:
-          "Replace this note with your confirmed stun rules once you have them.",
+          "Fill this in once you confirm stun behavior.",
       },
     };
 
@@ -217,20 +243,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         text:
           "Increases attack range. Range should stay consistent regardless of attack type, so this should always behave predictably.",
         note:
-          "If any unit breaks this rule, it’s worth calling out as an exception here.",
+          "If any unit breaks this rule, call it out as an exception.",
       },
     };
 
-    function setPanel(panelPrefix, data) {
-      const select = document.getElementById(panelPrefix + "Select");
-      const titleEl = document.getElementById(panelPrefix + "Title");
-      const textEl = document.getElementById(panelPrefix + "Text");
-      const noteEl = document.getElementById(panelPrefix + "Note");
-
+    function setPanel(prefix, data) {
+      const select = document.getElementById(prefix + "Select");
+      const titleEl = document.getElementById(prefix + "Title");
+      const textEl = document.getElementById(prefix + "Text");
+      const noteEl = document.getElementById(prefix + "Note");
       if (!select || !titleEl || !textEl || !noteEl) return;
 
-      const key = select.value;
-      const item = data[key];
+      const item = data[select.value];
       if (!item) return;
 
       titleEl.textContent = item.title;
@@ -253,6 +277,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </script>
 
   <style>
+    /* Background: darker + blurrier so it stops stealing the show */
     .page-bg{
       position: fixed;
       inset: 0;
@@ -261,8 +286,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      filter: blur(1px) brightness(0.85) contrast(1.05) saturate(1.2);
-      transform: scale(1.02);
+      filter: blur(4px) brightness(0.52) contrast(1.05) saturate(1.05);
+      transform: scale(1.08);
     }
 
     .page-bg-overlay{
@@ -270,13 +295,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       inset: 0;
       z-index: -1;
       background:
-        radial-gradient(900px 650px at 20% 10%, rgba(106,168,255,.18), transparent 60%),
-        radial-gradient(900px 650px at 80% 20%, rgba(159,91,255,.16), transparent 55%),
-        linear-gradient(180deg, rgba(10,12,18,.30), rgba(10,12,18,.55));
+        radial-gradient(900px 650px at 20% 10%, rgba(106,168,255,.12), transparent 60%),
+        radial-gradient(900px 650px at 80% 20%, rgba(159,91,255,.11), transparent 55%),
+        linear-gradient(180deg, rgba(10,12,18,.55), rgba(10,12,18,.82));
     }
 
     .guides-wrap{
-      max-width: 980px;
+      max-width: 1040px;
       margin: 0 auto;
       padding: 26px 18px 90px;
       text-align: center;
@@ -313,17 +338,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       border-radius: 22px;
       padding: 18px;
       border: 1px solid rgba(255,255,255,.20);
-      background: rgba(0,0,0,.22);
+      background: rgba(0,0,0,.26);
       box-shadow: var(--shadow);
       text-align: left;
     }
 
-    .box-top{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 10px;
+    .box-row{
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      gap: 16px;
+      align-items: start;
     }
 
     .box-title{
@@ -331,22 +355,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       letter-spacing: -0.01em;
       font-size: 18px;
       line-height: 1.25;
-    }
-
-    .box-badge{
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.22);
-      background: rgba(0,0,0,.22);
-      color: rgba(232,238,252,.86);
-      white-space: nowrap;
-    }
-
-    .box-badge.soon{
-      opacity: 0.85;
+      margin-bottom: 8px;
     }
 
     .box-desc{
@@ -354,6 +363,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       line-height: 1.7;
       font-size: 14px;
       margin-bottom: 12px;
+      max-width: 75ch;
     }
 
     .box-actions{
@@ -390,6 +400,38 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       opacity: 0.65;
       cursor: not-allowed;
       pointer-events: none;
+    }
+
+    /* Smaller image slot inside each box */
+    .box-media{
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.18);
+      min-height: 140px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .box-media[data-soon="true"]{
+      opacity: 0.7;
+    }
+
+    .media-label{
+      font-weight: 1000;
+      letter-spacing: -0.01em;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: rgba(232,238,252,.92);
+    }
+
+    .media-sub{
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
     }
 
     .picker-row{
@@ -451,14 +493,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       padding-top: 10px;
     }
 
+    @media (max-width: 820px){
+      .box-row{
+        grid-template-columns: 1fr;
+      }
+      .box-media{
+        min-height: 120px;
+      }
+    }
+
     @media (max-width: 640px){
       .picker-row{
         grid-template-columns: 1fr;
-      }
-
-      .box-top{
-        flex-direction: column;
-        align-items: flex-start;
       }
     }
   </style>
