@@ -1,725 +1,517 @@
 ---
-// src/pages/unit-arcade.astro
+import Layout from "../layouts/Layout.astro";
 
-const units = [
-  "Bear5",
-  "Test Dummy Endo",
-  "Nightguard",
-  "Chicken7",
-  "Fan",
-  "Bonnie",
-  "Carl The Cupcake",
-  "Freddy",
-  "Foxy",
-  "Chica",
-  "Big Band Bonnie",
-  "Golden Bonnie",
-  "Bunny6",
-  "Sparky The Dog",
-  "Endo 01",
-  "Bort Bunny",
-  "Stuffed Freddy",
-  "Phone Guy",
-  "Golden Freddy",
-  "Fox4",
-  "The Amalgamation",
-  "Shadow Freddy",
-  "Endo Plush",
-  "Crying Soul",
-  "Lamp",
-];
+const title = "Unit Arcade";
+const description = "A tiny arcade mini-game for your unit wiki.";
 ---
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Unit Arcade | Official NTD User Guide</title>
 
-    <style>
-      :root{
-        --panel:rgba(10,14,22,.72);
-        --panel2:rgba(10,14,22,.58);
-        --stroke:rgba(170,195,255,.18);
-        --stroke2:rgba(170,195,255,.28);
-        --text:#e8eefc;
-        --muted:rgba(232,238,252,.72);
-        --muted2:rgba(232,238,252,.55);
-        --radius:18px;
-      }
-
-      *{box-sizing:border-box}
-      html,body{height:100%}
-      body{
-        margin:0;
-        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-        color:var(--text);
-        overflow-x:hidden;
-      }
-
-      body.no-scroll{
-        height:100vh;
-        overflow:hidden;
-      }
-
-      .bg{
-        position: fixed;
-        inset: 0;
-        z-index: -2;
-        background-image: url("/unit-arcade-bg.png");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        filter: blur(10px);
-        transform: scale(1.05);
-      }
-      .bg::after{
-        content:"";
-        position:absolute;
-        inset:0;
-        background: radial-gradient(1000px 600px at 25% 10%, rgba(18,30,58,.55), rgba(0,0,0,.62));
-      }
-
-      .topbar{
-        position:sticky;
-        top:0;
-        z-index:50;
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        background: linear-gradient(to bottom, rgba(6,9,18,.88), rgba(6,9,18,.55));
-        border-bottom: 1px solid rgba(170,195,255,.10);
-      }
-
-      .topbar-inner{
-        max-width: 1240px;
-        margin: 0 auto;
-        padding: 14px 18px;
-        display:flex;
-        align-items:center;
-        gap:18px;
-      }
-
-      .brand{
-        display:flex;
-        align-items:center;
-        gap:10px;
-        min-width: 260px;
-      }
-
-      .dot{
-        width:12px;height:12px;border-radius:999px;
-        background: radial-gradient(circle at 30% 30%, #9db6ff, #3f6dff);
-        box-shadow: 0 0 0 4px rgba(125,160,255,.12);
-      }
-
-      .brand-title{
-        font-weight: 800;
-        letter-spacing:.2px;
-        line-height:1.05;
-        font-size: 15px;
-      }
-
-      .brand-sub{
-        font-size: 12px;
-        color: var(--muted2);
-        margin-top:2px;
-      }
-
-      .nav{
-        display:flex;
-        align-items:center;
-        gap:10px;
-        flex:1;
-      }
-
-      .nav a{
-        color: var(--muted);
-        text-decoration:none;
-        padding: 8px 12px;
-        border-radius: 12px;
-        border: 1px solid transparent;
-        transition: .15s ease;
-        font-size: 14px;
-        white-space: nowrap;
-      }
-
-      .nav a:hover{
-        color: var(--text);
-        border-color: rgba(170,195,255,.14);
-        background: rgba(20,28,45,.35);
-      }
-
-      .nav a.active{
-        color: var(--text);
-        border-color: rgba(170,195,255,.20);
-        background: rgba(20,28,45,.55);
-        box-shadow: 0 10px 28px rgba(0,0,0,.28);
-      }
-
-      .global-search{
-        width: 300px;
-        max-width: 38vw;
-        display:flex;
-        justify-content:flex-end;
-      }
-
-      .global-search input{
-        width: 100%;
-        padding: 10px 12px;
-        border-radius: 14px;
-        border: 1px solid rgba(170,195,255,.18);
-        background: rgba(7,10,16,.55);
-        color: var(--text);
-        outline:none;
-      }
-      .global-search input::placeholder{color: rgba(232,238,252,.45)}
-
-      main{
-        max-width: 1240px;
-        margin: 0 auto;
-        padding: 22px 18px 40px;
-      }
-
-      @media (max-width: 900px){
-        .brand{min-width:unset}
-        .global-search{display:none}
-        .nav{flex-wrap:wrap}
-      }
-
-      .ua{
-        position: relative;
-        min-height: calc(100vh - 64px);
-        padding: 26px 0 40px;
-      }
-
-      .centerCard{
-        width: min(860px, 94vw);
-        margin: 80px auto 0;
-        padding: 28px 28px 22px;
-        border-radius: 18px;
-        background: rgba(10,14,22,.58);
-        border: 1px solid rgba(170,195,255,.18);
-        box-shadow: 0 18px 60px rgba(0,0,0,.35);
-        text-align: center;
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-      }
-
-      .centerCard h1{
-        margin:0;
-        font-size: 40px;
-        letter-spacing:.3px;
-        font-weight: 850;
-      }
-
-      .sub{
-        margin: 8px 0 18px;
-        color: rgba(232,238,252,.75);
-        font-size: 14px;
-      }
-
-      .searchWrap{
-        position: relative;
-        width: min(740px, 92%);
-        margin: 0 auto;
-      }
-
-      input[type="text"], input[type="number"], select{
-        width:100%;
-        padding: 12px 14px;
-        border-radius: 14px;
-        border: 1px solid rgba(170,195,255,.18);
-        background: rgba(7,10,16,.55);
-        color: rgba(232,238,252,.92);
-        outline:none;
-      }
-      input::placeholder{ color: rgba(232,238,252,.42); }
-
-      .dropdown{
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: calc(100% + 10px);
-        background: rgba(7,10,16,.92);
-        border: 1px solid rgba(170,195,255,.22);
-        border-radius: 14px;
-        box-shadow: 0 18px 60px rgba(0,0,0,.45);
-        overflow: hidden;
-        z-index: 40;
-      }
-
-      .dropdownInner{
-        max-height: 360px;
-        overflow: auto;
-        padding: 8px;
-      }
-
-      .ddItem{
-        width: 100%;
-        display: block;
-        text-align: center;
-        padding: 12px 10px;
-        margin: 6px 0;
-        border-radius: 12px;
-        border: 1px solid rgba(170,195,255,.12);
-        background: rgba(20,28,45,.35);
-        color: rgba(232,238,252,.92);
-        font-weight: 800;
-        letter-spacing: .2px;
-        cursor: pointer;
-        transition: .12s ease;
-      }
-      .ddItem:hover{
-        background: rgba(125,160,255,.14);
-        border-color: rgba(170,195,255,.22);
-        transform: translateY(-1px);
-      }
-
-      .details{
-        width: min(1100px, 96vw);
-        margin: 28px auto 0;
-      }
-
-      .detailsShell{
-        padding: 22px;
-        border-radius: 18px;
-        background: rgba(10,14,22,.62);
-        border: 1px solid rgba(170,195,255,.18);
-        box-shadow: 0 18px 60px rgba(0,0,0,.35);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-      }
-
-      .topRow{
-        display:grid;
-        grid-template-columns: 1fr 220px;
-        gap: 18px;
-        align-items:start;
-      }
-
-      .label{
-        font-size: 12px;
-        color: rgba(232,238,252,.7);
-        font-weight: 800;
-        letter-spacing: .8px;
-        text-transform: uppercase;
-        margin-bottom: 8px;
-      }
-
-      .hint{
-        margin-top: 8px;
-        color: rgba(232,238,252,.55);
-        font-size: 12px;
-      }
-
-      .searchInline{
-        position: relative;
-      }
-
-      .metaGrid{
-        margin-top: 14px;
-        display:grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-      }
-
-      .metaBox, .wideBox, .statBox{
-        border-radius: 14px;
-        border: 1px solid rgba(170,195,255,.14);
-        background: rgba(7,10,16,.48);
-        padding: 12px 12px;
-      }
-
-      .k{
-        font-size: 12px;
-        color: rgba(232,238,252,.7);
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: .8px;
-        margin-bottom: 6px;
-      }
-
-      .v{
-        font-size: 14px;
-        font-weight: 750;
-        color: rgba(232,238,252,.92);
-      }
-
-      .muted{ color: rgba(232,238,252,.58); }
-
-      .wideBox{
-        margin-top: 12px;
-      }
-
-      .row2{
-        display:grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        align-items: center;
-      }
-      .right{ text-align:right; }
-
-      .portrait{
-        width: 220px;
-        height: 220px;
-        border-radius: 18px;
-        border: 1px solid rgba(170,195,255,.18);
-        background: rgba(7,10,16,.55);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        overflow:hidden;
-      }
-      .portrait img{
-        width:100%;
-        height:100%;
-        object-fit: cover;
-        display:block;
-      }
-      .noImg{
-        color: rgba(232,238,252,.55);
-        font-weight: 750;
-      }
-
-      .calc{
-        margin-top: 16px;
-        padding: 16px;
-        border-radius: 18px;
-        border: 1px solid rgba(170,195,255,.18);
-        background: rgba(7,10,16,.42);
-      }
-
-      .calcTitle{
-        font-size: 22px;
-        font-weight: 900;
-        margin-bottom: 12px;
-      }
-
-      .calcRow{
-        display:grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr auto;
-        gap: 10px;
-        align-items:end;
-      }
-
-      .applyBtn{
-        padding: 12px 16px;
-        border-radius: 14px;
-        border: 1px solid rgba(170,195,255,.20);
-        background: rgba(20,28,45,.55);
-        color: rgba(232,238,252,.92);
-        font-weight: 850;
-        cursor: pointer;
-        transition: .12s ease;
-        height: 44px;
-      }
-      .applyBtn:hover{
-        background: rgba(125,160,255,.16);
-      }
-
-      .calcGrid{
-        margin-top: 12px;
-        display:grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 10px;
-      }
-
-      .note{
-        margin-top: 10px;
-        font-size: 12px;
-        line-height: 1.35;
-      }
-
-      @media (max-width: 980px){
-        .topRow{ grid-template-columns: 1fr; }
-        .portrait{ width: 100%; height: 260px; }
-        .metaGrid{ grid-template-columns: 1fr 1fr; }
-        .calcRow{ grid-template-columns: 1fr 1fr; }
-        .calcGrid{ grid-template-columns: 1fr 1fr; }
-      }
-    </style>
-  </head>
-
-  <body class="no-scroll">
-    <div class="bg"></div>
-
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand">
-          <div class="dot"></div>
-          <div>
-            <div class="brand-title">Official NTD User Guide</div>
-            <div class="brand-sub">Numbers, tiers, and mechanics in one place</div>
-          </div>
-        </div>
-
-        <nav class="nav" aria-label="Primary">
-          <a href="/">Home</a>
-          <a href="/tier-lists/">Tier Lists</a>
-          <a class="active" href="/unit-arcade/">Unit Arcade</a>
-          <a href="/info-guides/">Info &amp; Guides</a>
-          <a href="/faq/">FAQ</a>
-        </nav>
-
-        <div class="global-search">
-          <input type="search" placeholder="Search units..." />
-        </div>
-      </div>
+<Layout title={title} description={description}>
+  <main class="wrap">
+    <header class="top">
+      <h1>Unit Arcade</h1>
+      <p>
+        Move with A/D or ←/→. Dodge the falling blocks. Press Space to pause.
+      </p>
     </header>
 
-    <main>
-      <section class="ua">
-        <div class="centerCard" id="pickCard" aria-hidden="false">
-          <h1>Unit Arcade</h1>
-          <p class="sub">Type a unit name and pick from the dropdown.</p>
-
-          <div class="searchWrap" id="searchWrap">
-            <input id="unitInput" type="text" placeholder="Search units..." autocomplete="off" />
-            <div class="dropdown" id="dropdown" role="listbox" aria-label="Unit list" hidden>
-              <div class="dropdownInner" id="dropdownInner"></div>
-            </div>
+    <section class="panel">
+      <div class="hud">
+        <div class="hud-left">
+          <div class="stat">
+            <span class="label">Score</span>
+            <span id="score" class="value">0</span>
+          </div>
+          <div class="stat">
+            <span class="label">Best</span>
+            <span id="best" class="value">0</span>
           </div>
         </div>
 
-        <div class="details" id="details" hidden>
-          <div class="detailsShell">
-            <div class="topRow">
-              <div class="left">
-                <div class="searchLine">
-                  <div class="label">Unit search</div>
-                  <div class="searchInline">
-                    <input id="unitInput2" type="text" placeholder="Search units..." autocomplete="off" />
-                    <div class="dropdown" id="dropdown2" role="listbox" aria-label="Unit list" hidden>
-                      <div class="dropdownInner" id="dropdownInner2"></div>
-                    </div>
-                  </div>
-                  <div class="hint">Click the search bar to browse, or type to filter.</div>
-                </div>
+        <div class="hud-right">
+          <button id="btnStart" class="btn primary" type="button">Start</button>
+          <button id="btnReset" class="btn" type="button">Reset</button>
+        </div>
+      </div>
 
-                <div class="metaGrid">
-                  <div class="metaBox">
-                    <div class="k">Rarity</div>
-                    <div class="v" id="rarityVal">Not set</div>
-                  </div>
-                  <div class="metaBox">
-                    <div class="k">Attack Type</div>
-                    <div class="v" id="attackVal">Not set</div>
-                  </div>
-                  <div class="metaBox">
-                    <div class="k">Placement Price</div>
-                    <div class="v" id="priceVal">Not set</div>
-                  </div>
-                  <div class="metaBox">
-                    <div class="k">Placements</div>
-                    <div class="v" id="placeVal">Not set</div>
-                  </div>
-                </div>
+      <div class="stage">
+        <canvas id="arcade" width="960" height="540" aria-label="Unit Arcade game canvas"></canvas>
 
-                <div class="wideBox">
-                  <div class="k">Obtainability</div>
-                  <div class="v muted">Not set yet.</div>
-                </div>
-
-                <div class="wideBox">
-                  <div class="row2">
-                    <div class="k">Ability</div>
-                    <div class="k right">Description</div>
-                  </div>
-                  <div class="row2">
-                    <div class="v muted">No abilities listed yet.</div>
-                    <div class="v muted right">Add this later.</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="right">
-                <div class="portrait" id="portrait">
-                  <div class="noImg">No image</div>
-                </div>
-              </div>
+        <div id="overlay" class="overlay">
+          <div class="overlay-card">
+            <h2 id="overlayTitle">Ready?</h2>
+            <p id="overlayText">Hit Start to play.</p>
+            <div class="overlay-actions">
+              <button id="btnOverlayStart" class="btn primary" type="button">Start</button>
             </div>
-
-            <div class="calc">
-              <div class="calcTitle">Calculator</div>
-
-              <div class="calcRow">
-                <div class="field">
-                  <div class="k">Level</div>
-                  <input type="number" min="1" max="100" value="1" />
-                </div>
-
-                <div class="field">
-                  <div class="k">Variant</div>
-                  <select>
-                    <option>Normal</option>
-                    <option>Shiny</option>
-                  </select>
-                </div>
-
-                <div class="field">
-                  <div class="k">Enchant</div>
-                  <select>
-                    <option>None</option>
-                    <option>DMG</option>
-                    <option>CD</option>
-                    <option>RNG</option>
-                  </select>
-                </div>
-
-                <div class="field">
-                  <div class="k">Chip</div>
-                  <select>
-                    <option>None</option>
-                    <option>Critical Strikes</option>
-                    <option>Attack Speed</option>
-                    <option>Range</option>
-                  </select>
-                </div>
-
-                <button class="applyBtn" type="button">Apply</button>
-              </div>
-
-              <div class="calcGrid">
-                <div class="statBox">
-                  <div class="k">Cost</div>
-                  <div class="v">0</div>
-                </div>
-                <div class="statBox">
-                  <div class="k">DPS</div>
-                  <div class="v">0</div>
-                </div>
-                <div class="statBox">
-                  <div class="k">Damage</div>
-                  <div class="v">0</div>
-                </div>
-                <div class="statBox">
-                  <div class="k">Cooldown</div>
-                  <div class="v">0</div>
-                </div>
-                <div class="statBox">
-                  <div class="k">Range</div>
-                  <div class="v">0</div>
-                </div>
-              </div>
-
-              <div class="note muted">
-                This calculator is a shell for now. Once your unit data table is added, we’ll compute real numbers.
-              </div>
-            </div>
+            <p class="overlay-hint">Tip: try to survive long enough to “earn” a new unit unlock screen later.</p>
           </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
+  </main>
 
-    <script>
-      const UNITS = ${JSON.stringify(units)};
+  <style>
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+    }
 
-      const pickCard = document.getElementById("pickCard");
-      const details = document.getElementById("details");
+    .top h1 {
+      font-size: clamp(28px, 3vw, 44px);
+      margin: 0 0 6px;
+      letter-spacing: 0.2px;
+    }
 
-      const input1 = document.getElementById("unitInput");
-      const dd1 = document.getElementById("dropdown");
-      const ddInner1 = document.getElementById("dropdownInner");
+    .top p {
+      margin: 0 0 18px;
+      opacity: 0.85;
+      line-height: 1.4;
+    }
 
-      const input2 = document.getElementById("unitInput2");
-      const dd2 = document.getElementById("dropdown2");
-      const ddInner2 = document.getElementById("dropdownInner2");
+    .panel {
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.03);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    }
 
-      const portrait = document.getElementById("portrait");
+    .hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(8px);
+    }
 
-      function norm(s){ return (s || "").toLowerCase().trim(); }
+    .hud-left {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
-      function setNoScroll(on){
-        document.body.classList.toggle("no-scroll", !!on);
+    .stat {
+      display: grid;
+      gap: 2px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+      min-width: 92px;
+    }
+
+    .label {
+      font-size: 12px;
+      opacity: 0.75;
+    }
+
+    .value {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .hud-right {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      color: inherit;
+      padding: 9px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.26);
+    }
+
+    .btn:active {
+      transform: translateY(0px);
+    }
+
+    .btn.primary {
+      border-color: rgba(120, 200, 255, 0.5);
+      background: rgba(120, 200, 255, 0.16);
+    }
+
+    .stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background:
+        radial-gradient(900px 420px at 30% 30%, rgba(120, 200, 255, 0.14), transparent 60%),
+        radial-gradient(700px 380px at 80% 70%, rgba(255, 120, 200, 0.10), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.35));
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(7px);
+    }
+
+    .overlay.hidden {
+      display: none;
+    }
+
+    .overlay-card {
+      width: min(520px, 92%);
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(20, 20, 28, 0.80);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.5);
+      padding: 18px 18px 14px;
+    }
+
+    .overlay-card h2 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+
+    .overlay-card p {
+      margin: 0 0 12px;
+      opacity: 0.88;
+      line-height: 1.4;
+    }
+
+    .overlay-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .overlay-hint {
+      margin-top: 14px;
+      font-size: 12px;
+      opacity: 0.65;
+    }
+  </style>
+
+  <script>
+    // This entire script runs in the browser only.
+    // No TypeScript syntax here, so Astro/Vite won't choke during build.
+
+    const canvas = document.getElementById("arcade");
+    const scoreEl = document.getElementById("score");
+    const bestEl = document.getElementById("best");
+    const overlay = document.getElementById("overlay");
+    const overlayTitle = document.getElementById("overlayTitle");
+    const overlayText = document.getElementById("overlayText");
+    const btnStart = document.getElementById("btnStart");
+    const btnReset = document.getElementById("btnReset");
+    const btnOverlayStart = document.getElementById("btnOverlayStart");
+
+    if (!(canvas instanceof HTMLCanvasElement)) {
+      throw new Error("Canvas #arcade not found.");
+    }
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("2D context not available.");
+
+    // HiDPI handling so it stays crisp.
+    function resizeCanvasToDisplaySize() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+
+      const w = Math.round(rect.width * dpr);
+      const h = Math.round(rect.height * dpr);
+
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+    }
+
+    const storageKey = "unitArcadeBestScore";
+    const bestScoreStored = Number(localStorage.getItem(storageKey) || "0");
+    let bestScore = Number.isFinite(bestScoreStored) ? bestScoreStored : 0;
+    bestEl.textContent = String(bestScore);
+
+    const keys = new Set();
+
+    window.addEventListener("keydown", (e) => {
+      if (["ArrowLeft", "ArrowRight", "a", "d", "A", "D", " "].includes(e.key)) {
+        e.preventDefault();
+      }
+      keys.add(e.key);
+
+      if (e.key === " ") togglePause();
+    });
+
+    window.addEventListener("keyup", (e) => keys.delete(e.key));
+    window.addEventListener("resize", resizeCanvasToDisplaySize);
+
+    const rng = (min, max) => min + Math.random() * (max - min);
+
+    const state = {
+      running: false,
+      paused: false,
+      time: 0,
+      score: 0,
+      lastSpawn: 0,
+      spawnEvery: 0.65,
+      speed: 260,
+      player: { x: 0.5, y: 0.86, w: 0.06, h: 0.06, vx: 0 },
+      blocks: []
+    };
+
+    function resetGame() {
+      state.running = false;
+      state.paused = false;
+      state.time = 0;
+      state.score = 0;
+      state.lastSpawn = 0;
+      state.spawnEvery = 0.65;
+      state.speed = 260;
+      state.blocks = [];
+      state.player.x = 0.5;
+      state.player.vx = 0;
+
+      scoreEl.textContent = "0";
+      showOverlay("Ready?", "Hit Start to play.");
+      drawFrame(0);
+    }
+
+    function startGame() {
+      state.running = true;
+      state.paused = false;
+      hideOverlay();
+    }
+
+    function togglePause() {
+      if (!state.running) return;
+      state.paused = !state.paused;
+
+      if (state.paused) {
+        showOverlay("Paused", "Press Space to resume.");
+      } else {
+        hideOverlay();
+      }
+    }
+
+    function showOverlay(title, text) {
+      overlayTitle.textContent = title;
+      overlayText.textContent = text;
+      overlay.classList.remove("hidden");
+    }
+
+    function hideOverlay() {
+      overlay.classList.add("hidden");
+    }
+
+    function endGame() {
+      state.running = false;
+
+      if (state.score > bestScore) {
+        bestScore = state.score;
+        bestEl.textContent = String(bestScore);
+        localStorage.setItem(storageKey, String(bestScore));
       }
 
-      function buildList(targetInner, targetDd, query){
-        const q = norm(query);
-        const filtered = q ? UNITS.filter(u => norm(u).includes(q)) : UNITS.slice();
-        const top = filtered.slice(0, 50);
+      showOverlay("Game Over", "Hit Start to try again.");
+    }
 
-        targetInner.innerHTML = "";
-        for (const name of top){
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "ddItem";
-          btn.textContent = name;
-          btn.addEventListener("click", () => selectUnit(name));
-          targetInner.appendChild(btn);
-        }
+    function spawnBlock() {
+      // Blocks are in normalized coordinates (0..1), then mapped to pixels each frame.
+      const w = rng(0.035, 0.09);
+      const h = rng(0.04, 0.12);
+      const x = rng(w * 0.6, 1 - w * 0.6);
+      const y = -h;
 
-        targetDd.hidden = top.length === 0;
-      }
-
-      function openDropdown(which){
-        if (which === 1){
-          buildList(ddInner1, dd1, input1.value);
-          dd1.hidden = false;
-        } else {
-          buildList(ddInner2, dd2, input2.value);
-          dd2.hidden = false;
-        }
-      }
-
-      function closeDropdowns(){
-        dd1.hidden = true;
-        dd2.hidden = true;
-      }
-
-      function selectUnit(name){
-        closeDropdowns();
-
-        input1.value = name;
-        input2.value = name;
-
-        pickCard.hidden = true;
-        pickCard.setAttribute("aria-hidden", "true");
-
-        details.hidden = false;
-
-        setNoScroll(false);
-
-        const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-        const imgPath = "/units/" + slug + ".png";
-
-        portrait.innerHTML = "";
-        const img = document.createElement("img");
-        img.src = imgPath;
-        img.alt = name;
-        img.loading = "lazy";
-        img.addEventListener("error", () => {
-          portrait.innerHTML = '<div class="noImg">No image</div>';
-        });
-        portrait.appendChild(img);
-      }
-
-      function initialState(){
-        pickCard.hidden = false;
-        pickCard.setAttribute("aria-hidden", "false");
-        details.hidden = true;
-        closeDropdowns();
-        setNoScroll(true);
-      }
-
-      initialState();
-
-      input1.addEventListener("focus", () => openDropdown(1));
-      input1.addEventListener("click", () => openDropdown(1));
-      input1.addEventListener("input", () => openDropdown(1));
-
-      input2.addEventListener("focus", () => openDropdown(2));
-      input2.addEventListener("click", () => openDropdown(2));
-      input2.addEventListener("input", () => openDropdown(2));
-
-      document.addEventListener("mousedown", (e) => {
-        const in1 = e.target.closest("#searchWrap");
-        const in2 = e.target.closest(".searchInline");
-        if (!in1 && !in2) closeDropdowns();
+      state.blocks.push({
+        x,
+        y,
+        w,
+        h,
+        vy: rng(0.22, 0.45) // normalized speed factor
       });
+    }
 
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeDropdowns();
-      });
-    </script>
-  </body>
-</html>
+    function intersects(a, b) {
+      return !(
+        a.x + a.w < b.x ||
+        a.x > b.x + b.w ||
+        a.y + a.h < b.y ||
+        a.y > b.y + b.h
+      );
+    }
+
+    function update(dt) {
+      if (!state.running || state.paused) return;
+
+      state.time += dt;
+
+      // Difficulty ramps up over time.
+      state.spawnEvery = Math.max(0.28, 0.65 - state.time * 0.01);
+      state.speed = Math.min(520, 260 + state.time * 7);
+
+      // Player movement (normalized coordinate space).
+      const left = keys.has("ArrowLeft") || keys.has("a") || keys.has("A");
+      const right = keys.has("ArrowRight") || keys.has("d") || keys.has("D");
+
+      const accel = 3.2;
+      const maxV = 1.2;
+
+      if (left) state.player.vx -= accel * dt;
+      if (right) state.player.vx += accel * dt;
+      if (!left && !right) state.player.vx *= Math.pow(0.0008, dt);
+
+      state.player.vx = Math.max(-maxV, Math.min(maxV, state.player.vx));
+      state.player.x += state.player.vx * dt;
+
+      const halfW = state.player.w * 0.5;
+      state.player.x = Math.max(halfW, Math.min(1 - halfW, state.player.x));
+
+      // Spawn blocks.
+      if (state.time - state.lastSpawn > state.spawnEvery) {
+        state.lastSpawn = state.time;
+        spawnBlock();
+      }
+
+      // Move blocks and check collision.
+      const playerRect = {
+        x: state.player.x - state.player.w / 2,
+        y: state.player.y - state.player.h / 2,
+        w: state.player.w,
+        h: state.player.h
+      };
+
+      for (const block of state.blocks) {
+        block.y += block.vy * dt * (state.speed / 260);
+
+        const blockRect = { x: block.x - block.w / 2, y: block.y - block.h / 2, w: block.w, h: block.h };
+        if (intersects(playerRect, blockRect)) {
+          endGame();
+          return;
+        }
+      }
+
+      // Remove offscreen blocks, increment score.
+      const before = state.blocks.length;
+      state.blocks = state.blocks.filter(b => b.y - b.h / 2 < 1.15);
+      const removed = before - state.blocks.length;
+
+      if (removed > 0) {
+        state.score += removed;
+        scoreEl.textContent = String(state.score);
+      }
+    }
+
+    function drawFrame() {
+      resizeCanvasToDisplaySize();
+
+      const w = canvas.width;
+      const h = canvas.height;
+
+      // Background
+      ctx.clearRect(0, 0, w, h);
+
+      // Soft scanline vibe
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "rgba(0,0,0,0.25)";
+      ctx.fillRect(0, 0, w, h);
+
+      // Grid
+      ctx.globalAlpha = 0.35;
+      ctx.strokeStyle = "rgba(255,255,255,0.12)";
+      ctx.lineWidth = 1;
+
+      const step = Math.max(28, Math.floor(w / 22));
+      for (let x = 0; x <= w; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x + 0.5, 0);
+        ctx.lineTo(x + 0.5, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= h; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y + 0.5);
+        ctx.lineTo(w, y + 0.5);
+        ctx.stroke();
+      }
+
+      // Convert normalized coords to pixels
+      const px = (nx) => nx * w;
+      const py = (ny) => ny * h;
+
+      // Blocks
+      ctx.globalAlpha = 1;
+      for (const b of state.blocks) {
+        const bw = px(b.w);
+        const bh = py(b.h);
+        const bx = px(b.x) - bw / 2;
+        const by = py(b.y) - bh / 2;
+
+        ctx.fillStyle = "rgba(255, 110, 180, 0.90)";
+        ctx.fillRect(bx, by, bw, bh);
+
+        ctx.strokeStyle = "rgba(255,255,255,0.35)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(bx, by, bw, bh);
+      }
+
+      // Player
+      const p = state.player;
+      const pw = px(p.w);
+      const ph = py(p.h);
+      const px0 = px(p.x) - pw / 2;
+      const py0 = py(p.y) - ph / 2;
+
+      ctx.fillStyle = "rgba(120, 200, 255, 0.95)";
+      ctx.fillRect(px0, py0, pw, ph);
+
+      ctx.strokeStyle = "rgba(255,255,255,0.45)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(px0, py0, pw, ph);
+
+      // Little “thruster” effect
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = "rgba(255,255,255,0.25)";
+      ctx.fillRect(px0 + pw * 0.15, py0 + ph, pw * 0.7, ph * 0.25);
+      ctx.globalAlpha = 1;
+    }
+
+    let last = performance.now();
+    function loop(now) {
+      const dt = Math.min(0.033, (now - last) / 1000);
+      last = now;
+
+      update(dt);
+      drawFrame();
+
+      requestAnimationFrame(loop);
+    }
+
+    btnStart.addEventListener("click", () => startGame());
+    btnOverlayStart.addEventListener("click", () => startGame());
+    btnReset.addEventListener("click", () => resetGame());
+
+    // Initialize
+    resetGame();
+    requestAnimationFrame(loop);
+  </script>
+</Layout>
