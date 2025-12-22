@@ -26,7 +26,7 @@ const pageTitle = "Unit Arcade";
           <button id="openBtn" class="ua-btn ua-btnBig" type="button">Open</button>
         </div>
 
-        <p id="searchHint" class="ua-footnote">Example: Bear5, Shadow Freddy, The Amalgamation</p>
+        <p id="searchHint" class="ua-footnote">Example: Bear5, Bunny6, Shadow Freddy</p>
       </div>
     </section>
 
@@ -244,11 +244,24 @@ const pageTitle = "Unit Arcade";
         placements: "1",
         obtainability: "Not set yet.",
         abilityName: "Team Buff",
-        abilityDesc:
-          "Every 60 seconds, boosts the DMG, RNG and CD of every unit in range by 10% each.",
+        abilityDesc: "Every 60 seconds, boosts the DMG, RNG and CD of every unit in range by 10% each.",
         baseDamage: 1250,
         baseCooldown: 2,
         baseRange: 30
+      },
+
+      "Bunny6": {
+        id: "bunny6",
+        rarity: "Vengeful",
+        attackType: "Single + Bleed",
+        placementPrice: "$6,666",
+        placements: "2",
+        obtainability: "Not set yet.",
+        abilityName: "Bleed",
+        abilityDesc: "50% bleed. Bleed deals 50% of Bunny6's damage every second to the target. The bleed never leaves, but it does not stack.",
+        baseDamage: 1250,
+        baseCooldown: 2.75,
+        baseRange: 20
       },
 
       "Golden Bonnie": {
@@ -306,7 +319,6 @@ const pageTitle = "Unit Arcade";
     let currentUnitName = "";
     let currentUnit = null;
 
-    // Build level options 1..100
     (function initLevels() {
       const frag = document.createDocumentFragment();
       for (let i = 1; i <= 100; i++) {
@@ -338,18 +350,16 @@ const pageTitle = "Unit Arcade";
       return (s || "").trim().toLowerCase();
     }
 
-    // exact match or case-insensitive exact match
     function resolveUnitName(input) {
       const raw = (input || "").trim();
       if (!raw) return "";
       if (UNIT_NAMES.includes(raw)) return raw;
 
       const n = normalizeName(raw);
-      const hit = UNIT_NAMES.find((u) => normalizeName(u) === n);
+      const hit = UNIT_NAMES.find(u => normalizeName(u) === n);
       return hit || "";
     }
 
-    // Images live in public/images/units => /images/units/...
     function trySetImage(unitId) {
       unitImgLabel.textContent = "No image";
       unitImg.style.display = "none";
@@ -394,10 +404,6 @@ const pageTitle = "Unit Arcade";
       return Number.isFinite(n) && n > 0 ? n : 1;
     }
 
-    // Shiny rules (max)
-    // +30% DMG, +20% RNG, -10% CD
-    // plus future-facing bonuses (stored for later status modeling):
-    // +25% boost, +20% bleed, +20% poison, +10% slow/stun/burn/mimic
     function applyShiny(isShiny, dmgMultObj, cdMultObj, rngMultObj, statusBonusObj) {
       if (!isShiny) return;
 
@@ -418,12 +424,10 @@ const pageTitle = "Unit Arcade";
       const k = key || "none";
       if (k === "none") return;
 
-      // simple max-level enchants
       if (k === "damage3") dmgMultObj.value *= 1.25;
       if (k === "range3") rngMultObj.value *= 1.30;
       if (k === "cooldown3") cdMultObj.value *= 0.85;
 
-      // complex enchants (DMG/RNG/CD applied now; status stored)
       if (k === "pizza_party") { dmgMultObj.value *= 1.30; rngMultObj.value *= 1.20; cdMultObj.value *= 0.90; }
       if (k === "withered") { dmgMultObj.value *= 1.35; rngMultObj.value *= 1.35; cdMultObj.value *= 1.05; statusBonusObj.bleed += 0.05; }
       if (k === "encased") { dmgMultObj.value *= 1.30; rngMultObj.value *= 1.20; cdMultObj.value *= 0.90; statusBonusObj.slow += 0.10; }
@@ -470,14 +474,13 @@ const pageTitle = "Unit Arcade";
         mimic: 0
       };
 
-      // Level scaling: each level gives 2% of Shiny bonuses (using level-1 steps)
       const lvl = Math.max(0, level - 1);
 
-      dmgMult.value *= 1 + lvl * 0.006;  // 0.6% DMG per level
-      rngMult.value *= 1 + lvl * 0.004;  // 0.4% RNG per level
-      cdMult.value  *= 1 - lvl * 0.002;  // -0.2% CD per level
+      dmgMult.value *= 1 + lvl * 0.006;
+      rngMult.value *= 1 + lvl * 0.004;
+      cdMult.value  *= 1 - lvl * 0.002;
 
-      statusBonus.boost  += lvl * 0.005; // +0.5% per level
+      statusBonus.boost  += lvl * 0.005;
       statusBonus.bleed  += lvl * 0.004;
       statusBonus.poison += lvl * 0.004;
       statusBonus.slow   += lvl * 0.002;
@@ -496,7 +499,6 @@ const pageTitle = "Unit Arcade";
       const dps = damage / cooldown;
       const placements = parsePlacements(currentUnit.placements);
 
-      // POWER = (DPS * RANGE / 100) * placements
       const power = (dps * range / 100) * placements;
 
       calcPower.textContent = fmt(power, 2);
@@ -566,7 +568,6 @@ const pageTitle = "Unit Arcade";
   <style>
     :global(body) { background: transparent !important; }
 
-    /* Full-page background with blur */
     :global(body::before) {
       content: "";
       position: fixed;
@@ -579,6 +580,7 @@ const pageTitle = "Unit Arcade";
       filter: blur(8px) saturate(0.95);
       transform: scale(1.05);
     }
+
     :global(body::after) {
       content: "";
       position: fixed;
@@ -588,7 +590,6 @@ const pageTitle = "Unit Arcade";
       pointer-events: none;
     }
 
-    /* No scroll until a unit is selected */
     :global(html.ua-lock),
     :global(body.ua-lock) {
       height: 100% !important;
@@ -687,7 +688,6 @@ const pageTitle = "Unit Arcade";
       opacity: 0.75;
     }
 
-    /* INFO VIEW */
     .ua-infoWrap { padding-bottom: 72px; }
     .ua-infoTitle { margin: 0 0 6px; font-size: 2.2rem; font-weight: 900; }
     .ua-infoSub { margin: 0 0 18px; opacity: 0.85; }
@@ -799,7 +799,6 @@ const pageTitle = "Unit Arcade";
 
     .ua-wideV { font-weight: 700; opacity: 0.9; }
 
-    /* CALCULATOR */
     .ua-calc { margin-top: 20px; }
 
     .ua-calcTitle {
@@ -859,7 +858,6 @@ const pageTitle = "Unit Arcade";
       padding: 12px;
     }
 
-    /* Output boxes centered */
     .ua-out { text-align: center; }
 
     .ua-calcK {
