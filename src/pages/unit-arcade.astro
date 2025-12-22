@@ -1,11 +1,10 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-
 const pageTitle = "Unit Arcade";
 ---
 
 <BaseLayout title={pageTitle}>
-  <main class="ua-page">
+  <main class="ua-root" id="uaRoot">
     <!-- SEARCH-ONLY VIEW -->
     <section id="searchView" class="ua-center">
       <div class="ua-card">
@@ -13,7 +12,7 @@ const pageTitle = "Unit Arcade";
         <p class="ua-sub">Type a unit name and pick from the dropdown.</p>
 
         <div class="ua-row">
-          <div class="ua-field" id="fieldCenter">
+          <div class="ua-field" id="centerField">
             <input
               id="unitSearch"
               class="ua-input"
@@ -22,7 +21,7 @@ const pageTitle = "Unit Arcade";
               autocomplete="off"
               spellcheck="false"
             />
-            <div id="unitDropdown" class="ua-dropdown ua-hidden" role="listbox"></div>
+            <div id="unitDropdown" class="ua-dropdown" role="listbox"></div>
           </div>
 
           <button id="openBtn" class="ua-btn" type="button">Open</button>
@@ -32,8 +31,8 @@ const pageTitle = "Unit Arcade";
       </div>
     </section>
 
-    <!-- INFO VIEW -->
-    <section id="infoView" class="ua-info ua-hidden">
+    <!-- INFO VIEW (hidden until unit selected) -->
+    <section id="infoView" class="ua-info">
       <div class="ua-infoWrap">
         <h1 id="unitTitle" class="ua-infoTitle">Unit Arcade</h1>
         <p class="ua-infoSub">Pick a unit to see details.</p>
@@ -43,7 +42,7 @@ const pageTitle = "Unit Arcade";
             <div class="ua-panelLeft">
               <div class="ua-label">Unit search</div>
 
-              <div class="ua-field" id="fieldTop">
+              <div class="ua-field" id="topField">
                 <input
                   id="unitSearchTop"
                   class="ua-input"
@@ -52,7 +51,7 @@ const pageTitle = "Unit Arcade";
                   autocomplete="off"
                   spellcheck="false"
                 />
-                <div id="unitDropdownTop" class="ua-dropdown ua-hidden" role="listbox"></div>
+                <div id="unitDropdownTop" class="ua-dropdown" role="listbox"></div>
               </div>
 
               <div class="ua-help">Click the search bar to browse, or type to filter.</div>
@@ -134,6 +133,7 @@ const pageTitle = "Unit Arcade";
       "Lamp"
     ];
 
+    // Keep minimal until you populate real data
     const UNIT_DATA = {
       "Golden Bonnie": {
         rarity: "Mythic",
@@ -145,17 +145,21 @@ const pageTitle = "Unit Arcade";
       }
     };
 
+    const htmlEl = document.documentElement;
+    const bodyEl = document.body;
+    const rootEl = document.getElementById("uaRoot");
+
     const searchView = document.getElementById("searchView");
     const infoView = document.getElementById("infoView");
 
-    const fieldCenter = document.getElementById("fieldCenter");
     const unitSearch = document.getElementById("unitSearch");
     const unitDropdown = document.getElementById("unitDropdown");
     const openBtn = document.getElementById("openBtn");
+    const centerField = document.getElementById("centerField");
 
-    const fieldTop = document.getElementById("fieldTop");
     const unitSearchTop = document.getElementById("unitSearchTop");
     const unitDropdownTop = document.getElementById("unitDropdownTop");
+    const topField = document.getElementById("topField");
 
     const unitTitle = document.getElementById("unitTitle");
     const unitImgLabel = document.getElementById("unitImgLabel");
@@ -167,44 +171,42 @@ const pageTitle = "Unit Arcade";
     const obtainVal = document.getElementById("obtainVal");
     const abilityVal = document.getElementById("abilityVal");
 
-    function hardLockScroll() {
-      document.documentElement.style.overflow = "hidden";
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.height = "100%";
-      document.body.style.height = "100%";
+    // ----- SCROLL LOCK (this kills that right-side scrollbar) -----
+    function lockScroll() {
+      htmlEl.classList.add("ua-lock");
+      bodyEl.classList.add("ua-lock");
+      rootEl.classList.add("ua-lock");
+    }
+    function unlockScroll() {
+      htmlEl.classList.remove("ua-lock");
+      bodyEl.classList.remove("ua-lock");
+      rootEl.classList.remove("ua-lock");
     }
 
-    function hardUnlockScroll() {
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-      document.documentElement.style.height = "";
-      document.body.style.height = "";
+    // Start on search-only (no scrolling)
+    infoView.style.display = "none";
+    searchView.style.display = "grid";
+    lockScroll();
+
+    // ----- DROPDOWN CONTROL (inline display so it cannot get “stuck”) -----
+    function openMenu(menuEl) {
+      menuEl.style.display = "block";
+    }
+    function closeMenu(menuEl) {
+      menuEl.style.display = "none";
+    }
+    function closeAllMenus() {
+      closeMenu(unitDropdown);
+      closeMenu(unitDropdownTop);
     }
 
-    // No scroll until info screen is shown
-    hardLockScroll();
-
-    function normalize(s) {
-      return (s || "").trim();
-    }
+    // Ensure menus start closed
+    closeAllMenus();
 
     function filterUnits(query) {
       const q = (query || "").trim().toLowerCase();
       if (!q) return UNIT_NAMES.slice(0, 10);
       return UNIT_NAMES.filter(n => n.toLowerCase().includes(q)).slice(0, 10);
-    }
-
-    function showMenu(menuEl) {
-      menuEl.classList.remove("ua-hidden");
-    }
-
-    function hideMenu(menuEl) {
-      menuEl.classList.add("ua-hidden");
-    }
-
-    function closeAllMenus() {
-      hideMenu(unitDropdown);
-      hideMenu(unitDropdownTop);
     }
 
     function renderMenu(menuEl, items, onPick) {
@@ -231,28 +233,28 @@ const pageTitle = "Unit Arcade";
       }
     }
 
-    function openMenuFor(inputEl, menuEl, onPick) {
+    function showDropdownFor(inputEl, menuEl, onPick) {
       const list = filterUnits(inputEl.value);
       renderMenu(menuEl, list, (name) => {
         inputEl.value = name;
         onPick(name);
       });
-      showMenu(menuEl);
+      openMenu(menuEl);
     }
 
-    function attachDropdown(inputEl, menuEl, onPick) {
+    function attachDropdown(inputEl, menuEl, fieldEl, onPick) {
       inputEl.addEventListener("focus", () => {
         closeAllMenus();
-        openMenuFor(inputEl, menuEl, onPick);
+        showDropdownFor(inputEl, menuEl, onPick);
       });
 
       inputEl.addEventListener("click", () => {
         closeAllMenus();
-        openMenuFor(inputEl, menuEl, onPick);
+        showDropdownFor(inputEl, menuEl, onPick);
       });
 
       inputEl.addEventListener("input", () => {
-        openMenuFor(inputEl, menuEl, onPick);
+        showDropdownFor(inputEl, menuEl, onPick);
       });
 
       inputEl.addEventListener("keydown", (e) => {
@@ -260,9 +262,8 @@ const pageTitle = "Unit Arcade";
           closeAllMenus();
           inputEl.blur();
         }
-
         if (e.key === "Enter") {
-          const val = normalize(inputEl.value);
+          const val = (inputEl.value || "").trim();
           if (UNIT_NAMES.includes(val)) {
             onPick(val);
             closeAllMenus();
@@ -270,42 +271,35 @@ const pageTitle = "Unit Arcade";
         }
       });
 
-      // When the input loses focus, close the dropdown shortly after
-      // (timeout lets clicks on menu items register first)
-      inputEl.addEventListener("blur", () => {
-        setTimeout(() => {
-          // Only close if focus didn't move into the menu itself
-          if (!menuEl.contains(document.activeElement)) closeAllMenus();
-        }, 120);
-      });
+      // If they click inside the dropdown, don't instantly close
+      menuEl.addEventListener("mousedown", (e) => e.preventDefault());
+
+      // Click-away to close
+      document.addEventListener(
+        "mousedown",
+        (e) => {
+          const t = e.target;
+          const insideThis = fieldEl.contains(t);
+          const insideOther = (fieldEl === centerField ? topField.contains(t) : centerField.contains(t));
+          if (!insideThis && !insideOther) closeAllMenus();
+        },
+        true
+      );
     }
 
-    // One global click-away handler that ALWAYS works
-    document.addEventListener("pointerdown", (e) => {
-      const t = e.target;
-
-      const insideCenter = fieldCenter && fieldCenter.contains(t);
-      const insideTop = fieldTop && fieldTop.contains(t);
-
-      if (!insideCenter && !insideTop) closeAllMenus();
-    });
-
     function loadUnit(name) {
-      const unitName = normalize(name);
-
+      const unitName = (name || "").trim();
       if (!UNIT_NAMES.includes(unitName)) return;
 
       // Switch views
-      searchView.classList.add("ua-hidden");
-      infoView.classList.remove("ua-hidden");
-      hardUnlockScroll();
+      searchView.style.display = "none";
+      infoView.style.display = "block";
+      unlockScroll();
 
-      // Sync top search
       unitTitle.textContent = unitName;
       unitSearchTop.value = unitName;
 
       const data = UNIT_DATA[unitName] || {};
-
       rarityVal.textContent = data.rarity || "Not set";
       attackVal.textContent = data.attackType || "Not set";
       priceVal.textContent = data.placementPrice || "Not set";
@@ -314,19 +308,18 @@ const pageTitle = "Unit Arcade";
       abilityVal.textContent = data.ability || "No abilities listed yet.";
 
       unitImgLabel.textContent = "No image";
+      closeAllMenus();
     }
 
     openBtn.addEventListener("click", () => loadUnit(unitSearch.value));
 
-    attachDropdown(unitSearch, unitDropdown, loadUnit);
-    attachDropdown(unitSearchTop, unitDropdownTop, loadUnit);
+    attachDropdown(unitSearch, unitDropdown, centerField, loadUnit);
+    attachDropdown(unitSearchTop, unitDropdownTop, topField, loadUnit);
   </script>
 
   <style>
-    :global(body) {
-      background: transparent !important;
-    }
-
+    /* FULL BACKGROUND */
+    :global(body) { background: transparent !important; }
     :global(body::before) {
       content: "";
       position: fixed;
@@ -337,24 +330,30 @@ const pageTitle = "Unit Arcade";
       background-position: center;
       background-repeat: no-repeat;
     }
-
     :global(body::after) {
       content: "";
       position: fixed;
       inset: 0;
       z-index: -1;
-      background: rgba(5, 10, 20, 0.30);
+      background: rgba(5, 10, 20, 0.28);
       pointer-events: none;
     }
 
-    .ua-page {
+    /* HARD scroll lock that works even with layout wrappers */
+    :global(html.ua-lock),
+    :global(body.ua-lock) {
+      height: 100% !important;
+      overflow: hidden !important;
+    }
+    .ua-lock {
+      height: 100% !important;
+      overflow: hidden !important;
+    }
+
+    .ua-root {
       max-width: 1200px;
       margin: 0 auto;
       padding: 24px;
-    }
-
-    .ua-hidden {
-      display: none !important;
     }
 
     .ua-center {
@@ -375,16 +374,8 @@ const pageTitle = "Unit Arcade";
       overflow: visible;
     }
 
-    .ua-title {
-      margin: 0 0 6px;
-      font-size: 2.2rem;
-      font-weight: 900;
-    }
-
-    .ua-sub {
-      margin: 0 0 14px;
-      opacity: 0.85;
-    }
+    .ua-title { margin: 0 0 6px; font-size: 2.2rem; font-weight: 900; }
+    .ua-sub { margin: 0 0 14px; opacity: 0.85; }
 
     .ua-row {
       display: grid;
@@ -393,11 +384,7 @@ const pageTitle = "Unit Arcade";
       align-items: start;
     }
 
-    .ua-field {
-      position: relative;
-      width: 100%;
-      overflow: visible;
-    }
+    .ua-field { position: relative; width: 100%; overflow: visible; }
 
     .ua-input {
       width: 100%;
@@ -419,19 +406,16 @@ const pageTitle = "Unit Arcade";
       height: 52px;
     }
 
-    /* replaces the weird “bar” completely with normal text */
+    /* the “bar” is gone */
     .ua-footnote {
       margin: 12px 0 0;
-      padding: 0;
-      background: none;
-      border: none;
-      border-radius: 0;
       font-size: 0.85rem;
       opacity: 0.7;
     }
 
-    /* DROPDOWN */
+    /* DROPDOWN: lined up, 10 items visible, scroll inside */
     .ua-dropdown {
+      display: none;
       position: absolute;
       top: calc(100% + 8px);
       left: 0;
@@ -443,74 +427,50 @@ const pageTitle = "Unit Arcade";
       background: rgba(5, 8, 15, 0.94);
       backdrop-filter: blur(10px);
 
-      max-height: 360px;
+      /* 10 items max-ish */
+      max-height: 420px;
       overflow-y: auto;
       overflow-x: hidden;
 
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
 
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: stretch !important;
-      gap: 0 !important;
-      padding: 8px !important;
+      padding: 10px;
     }
 
     .ua-ddItem {
-      display: block !important;
-      width: 100% !important;
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(180, 210, 255, 0.10);
+      background: rgba(255, 255, 255, 0.04);
+      color: inherit;
 
-      margin: 0 !important;
-      padding: 12px 12px !important;
+      cursor: pointer;
 
-      border: 1px solid rgba(180, 210, 255, 0.10) !important;
-      border-radius: 12px !important;
+      font-weight: 900;
+      font-size: 1.08rem;
 
-      background: rgba(255, 255, 255, 0.04) !important;
-      color: inherit !important;
-
-      cursor: pointer !important;
-
-      font-weight: 900 !important;
-      font-size: 1.05rem !important;
-
-      text-align: center !important;
-      white-space: nowrap !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
+      text-align: center;
+      padding: 12px 12px;
+      margin: 0;
     }
-
-    .ua-ddItem + .ua-ddItem {
-      margin-top: 8px !important;
-    }
+    .ua-ddItem + .ua-ddItem { margin-top: 8px; }
 
     .ua-ddItem:hover {
-      background: rgba(180, 210, 255, 0.10) !important;
-      border-color: rgba(180, 210, 255, 0.22) !important;
+      background: rgba(180, 210, 255, 0.10);
+      border-color: rgba(180, 210, 255, 0.22);
     }
 
     .ua-ddEmpty {
-      padding: 12px 12px;
+      padding: 12px;
       text-align: center;
       opacity: 0.65;
       font-weight: 800;
     }
 
-    /* INFO VIEW STYLES */
-    .ua-infoWrap {
-      padding-bottom: 72px;
-    }
-
-    .ua-infoTitle {
-      margin: 0 0 6px;
-      font-size: 2.2rem;
-      font-weight: 900;
-    }
-
-    .ua-infoSub {
-      margin: 0 0 18px;
-      opacity: 0.85;
-    }
+    /* INFO VIEW (unchanged styling, but kept here so file is self contained) */
+    .ua-infoWrap { padding-bottom: 72px; }
+    .ua-infoTitle { margin: 0 0 6px; font-size: 2.2rem; font-weight: 900; }
+    .ua-infoSub { margin: 0 0 18px; opacity: 0.85; }
 
     .ua-panel {
       border-radius: 18px;
@@ -554,10 +514,7 @@ const pageTitle = "Unit Arcade";
       overflow: hidden;
     }
 
-    .ua-imageText {
-      opacity: 0.7;
-      font-weight: 700;
-    }
+    .ua-imageText { opacity: 0.7; font-weight: 700; }
 
     .ua-divider {
       height: 1px;
@@ -585,10 +542,7 @@ const pageTitle = "Unit Arcade";
       opacity: 0.75;
     }
 
-    .ua-statV {
-      margin-top: 8px;
-      font-weight: 800;
-    }
+    .ua-statV { margin-top: 8px; font-weight: 800; }
 
     .ua-wide {
       border-radius: 14px;
@@ -611,25 +565,13 @@ const pageTitle = "Unit Arcade";
       gap: 12px;
     }
 
-    .ua-wideRight {
-      text-align: center;
-    }
-
-    .ua-wideV {
-      font-weight: 700;
-      opacity: 0.9;
-    }
+    .ua-wideRight { text-align: center; }
+    .ua-wideV { font-weight: 700; opacity: 0.9; }
 
     @media (max-width: 900px) {
-      .ua-row {
-        grid-template-columns: 1fr;
-      }
-      .ua-panelRow {
-        grid-template-columns: 1fr;
-      }
-      .ua-stats4 {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .ua-row { grid-template-columns: 1fr; }
+      .ua-panelRow { grid-template-columns: 1fr; }
+      .ua-stats4 { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </BaseLayout>
