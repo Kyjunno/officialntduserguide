@@ -2,222 +2,140 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const pageTitle = "Unit Arcade";
-
-const UNIT_NAMES = [
-  "Bear5",
-  "Test Dummy Endo",
-  "Nightguard",
-  "Chicken7",
-  "Fan",
-  "Bonnie",
-  "Carl The Cupcake",
-  "Freddy",
-  "Foxy",
-  "Chica",
-  "Big Band Bonnie",
-  "Golden Bonnie",
-  "Bunny6",
-  "Sparky The Dog",
-  "Endo 01",
-  "Bort Bunny",
-  "Stuffed Freddy",
-  "Phone Guy",
-  "Golden Freddy",
-  "Fox4",
-  "The Amalgamation",
-  "Shadow Freddy",
-  "Endo Plush",
-  "Crying Soul",
-  "Lamp"
-];
 ---
 
 <BaseLayout title={pageTitle}>
-  <main class="ua-wrap">
-    <!-- SEARCH ONLY SCREEN -->
-    <section id="searchScreen" class="ua-centerSearch">
-      <div class="ua-centerCard">
-        <div class="ua-centerTitle">Unit Arcade</div>
-        <div class="ua-centerSub">Type a unit name and pick from the dropdown.</div>
+  <main class="ua-page">
+    <!-- SEARCH-ONLY VIEW -->
+    <section id="searchView" class="ua-center">
+      <div class="ua-card">
+        <h1 class="ua-title">Unit Arcade</h1>
+        <p class="ua-sub">Type a unit name and pick from the dropdown.</p>
 
-        <div class="ua-centerInputRow">
+        <div class="ua-row">
           <div class="ua-field">
             <input
-              id="unitInput"
-              class="ua-input ua-inputBig"
+              id="unitSearch"
+              class="ua-input"
               type="text"
               placeholder="Search units..."
               autocomplete="off"
               spellcheck="false"
             />
-            <div id="dropdownCenter" class="ua-dropdown ua-hidden" role="listbox" aria-label="Unit results"></div>
+            <div id="unitDropdown" class="ua-dropdown ua-hidden" role="listbox"></div>
           </div>
 
-          <button id="goBtn" class="ua-goBtn" type="button" aria-label="Open unit">
-            Open
-          </button>
+          <button id="openBtn" class="ua-btn" type="button">Open</button>
         </div>
 
-        <div id="hint" class="ua-hint">Click the search bar to browse units.</div>
+        <div id="uaHint" class="ua-hint">Click the search bar to browse units.</div>
       </div>
     </section>
 
-    <!-- FULL INFO SCREEN (hidden until selection) -->
-    <section id="infoScreen" class="ua-infoScreen ua-hidden">
-      <header class="ua-hero">
-        <h1 id="unitTitle">Unit Arcade</h1>
-        <p id="unitSubtitle">Pick a unit to see details.</p>
-      </header>
+    <!-- INFO VIEW -->
+    <section id="infoView" class="ua-info ua-hidden">
+      <div class="ua-infoWrap">
+        <h1 id="unitTitle" class="ua-infoTitle">Unit Arcade</h1>
+        <p class="ua-infoSub">Pick a unit to see details.</p>
 
-      <section class="ua-card">
-        <div class="ua-searchRow">
-          <div class="ua-searchLeft">
-            <div class="ua-label">Unit search</div>
+        <div class="ua-panel">
+          <div class="ua-panelRow">
+            <div class="ua-panelLeft">
+              <div class="ua-label">Unit search</div>
 
-            <div class="ua-field">
-              <input
-                id="unitInputTop"
-                class="ua-input"
-                type="text"
-                placeholder="Search units..."
-                autocomplete="off"
-                spellcheck="false"
-              />
-              <div id="dropdownTop" class="ua-dropdown ua-hidden" role="listbox" aria-label="Unit results"></div>
+              <div class="ua-field">
+                <input
+                  id="unitSearchTop"
+                  class="ua-input"
+                  type="text"
+                  placeholder="Search units..."
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+                <div id="unitDropdownTop" class="ua-dropdown ua-hidden" role="listbox"></div>
+              </div>
+
+              <div class="ua-help">Click the search bar to browse, or type to filter.</div>
             </div>
 
-            <div class="ua-help">Click the search bar to browse, or type to filter.</div>
+            <div class="ua-imageBox">
+              <div id="unitImgLabel" class="ua-imageText">No image</div>
+            </div>
           </div>
 
-          <div class="ua-imageBox">
-            <div id="unitImageLabel" class="ua-imageInner">No image</div>
+          <div class="ua-divider"></div>
+
+          <div class="ua-stats4">
+            <div class="ua-stat">
+              <div class="ua-statK">RARITY</div>
+              <div id="rarityVal" class="ua-statV">Not set</div>
+            </div>
+            <div class="ua-stat">
+              <div class="ua-statK">ATTACK TYPE</div>
+              <div id="attackVal" class="ua-statV">Not set</div>
+            </div>
+            <div class="ua-stat">
+              <div class="ua-statK">PLACEMENT PRICE</div>
+              <div id="priceVal" class="ua-statV">Not set</div>
+            </div>
+            <div class="ua-stat">
+              <div class="ua-statK">PLACEMENTS</div>
+              <div id="placementsVal" class="ua-statV">Not set</div>
+            </div>
+          </div>
+
+          <div class="ua-divider"></div>
+
+          <div class="ua-wide">
+            <div class="ua-wideK">OBTAINABILITY</div>
+            <div id="obtainVal" class="ua-wideV">Not set yet.</div>
+          </div>
+
+          <div class="ua-divider"></div>
+
+          <div class="ua-wide">
+            <div class="ua-wideK ua-wideK2">
+              <span>ABILITY</span>
+              <span class="ua-wideRight">DESCRIPTION</span>
+            </div>
+            <div id="abilityVal" class="ua-wideV">No abilities listed yet.</div>
           </div>
         </div>
-
-        <div class="ua-divider"></div>
-
-        <div class="ua-statsGrid4">
-          <div class="ua-stat">
-            <div class="ua-statLabel">RARITY</div>
-            <div id="rarityVal" class="ua-statValue">Not set</div>
-          </div>
-
-          <div class="ua-stat">
-            <div class="ua-statLabel">ATTACK TYPE</div>
-            <div id="attackVal" class="ua-statValue">Not set</div>
-          </div>
-
-          <div class="ua-stat">
-            <div class="ua-statLabel">PLACEMENT PRICE</div>
-            <div id="priceVal" class="ua-statValue">Not set</div>
-          </div>
-
-          <div class="ua-stat">
-            <div class="ua-statLabel">PLACEMENTS</div>
-            <div id="placementsVal" class="ua-statValue">Not set</div>
-          </div>
-        </div>
-
-        <div class="ua-divider"></div>
-
-        <div class="ua-wideBlock">
-          <div class="ua-wideTitle">OBTAINABILITY</div>
-          <div id="obtainVal" class="ua-wideText">Not set yet.</div>
-        </div>
-
-        <div class="ua-divider"></div>
-
-        <div class="ua-wideBlock">
-          <div class="ua-wideTitle ua-twoColTitle">
-            <span>ABILITY</span>
-            <span class="ua-rightTitle">DESCRIPTION</span>
-          </div>
-          <div id="abilityVal" class="ua-wideText">No abilities listed yet.</div>
-        </div>
-
-        <div class="ua-divider"></div>
-
-        <section class="ua-calcCard">
-          <div class="ua-calcHeader">
-            <h2>Calculator</h2>
-          </div>
-
-          <div class="ua-calcControls">
-            <div class="ua-control">
-              <div class="ua-controlLabel">LEVEL</div>
-              <input id="lvlInput" class="ua-inputSmall" type="number" min="1" value="1" />
-            </div>
-
-            <div class="ua-control">
-              <div class="ua-controlLabel">VARIANT</div>
-              <select id="variantInput" class="ua-select">
-                <option value="Normal">Normal</option>
-                <option value="Shiny">Shiny</option>
-              </select>
-            </div>
-
-            <div class="ua-control">
-              <div class="ua-controlLabel">ENCHANT</div>
-              <select id="enchantInput" class="ua-select">
-                <option value="None">None</option>
-                <option value="Critical Strikes">Critical Strikes</option>
-                <option value="Power">Power</option>
-                <option value="Cooldown">Cooldown</option>
-                <option value="Range">Range</option>
-              </select>
-            </div>
-
-            <button class="ua-applyBtn" type="button">Apply</button>
-          </div>
-
-          <div class="ua-calcGrid">
-            <div class="ua-miniStat">
-              <div class="ua-miniLabel">LEVEL</div>
-              <div id="outLevel" class="ua-miniValue">1</div>
-            </div>
-            <div class="ua-miniStat">
-              <div class="ua-miniLabel">COST</div>
-              <div id="outCost" class="ua-miniValue">0</div>
-            </div>
-            <div class="ua-miniStat">
-              <div class="ua-miniLabel">DPS</div>
-              <div id="outDps" class="ua-miniValue">0</div>
-            </div>
-            <div class="ua-miniStat">
-              <div class="ua-miniLabel">DAMAGE</div>
-              <div id="outDmg" class="ua-miniValue">0</div>
-            </div>
-            <div class="ua-miniStat">
-              <div class="ua-miniLabel">COOLDOWN</div>
-              <div id="outCd" class="ua-miniValue">0</div>
-            </div>
-            <div class="ua-miniStat">
-              <div class="ua-miniLabel">RANGE</div>
-              <div id="outRng" class="ua-miniValue">0</div>
-            </div>
-            <div class="ua-miniStat">
-              <div class="ua-miniLabel">POWER</div>
-              <div id="outPow" class="ua-miniValue">0</div>
-            </div>
-          </div>
-
-          <div class="ua-totalBox">
-            <div class="ua-totalTitle">TOTAL DPS</div>
-            <div id="outTotal" class="ua-totalValue">0</div>
-          </div>
-        </section>
-      </section>
+      </div>
     </section>
   </main>
 
-  <!-- embed unit names as JSON so inline script can read them safely -->
-  <script id="ua-unit-names" type="application/json" is:inline>
-    {JSON.stringify(UNIT_NAMES)}
-  </script>
-
   <script is:inline>
-    const UNIT_NAMES = JSON.parse(document.getElementById("ua-unit-names").textContent);
+    // Put the list directly in JS so we don't rely on JSON script tags (safer on some setups)
+    const UNIT_NAMES = [
+      "Bear5",
+      "Test Dummy Endo",
+      "Nightguard",
+      "Chicken7",
+      "Fan",
+      "Bonnie",
+      "Carl The Cupcake",
+      "Freddy",
+      "Foxy",
+      "Chica",
+      "Big Band Bonnie",
+      "Golden Bonnie",
+      "Bunny6",
+      "Sparky The Dog",
+      "Endo 01",
+      "Bort Bunny",
+      "Stuffed Freddy",
+      "Phone Guy",
+      "Golden Freddy",
+      "Fox4",
+      "The Amalgamation",
+      "Shadow Freddy",
+      "Endo Plush",
+      "Crying Soul",
+      "Lamp"
+    ];
 
+    // Minimal placeholder data. We'll expand this later.
     const UNIT_DATA = {
       "Golden Bonnie": {
         rarity: "Mythic",
@@ -229,20 +147,19 @@ const UNIT_NAMES = [
       }
     };
 
-    const searchScreen = document.getElementById("searchScreen");
-    const infoScreen = document.getElementById("infoScreen");
+    const searchView = document.getElementById("searchView");
+    const infoView = document.getElementById("infoView");
 
-    const unitInput = document.getElementById("unitInput");
-    const dropdownCenter = document.getElementById("dropdownCenter");
-    const unitInputTop = document.getElementById("unitInputTop");
-    const dropdownTop = document.getElementById("dropdownTop");
+    const unitSearch = document.getElementById("unitSearch");
+    const unitDropdown = document.getElementById("unitDropdown");
+    const openBtn = document.getElementById("openBtn");
+    const uaHint = document.getElementById("uaHint");
 
-    const goBtn = document.getElementById("goBtn");
-    const hint = document.getElementById("hint");
+    const unitSearchTop = document.getElementById("unitSearchTop");
+    const unitDropdownTop = document.getElementById("unitDropdownTop");
 
     const unitTitle = document.getElementById("unitTitle");
-    const unitSubtitle = document.getElementById("unitSubtitle");
-    const unitImageLabel = document.getElementById("unitImageLabel");
+    const unitImgLabel = document.getElementById("unitImgLabel");
 
     const rarityVal = document.getElementById("rarityVal");
     const attackVal = document.getElementById("attackVal");
@@ -251,45 +168,61 @@ const UNIT_NAMES = [
     const obtainVal = document.getElementById("obtainVal");
     const abilityVal = document.getElementById("abilityVal");
 
+    function hardLockScroll() {
+      // Lock the obvious places
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.height = "100%";
+      document.body.style.height = "100%";
+
+      // Lock common Astro layout wrappers too (because many templates scroll a wrapper, not the body)
+      const candidates = [
+        document.querySelector("main"),
+        document.querySelector(".layout"),
+        document.querySelector(".site"),
+        document.querySelector(".page"),
+        document.querySelector("#app"),
+        document.querySelector("#root"),
+        document.querySelector("[data-scroll-container]"),
+      ].filter(Boolean);
+
+      for (const el of candidates) {
+        el.style.overflow = "hidden";
+      }
+    }
+
+    function hardUnlockScroll() {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+      document.documentElement.style.height = "";
+      document.body.style.height = "";
+
+      const candidates = [
+        document.querySelector("main"),
+        document.querySelector(".layout"),
+        document.querySelector(".site"),
+        document.querySelector(".page"),
+        document.querySelector("#app"),
+        document.querySelector("#root"),
+        document.querySelector("[data-scroll-container]"),
+      ].filter(Boolean);
+
+      for (const el of candidates) {
+        el.style.overflow = "";
+      }
+    }
+
+    // Start locked because there is nothing to scroll on the search-only screen
+    hardLockScroll();
+
     function normalize(s) {
       return (s || "").trim();
     }
 
-    function lockScroll() {
-      document.body.classList.add("ua-lockScroll");
-      document.documentElement.classList.add("ua-lockScroll");
-    }
-
-    function unlockScroll() {
-      document.body.classList.remove("ua-lockScroll");
-      document.documentElement.classList.remove("ua-lockScroll");
-    }
-
-    function matches(query, name) {
-      const q = query.toLowerCase();
-      const n = name.toLowerCase();
-      return n.includes(q);
-    }
-
-    function renderDropdown(menuEl, items, onPick) {
-      menuEl.innerHTML = "";
-
-      if (!items.length) {
-        const empty = document.createElement("div");
-        empty.className = "ua-ddItem ua-ddEmpty";
-        empty.textContent = "No matches";
-        menuEl.appendChild(empty);
-        return;
-      }
-
-      items.forEach((name) => {
-        const row = document.createElement("button");
-        row.type = "button";
-        row.className = "ua-ddItem";
-        row.textContent = name;
-        row.addEventListener("click", () => onPick(name));
-        menuEl.appendChild(row);
-      });
+    function filterUnits(query) {
+      const q = (query || "").trim().toLowerCase();
+      if (!q) return UNIT_NAMES.slice(0, 10);
+      return UNIT_NAMES.filter(n => n.toLowerCase().includes(q)).slice(0, 10);
     }
 
     function showMenu(menuEl) {
@@ -300,99 +233,98 @@ const UNIT_NAMES = [
       menuEl.classList.add("ua-hidden");
     }
 
-    // showAllIfEmpty=true means clicking/focusing an empty input shows the first 10 units
-    function attachAutocomplete(inputEl, menuEl, onPick) {
-      function update(showAllIfEmpty = false) {
-        const q = normalize(inputEl.value);
+    function renderMenu(menuEl, items, onPick) {
+      menuEl.innerHTML = "";
 
-        let filtered = [];
-        if (!q) {
-          if (!showAllIfEmpty) {
-            hideMenu(menuEl);
-            return;
-          }
-          filtered = UNIT_NAMES.slice(0, 10);
-        } else {
-          filtered = UNIT_NAMES.filter((n) => matches(q, n)).slice(0, 10);
-        }
+      if (!items.length) {
+        const empty = document.createElement("div");
+        empty.className = "ua-ddItem ua-ddEmpty";
+        empty.textContent = "No matches";
+        menuEl.appendChild(empty);
+        return;
+      }
 
-        renderDropdown(menuEl, filtered, (name) => {
+      for (const name of items) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "ua-ddItem";
+        btn.textContent = name;
+        btn.addEventListener("click", () => onPick(name));
+        menuEl.appendChild(btn);
+      }
+    }
+
+    function attachDropdown(inputEl, menuEl, onPick) {
+      function openWith(query) {
+        const list = filterUnits(query);
+        renderMenu(menuEl, list, (name) => {
           inputEl.value = name;
           hideMenu(menuEl);
           onPick(name);
         });
-
         showMenu(menuEl);
       }
 
-      // Type to filter
-      inputEl.addEventListener("input", () => update(false));
+      // This is the key: open on click/focus even if empty
+      inputEl.addEventListener("focus", () => openWith(inputEl.value));
+      inputEl.addEventListener("click", () => openWith(inputEl.value));
 
-      // Click/focus to open even when empty
-      inputEl.addEventListener("focus", () => update(true));
-      inputEl.addEventListener("click", () => update(true));
+      // Update while typing
+      inputEl.addEventListener("input", () => openWith(inputEl.value));
 
       inputEl.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          hideMenu(menuEl);
-        }
+        if (e.key === "Escape") hideMenu(menuEl);
         if (e.key === "Enter") {
           const val = normalize(inputEl.value);
-          const exists = UNIT_NAMES.includes(val);
-          if (!exists) return;
-          hideMenu(menuEl);
-          onPick(val);
+          if (UNIT_NAMES.includes(val)) {
+            hideMenu(menuEl);
+            onPick(val);
+          }
         }
       });
 
-      document.addEventListener("click", (e) => {
-        const target = e.target;
-        const wrapper = inputEl.closest(".ua-field");
-        if (!wrapper) return;
-        if (!wrapper.contains(target)) hideMenu(menuEl);
+      // Close when clicking outside the field
+      document.addEventListener("mousedown", (e) => {
+        const wrap = inputEl.closest(".ua-field");
+        if (!wrap) return;
+        if (!wrap.contains(e.target)) hideMenu(menuEl);
       });
     }
 
     function loadUnit(name) {
       const unitName = normalize(name);
+
       if (!UNIT_NAMES.includes(unitName)) {
-        hint.textContent = "Pick a unit from the dropdown list.";
+        uaHint.textContent = "Pick a unit from the dropdown list.";
         return;
       }
 
-      searchScreen.classList.add("ua-hidden");
-      infoScreen.classList.remove("ua-hidden");
-      unlockScroll();
+      // Switch screens
+      searchView.classList.add("ua-hidden");
+      infoView.classList.remove("ua-hidden");
+
+      // Allow page scrolling now that there is content
+      hardUnlockScroll();
 
       unitTitle.textContent = unitName;
-      unitSubtitle.textContent = "Choose level, shiny, and enchant to see calculated stats.";
+      unitSearchTop.value = unitName;
 
-      unitInputTop.value = unitName;
+      const data = UNIT_DATA[unitName] || {};
 
-      const data = UNIT_DATA[unitName] || null;
+      rarityVal.textContent = data.rarity || "Not set";
+      attackVal.textContent = data.attackType || "Not set";
+      priceVal.textContent = data.placementPrice || "Not set";
+      placementsVal.textContent = data.placements || "Not set";
+      obtainVal.textContent = data.obtainability || "Not set yet.";
+      abilityVal.textContent = data.ability || "No abilities listed yet.";
 
-      rarityVal.textContent = data?.rarity ?? "Not set";
-      attackVal.textContent = data?.attackType ?? "Not set";
-      priceVal.textContent = data?.placementPrice ?? "Not set";
-      placementsVal.textContent = data?.placements ?? "Not set";
-      obtainVal.textContent = data?.obtainability ?? "Not set yet.";
-      abilityVal.textContent = data?.ability ?? "No abilities listed yet.";
-
-      unitImageLabel.textContent = "No image";
+      unitImgLabel.textContent = "No image";
     }
 
-    function openFromCenter() {
-      const val = normalize(unitInput.value);
-      loadUnit(val);
-    }
+    openBtn.addEventListener("click", () => loadUnit(unitSearch.value));
 
-    goBtn.addEventListener("click", openFromCenter);
-
-    // Start locked (no page scroll) until a unit is selected
-    lockScroll();
-
-    attachAutocomplete(unitInput, dropdownCenter, loadUnit);
-    attachAutocomplete(unitInputTop, dropdownTop, loadUnit);
+    attachDropdown(unitSearch, unitDropdown, loadUnit);
+    attachDropdown(unitSearchTop, unitDropdownTop, loadUnit);
   </script>
 
   <style>
@@ -409,7 +341,6 @@ const UNIT_NAMES = [
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      transform: translateZ(0);
     }
 
     :global(body::after) {
@@ -417,94 +348,81 @@ const UNIT_NAMES = [
       position: fixed;
       inset: 0;
       z-index: -1;
-      background: linear-gradient(rgba(5, 10, 20, 0.45), rgba(5, 10, 20, 0.45));
+      background: rgba(5, 10, 20, 0.35);
       pointer-events: none;
     }
 
-    /* LOCK SCROLL (kills the right-side page scrollbar on the search screen) */
-    :global(html.ua-lockScroll),
-    :global(body.ua-lockScroll) {
-      overflow: hidden !important;
-      height: 100%;
-    }
-
-    /* Also hide the scrollbar visually while locked (extra safety) */
-    :global(html.ua-lockScroll::-webkit-scrollbar),
-    :global(body.ua-lockScroll::-webkit-scrollbar) {
-      width: 0px;
-      height: 0px;
-    }
-    :global(html.ua-lockScroll),
-    :global(body.ua-lockScroll) {
-      scrollbar-width: none;
-    }
-
-    .ua-wrap {
+    .ua-page {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 24px 24px 72px;
+      padding: 24px;
     }
 
     .ua-hidden {
       display: none !important;
     }
 
-    .ua-centerSearch {
+    .ua-center {
       min-height: calc(100vh - 140px);
       display: grid;
       place-items: center;
-      padding: 20px 0;
     }
 
-    .ua-centerCard {
-      width: min(720px, 100%);
+    /* Important: allow dropdown to escape without being clipped */
+    .ua-card {
+      width: min(760px, 100%);
       border-radius: 18px;
       border: 1px solid rgba(180, 210, 255, 0.18);
       background: rgba(10, 15, 25, 0.55);
       backdrop-filter: blur(10px);
       padding: 22px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
       text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+      overflow: visible;
     }
 
-    .ua-centerTitle {
+    .ua-title {
+      margin: 0 0 6px;
       font-size: 2.2rem;
       font-weight: 900;
-      margin-bottom: 6px;
     }
 
-    .ua-centerSub {
+    .ua-sub {
+      margin: 0 0 14px;
       opacity: 0.85;
-      margin-bottom: 16px;
     }
 
-    .ua-centerInputRow {
+    .ua-row {
       display: grid;
       grid-template-columns: 1fr 110px;
       gap: 10px;
       align-items: start;
-      margin: 0 auto;
     }
 
     .ua-field {
       position: relative;
       width: 100%;
+      overflow: visible;
     }
 
-    .ua-inputBig {
-      padding: 14px 14px;
+    .ua-input {
+      width: 100%;
       border-radius: 14px;
-      font-size: 1rem;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(5, 8, 15, 0.55);
+      padding: 14px 14px;
+      outline: none;
+      color: inherit;
     }
 
-    .ua-goBtn {
+    .ua-btn {
       border-radius: 14px;
       border: 1px solid rgba(180, 210, 255, 0.20);
       background: rgba(25, 40, 70, 0.35);
-      padding: 14px 14px;
+      padding: 14px;
       cursor: pointer;
       font-weight: 900;
-      height: 50px;
+      height: 52px;
     }
 
     .ua-hint {
@@ -513,84 +431,19 @@ const UNIT_NAMES = [
       opacity: 0.7;
     }
 
-    .ua-hero h1 {
-      font-size: 2.2rem;
-      margin: 0 0 6px;
-      letter-spacing: 0.2px;
-      text-align: left;
-    }
-
-    .ua-hero p {
-      margin: 0 0 18px;
-      opacity: 0.85;
-      text-align: left;
-    }
-
-    .ua-card {
-      border-radius: 18px;
-      border: 1px solid rgba(180, 210, 255, 0.18);
-      background: rgba(10, 15, 25, 0.55);
-      backdrop-filter: blur(10px);
-      padding: 20px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
-    }
-
-    .ua-divider {
-      height: 1px;
-      background: rgba(180, 210, 255, 0.14);
-      margin: 18px 0;
-    }
-
-    .ua-searchRow {
-      display: grid;
-      grid-template-columns: 1fr 120px;
-      gap: 16px;
-      align-items: stretch;
-    }
-
-    .ua-searchLeft {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .ua-label {
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      opacity: 0.9;
-    }
-
-    .ua-help {
-      font-size: 0.8rem;
-      opacity: 0.65;
-    }
-
-    .ua-input {
-      width: 100%;
-      border-radius: 14px;
-      border: 1px solid rgba(180, 210, 255, 0.18);
-      background: rgba(5, 8, 15, 0.55);
-      padding: 12px 14px;
-      outline: none;
-      color: inherit;
-    }
-
-    /* Custom dropdown aligned to the input */
     .ua-dropdown {
       position: absolute;
       top: calc(100% + 8px);
       left: 0;
       width: 100%;
+      z-index: 9999;
+
       border-radius: 14px;
       border: 1px solid rgba(180, 210, 255, 0.18);
       background: rgba(5, 8, 15, 0.92);
       backdrop-filter: blur(10px);
-      overflow: hidden;
-      z-index: 50;
 
-      /* ~10 items visible then internal scroll */
-      max-height: 360px;
+      max-height: 360px; /* about 10 items */
       overflow-y: auto;
 
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
@@ -622,6 +475,54 @@ const UNIT_NAMES = [
       background: transparent;
     }
 
+    .ua-infoWrap {
+      padding-bottom: 72px;
+    }
+
+    .ua-infoTitle {
+      margin: 0 0 6px;
+      font-size: 2.2rem;
+      font-weight: 900;
+    }
+
+    .ua-infoSub {
+      margin: 0 0 18px;
+      opacity: 0.85;
+    }
+
+    .ua-panel {
+      border-radius: 18px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(10, 15, 25, 0.55);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+      overflow: visible;
+    }
+
+    .ua-panelRow {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .ua-label {
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      opacity: 0.9;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .ua-help {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      opacity: 0.65;
+      text-align: left;
+    }
+
     .ua-imageBox {
       border-radius: 16px;
       border: 1px solid rgba(180, 210, 255, 0.18);
@@ -631,12 +532,18 @@ const UNIT_NAMES = [
       overflow: hidden;
     }
 
-    .ua-imageInner {
+    .ua-imageText {
       opacity: 0.7;
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    .ua-statsGrid4 {
+    .ua-divider {
+      height: 1px;
+      background: rgba(180, 210, 255, 0.14);
+      margin: 18px 0;
+    }
+
+    .ua-stats4 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
@@ -646,177 +553,60 @@ const UNIT_NAMES = [
       border-radius: 14px;
       border: 1px solid rgba(180, 210, 255, 0.14);
       background: rgba(5, 8, 15, 0.35);
-      padding: 12px 12px;
+      padding: 12px;
     }
 
-    .ua-statLabel {
+    .ua-statK {
       font-size: 0.72rem;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing: 0.06em;
       opacity: 0.75;
     }
 
-    .ua-statValue {
+    .ua-statV {
       margin-top: 8px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
-    .ua-wideBlock {
+    .ua-wide {
       border-radius: 14px;
       border: 1px solid rgba(180, 210, 255, 0.14);
       background: rgba(5, 8, 15, 0.35);
-      padding: 14px 14px;
+      padding: 14px;
     }
 
-    .ua-wideTitle {
+    .ua-wideK {
       font-size: 0.72rem;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing: 0.06em;
       opacity: 0.75;
       margin-bottom: 10px;
     }
 
-    .ua-twoColTitle {
+    .ua-wideK2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
 
-    .ua-rightTitle {
+    .ua-wideRight {
       text-align: center;
-      opacity: 0.75;
     }
 
-    .ua-wideText {
-      font-weight: 600;
+    .ua-wideV {
+      font-weight: 700;
       opacity: 0.9;
     }
 
-    .ua-calcCard {
-      border-radius: 16px;
-      border: 1px solid rgba(180, 210, 255, 0.16);
-      background: rgba(5, 8, 15, 0.28);
-      padding: 18px;
-    }
-
-    .ua-calcHeader h2 {
-      margin: 0 0 14px;
-      font-size: 1.4rem;
-    }
-
-    .ua-calcControls {
-      display: grid;
-      grid-template-columns: 160px 1fr 1fr 120px;
-      gap: 12px;
-      align-items: end;
-    }
-
-    .ua-controlLabel {
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      opacity: 0.75;
-      margin-bottom: 8px;
-    }
-
-    .ua-inputSmall {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid rgba(180, 210, 255, 0.18);
-      background: rgba(5, 8, 15, 0.55);
-      padding: 10px 12px;
-      outline: none;
-      color: inherit;
-    }
-
-    .ua-select {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid rgba(180, 210, 255, 0.18);
-      background: rgba(5, 8, 15, 0.55);
-      padding: 10px 12px;
-      outline: none;
-      color: inherit;
-    }
-
-    .ua-applyBtn {
-      border-radius: 14px;
-      border: 1px solid rgba(180, 210, 255, 0.2);
-      background: rgba(25, 40, 70, 0.35);
-      padding: 10px 14px;
-      cursor: pointer;
-      font-weight: 800;
-    }
-
-    .ua-calcGrid {
-      margin-top: 16px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .ua-miniStat {
-      border-radius: 14px;
-      border: 1px solid rgba(180, 210, 255, 0.14);
-      background: rgba(5, 8, 15, 0.35);
-      padding: 12px;
-      min-height: 70px;
-    }
-
-    .ua-miniLabel {
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      opacity: 0.75;
-    }
-
-    .ua-miniValue {
-      margin-top: 10px;
-      font-weight: 800;
-      font-size: 1.05rem;
-    }
-
-    .ua-totalBox {
-      margin-top: 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(180, 210, 255, 0.16);
-      background: rgba(10, 15, 25, 0.55);
-      padding: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .ua-totalTitle {
-      font-size: 0.8rem;
-      font-weight: 900;
-      letter-spacing: 0.06em;
-      opacity: 0.85;
-    }
-
-    .ua-totalValue {
-      font-size: 1.2rem;
-      font-weight: 900;
-    }
-
     @media (max-width: 900px) {
-      .ua-centerInputRow {
+      .ua-row {
         grid-template-columns: 1fr;
       }
-      .ua-goBtn {
-        width: 100%;
-      }
-      .ua-searchRow {
+      .ua-panelRow {
         grid-template-columns: 1fr;
       }
-      .ua-statsGrid4 {
+      .ua-stats4 {
         grid-template-columns: repeat(2, 1fr);
-      }
-      .ua-calcControls {
-        grid-template-columns: 1fr;
-      }
-      .ua-calcGrid {
-        grid-template-columns: 1fr;
       }
     }
   </style>
