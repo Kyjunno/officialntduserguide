@@ -26,7 +26,7 @@ const pageTitle = "Unit Arcade";
           <button id="openBtn" class="ua-btn ua-btnBig" type="button">Open</button>
         </div>
 
-        <p id="searchHint" class="ua-footnote">Example: Bear5, Shadow Freddy, Golden Bonnie</p>
+        <p id="searchHint" class="ua-footnote">Example: Bear5, Shadow Freddy, The Amalgamation</p>
       </div>
     </section>
 
@@ -94,7 +94,6 @@ const pageTitle = "Unit Arcade";
 
           <div class="ua-divider"></div>
 
-          <!-- Ability box: "Name: Description" -->
           <div class="ua-wide">
             <div class="ua-wideK">ABILITY</div>
             <div id="abilityVal" class="ua-wideV">No abilities listed yet.</div>
@@ -153,7 +152,6 @@ const pageTitle = "Unit Arcade";
               </label>
             </div>
 
-            <!-- Output boxes: centered text -->
             <div class="ua-calcGrid">
               <div class="ua-calcStat ua-out">
                 <div class="ua-calcK">POWER</div>
@@ -236,6 +234,21 @@ const pageTitle = "Unit Arcade";
         baseDamage: 100,
         baseCooldown: 0.1,
         baseRange: 20
+      },
+
+      "The Amalgamation": {
+        id: "the-amalgamation",
+        rarity: "Vengeful",
+        attackType: "Cone AOE (50%)",
+        placementPrice: "$15,000",
+        placements: "1",
+        obtainability: "Not set yet.",
+        abilityName: "Team Buff",
+        abilityDesc:
+          "Every 60 seconds, boosts the DMG, RNG and CD of every unit in range by 10% each.",
+        baseDamage: 1250,
+        baseCooldown: 2,
+        baseRange: 30
       },
 
       "Golden Bonnie": {
@@ -332,7 +345,7 @@ const pageTitle = "Unit Arcade";
       if (UNIT_NAMES.includes(raw)) return raw;
 
       const n = normalizeName(raw);
-      const hit = UNIT_NAMES.find(u => normalizeName(u) === n);
+      const hit = UNIT_NAMES.find((u) => normalizeName(u) === n);
       return hit || "";
     }
 
@@ -566,7 +579,6 @@ const pageTitle = "Unit Arcade";
       filter: blur(8px) saturate(0.95);
       transform: scale(1.05);
     }
-
     :global(body::after) {
       content: "";
       position: fixed;
