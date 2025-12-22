@@ -1,512 +1,904 @@
 ---
-const title = "Unit Arcade";
-const description = "A tiny arcade mini-game for your unit wiki.";
+import BaseLayout from "../layouts/BaseLayout.astro";
+const pageTitle = "Unit Arcade";
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
-    <title>{title}</title>
+<BaseLayout title={pageTitle}>
+  <main class="ua-root" id="uaRoot">
+    <!-- SEARCH-ONLY VIEW -->
+    <section id="searchView" class="ua-center" aria-label="Unit Arcade Search View">
+      <div class="ua-card">
+        <h1 class="ua-title">Unit Arcade</h1>
+        <p class="ua-sub">Type a unit name and pick from the dropdown.</p>
 
-    <style>
-      :root {
-        color-scheme: dark;
-        --bg0: #0b0d12;
-        --bg1: #0f1320;
-        --card: rgba(255,255,255,0.05);
-        --line: rgba(255,255,255,0.12);
-        --text: rgba(255,255,255,0.92);
-        --muted: rgba(255,255,255,0.72);
-      }
-
-      body {
-        margin: 0;
-        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        color: var(--text);
-        background:
-          radial-gradient(900px 520px at 25% 20%, rgba(120, 200, 255, 0.14), transparent 60%),
-          radial-gradient(700px 420px at 80% 70%, rgba(255, 120, 200, 0.10), transparent 60%),
-          linear-gradient(180deg, var(--bg0), var(--bg1));
-        min-height: 100vh;
-      }
-
-      a { color: inherit; }
-
-      .wrap {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 28px 16px 60px;
-      }
-
-      .top {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 14px;
-        flex-wrap: wrap;
-        margin-bottom: 16px;
-      }
-
-      .top h1 {
-        font-size: clamp(28px, 3vw, 44px);
-        margin: 0;
-        letter-spacing: 0.2px;
-      }
-
-      .top p {
-        margin: 6px 0 0;
-        opacity: 0.85;
-        line-height: 1.4;
-        max-width: 62ch;
-      }
-
-      .nav {
-        display: flex;
-        gap: 10px;
-        opacity: 0.9;
-        font-weight: 700;
-      }
-
-      .nav a {
-        text-decoration: none;
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.04);
-        padding: 9px 12px;
-        border-radius: 12px;
-        transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
-      }
-
-      .nav a:hover {
-        transform: translateY(-1px);
-        background: rgba(255,255,255,0.08);
-        border-color: rgba(255,255,255,0.22);
-      }
-
-      .panel {
-        border: 1px solid rgba(255,255,255,0.10);
-        border-radius: 18px;
-        overflow: hidden;
-        background: rgba(255,255,255,0.03);
-        box-shadow: 0 12px 40px rgba(0,0,0,0.35);
-      }
-
-      .hud {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 12px 14px;
-        border-bottom: 1px solid rgba(255,255,255,0.08);
-        background: rgba(0,0,0,0.25);
-        backdrop-filter: blur(8px);
-      }
-
-      .hud-left {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-
-      .stat {
-        display: grid;
-        gap: 2px;
-        padding: 8px 10px;
-        border-radius: 12px;
-        border: 1px solid rgba(255,255,255,0.10);
-        background: rgba(255,255,255,0.04);
-        min-width: 92px;
-      }
-
-      .label { font-size: 12px; opacity: 0.75; }
-      .value { font-size: 18px; font-weight: 800; letter-spacing: 0.2px; }
-
-      .hud-right { display: flex; gap: 10px; }
-
-      .btn {
-        appearance: none;
-        border: 1px solid rgba(255,255,255,0.18);
-        background: rgba(255,255,255,0.06);
-        color: inherit;
-        padding: 9px 12px;
-        border-radius: 12px;
-        cursor: pointer;
-        font-weight: 800;
-        letter-spacing: 0.2px;
-        transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
-      }
-
-      .btn:hover {
-        transform: translateY(-1px);
-        background: rgba(255,255,255,0.10);
-        border-color: rgba(255,255,255,0.26);
-      }
-
-      .btn:active { transform: translateY(0px); }
-
-      .btn.primary {
-        border-color: rgba(120, 200, 255, 0.5);
-        background: rgba(120, 200, 255, 0.16);
-      }
-
-      .stage {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 16 / 9;
-        background:
-          linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.35));
-      }
-
-      canvas {
-        display: block;
-        width: 100%;
-        height: 100%;
-        outline: none;
-      }
-
-      .overlay {
-        position: absolute;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        background: rgba(0,0,0,0.45);
-        backdrop-filter: blur(7px);
-      }
-
-      .overlay.hidden { display: none; }
-
-      .overlay-card {
-        width: min(520px, 92%);
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,0.14);
-        background: rgba(20, 20, 28, 0.80);
-        box-shadow: 0 18px 60px rgba(0,0,0,0.5);
-        padding: 18px 18px 14px;
-      }
-
-      .overlay-card h2 { margin: 0 0 6px; font-size: 22px; }
-      .overlay-card p { margin: 0 0 12px; opacity: 0.88; line-height: 1.4; }
-
-      .overlay-actions { display: flex; gap: 10px; margin-top: 10px; }
-
-      .overlay-hint { margin-top: 14px; font-size: 12px; opacity: 0.65; }
-    </style>
-  </head>
-
-  <body>
-    <main class="wrap">
-      <header class="top">
-        <div>
-          <h1>Unit Arcade</h1>
-          <p>
-            Move with A/D or ←/→. Dodge the falling blocks. Press Space to pause.
-          </p>
-        </div>
-
-        <nav class="nav" aria-label="Site">
-          <a href="/">Home</a>
-          <a href="/units">Units</a>
-        </nav>
-      </header>
-
-      <section class="panel">
-        <div class="hud">
-          <div class="hud-left">
-            <div class="stat">
-              <span class="label">Score</span>
-              <span id="score" class="value">0</span>
-            </div>
-            <div class="stat">
-              <span class="label">Best</span>
-              <span id="best" class="value">0</span>
-            </div>
+        <div class="ua-row">
+          <div class="ua-field" id="centerField">
+            <input
+              id="unitSearch"
+              class="ua-input"
+              type="text"
+              placeholder="Search units..."
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <div id="unitDropdown" class="ua-dropdown" role="listbox" aria-label="Unit list"></div>
           </div>
 
-          <div class="hud-right">
-            <button id="btnStart" class="btn primary" type="button">Start</button>
-            <button id="btnReset" class="btn" type="button">Reset</button>
-          </div>
+          <button id="openBtn" class="ua-btn" type="button">Open</button>
         </div>
 
-        <div class="stage">
-          <canvas id="arcade" width="960" height="540" aria-label="Unit Arcade game canvas"></canvas>
+        <p class="ua-footnote">Click the search bar to browse units, or type to filter.</p>
+      </div>
+    </section>
 
-          <div id="overlay" class="overlay">
-            <div class="overlay-card">
-              <h2 id="overlayTitle">Ready?</h2>
-              <p id="overlayText">Hit Start to play.</p>
-              <div class="overlay-actions">
-                <button id="btnOverlayStart" class="btn primary" type="button">Start</button>
+    <!-- INFO VIEW -->
+    <section id="infoView" class="ua-info" aria-label="Unit Arcade Info View">
+      <div class="ua-infoWrap">
+        <h1 id="unitTitle" class="ua-infoTitle">Unit Arcade</h1>
+        <p id="unitSubtitle" class="ua-infoSub">Pick a unit to see details.</p>
+
+        <div class="ua-panel">
+          <div class="ua-panelRow">
+            <div class="ua-panelLeft">
+              <div class="ua-label">Unit search</div>
+
+              <div class="ua-field" id="topField">
+                <input
+                  id="unitSearchTop"
+                  class="ua-input"
+                  type="text"
+                  placeholder="Search units..."
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+                <div id="unitDropdownTop" class="ua-dropdown" role="listbox" aria-label="Unit list"></div>
               </div>
-              <p class="overlay-hint">Tip: later you can tie this into unit unlocks or lore drops.</p>
+
+              <div class="ua-help">Click the search bar to browse, or type to filter.</div>
+            </div>
+
+            <!-- Bigger image box -->
+            <div class="ua-imageBox">
+              <img id="unitImg" class="ua-image" alt="" />
+              <div id="unitImgLabel" class="ua-imageText">No image</div>
             </div>
           </div>
+
+          <div class="ua-divider"></div>
+
+          <div class="ua-stats4">
+            <div class="ua-stat">
+              <div class="ua-statK">RARITY</div>
+              <div id="rarityVal" class="ua-statV">Not set</div>
+            </div>
+            <div class="ua-stat">
+              <div class="ua-statK">ATTACK TYPE</div>
+              <div id="attackVal" class="ua-statV">Not set</div>
+            </div>
+            <div class="ua-stat">
+              <div class="ua-statK">PLACEMENT PRICE</div>
+              <div id="priceVal" class="ua-statV">Not set</div>
+            </div>
+            <div class="ua-stat">
+              <div class="ua-statK">PLACEMENTS</div>
+              <div id="placementsVal" class="ua-statV">Not set</div>
+            </div>
+          </div>
+
+          <div class="ua-divider"></div>
+
+          <div class="ua-wide">
+            <div class="ua-wideK">OBTAINABILITY</div>
+            <div id="obtainVal" class="ua-wideV">Not set yet.</div>
+          </div>
+
+          <div class="ua-divider"></div>
+
+          <div class="ua-wide">
+            <div class="ua-wideK ua-wideK2">
+              <span>ABILITY</span>
+              <span class="ua-wideRight">DESCRIPTION</span>
+            </div>
+            <div id="abilityVal" class="ua-wideV">No abilities listed yet.</div>
+          </div>
         </div>
-      </section>
-    </main>
 
-    <script>
-      const canvas = document.getElementById("arcade");
-      const scoreEl = document.getElementById("score");
-      const bestEl = document.getElementById("best");
-      const overlay = document.getElementById("overlay");
-      const overlayTitle = document.getElementById("overlayTitle");
-      const overlayText = document.getElementById("overlayText");
-      const btnStart = document.getElementById("btnStart");
-      const btnReset = document.getElementById("btnReset");
-      const btnOverlayStart = document.getElementById("btnOverlayStart");
+        <!-- CALCULATOR -->
+        <section class="ua-calc" aria-label="Unit Calculator">
+          <h2 class="ua-calcTitle">Calculator</h2>
+          <p class="ua-calcSub">Choose options and see computed stats. This is the foundation for a full “unit machine”.</p>
 
-      if (!(canvas instanceof HTMLCanvasElement)) throw new Error("Canvas #arcade not found.");
+          <div class="ua-calcPanel">
+            <div class="ua-calcControls">
+              <label class="ua-control">
+                <span class="ua-controlK">Level</span>
+                <select id="levelSel" class="ua-select">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </select>
+              </label>
 
-      const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("2D context not available.");
+              <label class="ua-control">
+                <span class="ua-controlK">Shiny</span>
+                <select id="shinySel" class="ua-select">
+                  <option value="0">Normal</option>
+                  <option value="1">Shiny</option>
+                </select>
+              </label>
 
-      function resizeCanvasToDisplaySize() {
-        const rect = canvas.getBoundingClientRect();
-        const dpr = Math.max(1, window.devicePixelRatio || 1);
-        const w = Math.round(rect.width * dpr);
-        const h = Math.round(rect.height * dpr);
-        if (canvas.width !== w || canvas.height !== h) {
-          canvas.width = w;
-          canvas.height = h;
-        }
+              <label class="ua-control">
+                <span class="ua-controlK">Enchant</span>
+                <select id="enchantSel" class="ua-select">
+                  <option value="none">None</option>
+                  <option value="dmg10">DMG +10%</option>
+                  <option value="dmg20">DMG +20%</option>
+                  <option value="cd10">CD -10%</option>
+                  <option value="cd20">CD -20%</option>
+                  <option value="rng10">RNG +10%</option>
+                  <option value="rng20">RNG +20%</option>
+                </select>
+              </label>
+
+              <label class="ua-control">
+                <span class="ua-controlK">Chip</span>
+                <select id="chipSel" class="ua-select">
+                  <option value="none">None</option>
+                  <option value="dmg15">DMG +15%</option>
+                  <option value="dmg30">DMG +30%</option>
+                  <option value="cd15">CD -15%</option>
+                  <option value="rng15">RNG +15%</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="ua-calcGrid">
+              <div class="ua-calcStat">
+                <div class="ua-calcK">Damage</div>
+                <div id="calcDmg" class="ua-calcV">-</div>
+              </div>
+              <div class="ua-calcStat">
+                <div class="ua-calcK">Cooldown</div>
+                <div id="calcCd" class="ua-calcV">-</div>
+              </div>
+              <div class="ua-calcStat">
+                <div class="ua-calcK">DPS</div>
+                <div id="calcDps" class="ua-calcV">-</div>
+              </div>
+              <div class="ua-calcStat">
+                <div class="ua-calcK">Range</div>
+                <div id="calcRng" class="ua-calcV">-</div>
+              </div>
+            </div>
+
+            <div class="ua-calcNote" id="calcNote">
+              Select a unit to compute stats.
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script is:inline>
+    const UNIT_NAMES = [
+      "Bear5",
+      "Test Dummy Endo",
+      "Nightguard",
+      "Chicken7",
+      "Fan",
+      "Bonnie",
+      "Carl The Cupcake",
+      "Freddy",
+      "Foxy",
+      "Chica",
+      "Big Band Bonnie",
+      "Golden Bonnie",
+      "Bunny6",
+      "Sparky The Dog",
+      "Endo 01",
+      "Bort Bunny",
+      "Stuffed Freddy",
+      "Phone Guy",
+      "Golden Freddy",
+      "Fox4",
+      "The Amalgamation",
+      "Shadow Freddy",
+      "Endo Plush",
+      "Crying Soul",
+      "Lamp"
+    ];
+
+    // Minimal data now, expandable later.
+    // Add stats for calculator: baseDamage, baseCooldown, baseRange
+    // If a unit is missing stats, the calculator shows placeholders.
+    const UNIT_DATA = {
+      "Bear5": {
+        id: "bear5",
+        rarity: "Uncommon",
+        attackType: "Single",
+        placementPrice: "Not set",
+        placements: "Not set",
+        obtainability: "Not set yet.",
+        ability: "No abilities listed yet.",
+        baseDamage: 35.35,
+        baseCooldown: 2.5,
+        baseRange: 20.0
+      },
+      "Golden Bonnie": {
+        id: "golden-bonnie",
+        rarity: "Mythic",
+        attackType: "Pierce + Poison",
+        placementPrice: "$4,500",
+        placements: "2",
+        obtainability: "Not set yet.",
+        ability: "Not set yet.",
+        baseDamage: 50.50,
+        baseCooldown: 2.0,
+        baseRange: 27.5
+      }
+    };
+
+    const htmlEl = document.documentElement;
+    const bodyEl = document.body;
+    const rootEl = document.getElementById("uaRoot");
+
+    const searchView = document.getElementById("searchView");
+    const infoView = document.getElementById("infoView");
+
+    const unitSearch = document.getElementById("unitSearch");
+    const unitDropdown = document.getElementById("unitDropdown");
+    const openBtn = document.getElementById("openBtn");
+    const centerField = document.getElementById("centerField");
+
+    const unitSearchTop = document.getElementById("unitSearchTop");
+    const unitDropdownTop = document.getElementById("unitDropdownTop");
+    const topField = document.getElementById("topField");
+
+    const unitTitle = document.getElementById("unitTitle");
+    const unitSubtitle = document.getElementById("unitSubtitle");
+    const unitImg = document.getElementById("unitImg");
+    const unitImgLabel = document.getElementById("unitImgLabel");
+
+    const rarityVal = document.getElementById("rarityVal");
+    const attackVal = document.getElementById("attackVal");
+    const priceVal = document.getElementById("priceVal");
+    const placementsVal = document.getElementById("placementsVal");
+    const obtainVal = document.getElementById("obtainVal");
+    const abilityVal = document.getElementById("abilityVal");
+
+    const levelSel = document.getElementById("levelSel");
+    const shinySel = document.getElementById("shinySel");
+    const enchantSel = document.getElementById("enchantSel");
+    const chipSel = document.getElementById("chipSel");
+
+    const calcDmg = document.getElementById("calcDmg");
+    const calcCd = document.getElementById("calcCd");
+    const calcDps = document.getElementById("calcDps");
+    const calcRng = document.getElementById("calcRng");
+    const calcNote = document.getElementById("calcNote");
+
+    let currentUnitName = "";
+    let currentUnit = null;
+
+    function lockScroll() {
+      htmlEl.classList.add("ua-lock");
+      bodyEl.classList.add("ua-lock");
+      rootEl.classList.add("ua-lock");
+    }
+    function unlockScroll() {
+      htmlEl.classList.remove("ua-lock");
+      bodyEl.classList.remove("ua-lock");
+      rootEl.classList.remove("ua-lock");
+    }
+
+    infoView.style.display = "none";
+    searchView.style.display = "grid";
+    lockScroll();
+
+    function openMenu(menuEl) { menuEl.style.display = "flex"; }
+    function closeMenu(menuEl) { menuEl.style.display = "none"; }
+    function closeAllMenus() {
+      closeMenu(unitDropdown);
+      closeMenu(unitDropdownTop);
+    }
+    closeAllMenus();
+
+    function filterUnits(query) {
+      const q = (query || "").trim().toLowerCase();
+      if (!q) return UNIT_NAMES.slice(0, 10);
+      return UNIT_NAMES.filter(n => n.toLowerCase().includes(q)).slice(0, 10);
+    }
+
+    function renderMenu(menuEl, items, onPick) {
+      menuEl.innerHTML = "";
+
+      if (!items.length) {
+        const empty = document.createElement("div");
+        empty.className = "ua-ddEmpty";
+        empty.textContent = "No matches";
+        menuEl.appendChild(empty);
+        return;
       }
 
-      const storageKey = "unitArcadeBestScore";
-      const bestScoreStored = Number(localStorage.getItem(storageKey) || "0");
-      let bestScore = Number.isFinite(bestScoreStored) ? bestScoreStored : 0;
-      bestEl.textContent = String(bestScore);
+      for (const name of items) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "ua-ddItem";
+        btn.textContent = name;
+        btn.setAttribute("role", "option");
+        btn.addEventListener("click", () => {
+          onPick(name);
+          closeAllMenus();
+        });
+        menuEl.appendChild(btn);
+      }
+    }
 
-      const keys = new Set();
+    function showDropdownFor(inputEl, menuEl, onPick) {
+      const list = filterUnits(inputEl.value);
+      renderMenu(menuEl, list, (name) => {
+        inputEl.value = name;
+        onPick(name);
+      });
+      openMenu(menuEl);
+    }
 
-      window.addEventListener("keydown", (e) => {
-        if (["ArrowLeft", "ArrowRight", "a", "d", "A", "D", " "].includes(e.key)) e.preventDefault();
-        keys.add(e.key);
-        if (e.key === " ") togglePause();
+    function attachDropdown(inputEl, menuEl, fieldEl, onPick) {
+      inputEl.addEventListener("focus", () => {
+        closeAllMenus();
+        showDropdownFor(inputEl, menuEl, onPick);
       });
 
-      window.addEventListener("keyup", (e) => keys.delete(e.key));
-      window.addEventListener("resize", resizeCanvasToDisplaySize);
+      inputEl.addEventListener("click", () => {
+        closeAllMenus();
+        showDropdownFor(inputEl, menuEl, onPick);
+      });
 
-      const rng = (min, max) => min + Math.random() * (max - min);
+      inputEl.addEventListener("input", () => {
+        showDropdownFor(inputEl, menuEl, onPick);
+      });
 
-      const state = {
-        running: false,
-        paused: false,
-        time: 0,
-        score: 0,
-        lastSpawn: 0,
-        spawnEvery: 0.65,
-        speed: 260,
-        player: { x: 0.5, y: 0.86, w: 0.06, h: 0.06, vx: 0 },
-        blocks: []
-      };
-
-      function resetGame() {
-        state.running = false;
-        state.paused = false;
-        state.time = 0;
-        state.score = 0;
-        state.lastSpawn = 0;
-        state.spawnEvery = 0.65;
-        state.speed = 260;
-        state.blocks = [];
-        state.player.x = 0.5;
-        state.player.vx = 0;
-
-        scoreEl.textContent = "0";
-        showOverlay("Ready?", "Hit Start to play.");
-        drawFrame();
-      }
-
-      function startGame() {
-        state.running = true;
-        state.paused = false;
-        hideOverlay();
-      }
-
-      function togglePause() {
-        if (!state.running) return;
-        state.paused = !state.paused;
-        if (state.paused) showOverlay("Paused", "Press Space to resume.");
-        else hideOverlay();
-      }
-
-      function showOverlay(title, text) {
-        overlayTitle.textContent = title;
-        overlayText.textContent = text;
-        overlay.classList.remove("hidden");
-      }
-
-      function hideOverlay() {
-        overlay.classList.add("hidden");
-      }
-
-      function endGame() {
-        state.running = false;
-
-        if (state.score > bestScore) {
-          bestScore = state.score;
-          bestEl.textContent = String(bestScore);
-          localStorage.setItem(storageKey, String(bestScore));
+      inputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeAllMenus();
+          inputEl.blur();
         }
-
-        showOverlay("Game Over", "Hit Start to try again.");
-      }
-
-      function spawnBlock() {
-        const w = rng(0.035, 0.09);
-        const h = rng(0.04, 0.12);
-        const x = rng(w * 0.6, 1 - w * 0.6);
-        const y = -h;
-
-        state.blocks.push({ x, y, w, h, vy: rng(0.22, 0.45) });
-      }
-
-      function intersects(a, b) {
-        return !(a.x + a.w < b.x || a.x > b.x + b.w || a.y + a.h < b.y || a.y > b.y + b.h);
-      }
-
-      function update(dt) {
-        if (!state.running || state.paused) return;
-
-        state.time += dt;
-
-        state.spawnEvery = Math.max(0.28, 0.65 - state.time * 0.01);
-        state.speed = Math.min(520, 260 + state.time * 7);
-
-        const left = keys.has("ArrowLeft") || keys.has("a") || keys.has("A");
-        const right = keys.has("ArrowRight") || keys.has("d") || keys.has("D");
-
-        const accel = 3.2;
-        const maxV = 1.2;
-
-        if (left) state.player.vx -= accel * dt;
-        if (right) state.player.vx += accel * dt;
-        if (!left && !right) state.player.vx *= Math.pow(0.0008, dt);
-
-        state.player.vx = Math.max(-maxV, Math.min(maxV, state.player.vx));
-        state.player.x += state.player.vx * dt;
-
-        const halfW = state.player.w * 0.5;
-        state.player.x = Math.max(halfW, Math.min(1 - halfW, state.player.x));
-
-        if (state.time - state.lastSpawn > state.spawnEvery) {
-          state.lastSpawn = state.time;
-          spawnBlock();
-        }
-
-        const playerRect = {
-          x: state.player.x - state.player.w / 2,
-          y: state.player.y - state.player.h / 2,
-          w: state.player.w,
-          h: state.player.h
-        };
-
-        for (const block of state.blocks) {
-          block.y += block.vy * dt * (state.speed / 260);
-          const blockRect = { x: block.x - block.w / 2, y: block.y - block.h / 2, w: block.w, h: block.h };
-          if (intersects(playerRect, blockRect)) {
-            endGame();
-            return;
+        if (e.key === "Enter") {
+          const val = (inputEl.value || "").trim();
+          if (UNIT_NAMES.includes(val)) {
+            onPick(val);
+            closeAllMenus();
           }
         }
+      });
 
-        const before = state.blocks.length;
-        state.blocks = state.blocks.filter(b => b.y - b.h / 2 < 1.15);
-        const removed = before - state.blocks.length;
+      menuEl.addEventListener("mousedown", (e) => e.preventDefault());
 
-        if (removed > 0) {
-          state.score += removed;
-          scoreEl.textContent = String(state.score);
+      document.addEventListener(
+        "mousedown",
+        (e) => {
+          const t = e.target;
+          const insideThis = fieldEl.contains(t);
+          const insideOther = (fieldEl === centerField ? topField.contains(t) : centerField.contains(t));
+          if (!insideThis && !insideOther) closeAllMenus();
+        },
+        true
+      );
+    }
+
+    function trySetImage(unitId) {
+      unitImgLabel.textContent = "No image";
+      unitImg.style.display = "none";
+      unitImg.removeAttribute("src");
+      unitImg.removeAttribute("srcset");
+      unitImg.alt = "";
+
+      if (!unitId) return;
+
+      const candidates = [
+        `/units/${unitId}.png`,
+        `/units/${unitId}.webp`,
+        `/units/${unitId}.jpg`
+      ];
+
+      let idx = 0;
+      unitImg.alt = currentUnitName ? `${currentUnitName} unit image` : "Unit image";
+      unitImg.style.display = "block";
+      unitImg.src = candidates[idx];
+
+      unitImg.onerror = () => {
+        idx += 1;
+        if (idx < candidates.length) {
+          unitImg.src = candidates[idx];
+        } else {
+          unitImg.onerror = null;
+          unitImg.style.display = "none";
+          unitImgLabel.textContent = "No image";
         }
+      };
+
+      unitImg.onload = () => {
+        unitImgLabel.textContent = "";
+      };
+    }
+
+    function fmt(n, digits = 2) {
+      if (!Number.isFinite(n)) return "-";
+      return n.toFixed(digits);
+    }
+
+    function computeAndRender() {
+      if (!currentUnit || !Number.isFinite(currentUnit.baseDamage) || !Number.isFinite(currentUnit.baseCooldown)) {
+        calcDmg.textContent = "-";
+        calcCd.textContent = "-";
+        calcDps.textContent = "-";
+        calcRng.textContent = "-";
+        calcNote.textContent = "This unit has no calculator stats set yet.";
+        return;
       }
 
-      function drawFrame() {
-        resizeCanvasToDisplaySize();
+      const level = Number(levelSel.value || "1");
+      const shiny = Number(shinySel.value || "0") === 1;
 
-        const w = canvas.width;
-        const h = canvas.height;
+      let dmgMult = 1;
+      let cdMult = 1;
+      let rngMult = 1;
 
-        ctx.clearRect(0, 0, w, h);
+      // simple level scaling: +6% per level after 1 (placeholder you can tune)
+      dmgMult *= 1 + Math.max(0, level - 1) * 0.06;
 
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = "rgba(0,0,0,0.25)";
-        ctx.fillRect(0, 0, w, h);
+      // shiny: +15% dmg (placeholder)
+      if (shiny) dmgMult *= 1.15;
 
-        ctx.globalAlpha = 0.35;
-        ctx.strokeStyle = "rgba(255,255,255,0.12)";
-        ctx.lineWidth = 1;
+      function applyModifier(key) {
+        if (key === "dmg10") dmgMult *= 1.10;
+        if (key === "dmg20") dmgMult *= 1.20;
+        if (key === "cd10") cdMult *= 0.90;
+        if (key === "cd20") cdMult *= 0.80;
+        if (key === "rng10") rngMult *= 1.10;
+        if (key === "rng20") rngMult *= 1.20;
 
-        const step = Math.max(28, Math.floor(w / 22));
-        for (let x = 0; x <= w; x += step) {
-          ctx.beginPath();
-          ctx.moveTo(x + 0.5, 0);
-          ctx.lineTo(x + 0.5, h);
-          ctx.stroke();
-        }
-        for (let y = 0; y <= h; y += step) {
-          ctx.beginPath();
-          ctx.moveTo(0, y + 0.5);
-          ctx.lineTo(w, y + 0.5);
-          ctx.stroke();
-        }
-
-        const px = (nx) => nx * w;
-        const py = (ny) => ny * h;
-
-        for (const b of state.blocks) {
-          const bw = px(b.w);
-          const bh = py(b.h);
-          const bx = px(b.x) - bw / 2;
-          const by = py(b.y) - bh / 2;
-
-          ctx.fillStyle = "rgba(255, 110, 180, 0.90)";
-          ctx.fillRect(bx, by, bw, bh);
-
-          ctx.strokeStyle = "rgba(255,255,255,0.35)";
-          ctx.lineWidth = 2;
-          ctx.strokeRect(bx, by, bw, bh);
-        }
-
-        const p = state.player;
-        const pw = px(p.w);
-        const ph = py(p.h);
-        const px0 = px(p.x) - pw / 2;
-        const py0 = py(p.y) - ph / 2;
-
-        ctx.fillStyle = "rgba(120, 200, 255, 0.95)";
-        ctx.fillRect(px0, py0, pw, ph);
-
-        ctx.strokeStyle = "rgba(255,255,255,0.45)";
-        ctx.lineWidth = 2;
-        ctx.strokeRect(px0, py0, pw, ph);
-
-        ctx.globalAlpha = 0.8;
-        ctx.fillStyle = "rgba(255,255,255,0.25)";
-        ctx.fillRect(px0 + pw * 0.15, py0 + ph, pw * 0.7, ph * 0.25);
-        ctx.globalAlpha = 1;
+        if (key === "dmg15") dmgMult *= 1.15;
+        if (key === "dmg30") dmgMult *= 1.30;
+        if (key === "cd15") cdMult *= 0.85;
+        if (key === "rng15") rngMult *= 1.15;
       }
 
-      let last = performance.now();
-      function loop(now) {
-        const dt = Math.min(0.033, (now - last) / 1000);
-        last = now;
+      applyModifier(enchantSel.value);
+      applyModifier(chipSel.value);
 
-        update(dt);
-        drawFrame();
+      const damage = currentUnit.baseDamage * dmgMult;
+      const cooldown = Math.max(0.05, currentUnit.baseCooldown * cdMult);
+      const dps = damage / cooldown;
+      const range = (Number.isFinite(currentUnit.baseRange) ? currentUnit.baseRange : 0) * rngMult;
 
-        requestAnimationFrame(loop);
-      }
+      calcDmg.textContent = fmt(damage, 2);
+      calcCd.textContent = fmt(cooldown, 3);
+      calcDps.textContent = fmt(dps, 2);
+      calcRng.textContent = Number.isFinite(range) ? fmt(range, 1) : "-";
 
-      btnStart.addEventListener("click", startGame);
-      btnOverlayStart.addEventListener("click", startGame);
-      btnReset.addEventListener("click", resetGame);
+      calcNote.textContent = "These formulas are placeholders. Once you paste your real unit-machine rules, we swap them in.";
+    }
 
-      resetGame();
-      requestAnimationFrame(loop);
-    </script>
-  </body>
-</html>
+    function loadUnit(name) {
+      const unitName = (name || "").trim();
+      if (!UNIT_NAMES.includes(unitName)) return;
+
+      currentUnitName = unitName;
+      currentUnit = UNIT_DATA[unitName] || null;
+
+      searchView.style.display = "none";
+      infoView.style.display = "block";
+      unlockScroll();
+
+      unitTitle.textContent = unitName;
+      unitSubtitle.textContent = "Unit details and calculator.";
+      unitSearchTop.value = unitName;
+
+      const data = UNIT_DATA[unitName] || {};
+      rarityVal.textContent = data.rarity || "Not set";
+      attackVal.textContent = data.attackType || "Not set";
+      priceVal.textContent = data.placementPrice || "Not set";
+      placementsVal.textContent = data.placements || "Not set";
+      obtainVal.textContent = data.obtainability || "Not set yet.";
+      abilityVal.textContent = data.ability || "No abilities listed yet.";
+
+      trySetImage(data.id || "");
+
+      closeAllMenus();
+      computeAndRender();
+
+      // scroll to top of info view for a clean reveal
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+
+    openBtn.addEventListener("click", () => loadUnit(unitSearch.value));
+
+    attachDropdown(unitSearch, unitDropdown, centerField, loadUnit);
+    attachDropdown(unitSearchTop, unitDropdownTop, topField, loadUnit);
+
+    // Calculator events
+    levelSel.addEventListener("change", computeAndRender);
+    shinySel.addEventListener("change", computeAndRender);
+    enchantSel.addEventListener("change", computeAndRender);
+    chipSel.addEventListener("change", computeAndRender);
+  </script>
+
+  <style>
+    /* Full-page background image (from /public) */
+    :global(body) { background: transparent !important; }
+    :global(body::before) {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image: url("/unit-arcade-bg.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    :global(body::after) {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: rgba(5, 10, 20, 0.28);
+      pointer-events: none;
+    }
+
+    /* No scroll until a unit is selected */
+    :global(html.ua-lock),
+    :global(body.ua-lock) {
+      height: 100% !important;
+      overflow: hidden !important;
+    }
+    .ua-lock {
+      height: 100% !important;
+      overflow: hidden !important;
+    }
+
+    .ua-root {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Center search card view */
+    .ua-center {
+      min-height: calc(100vh - 140px);
+      display: grid;
+      place-items: center;
+    }
+
+    .ua-card {
+      width: min(760px, 100%);
+      border-radius: 18px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(10, 15, 25, 0.55);
+      backdrop-filter: blur(10px);
+      padding: 22px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+      overflow: visible;
+    }
+
+    .ua-title { margin: 0 0 6px; font-size: 2.2rem; font-weight: 900; }
+    .ua-sub { margin: 0 0 14px; opacity: 0.85; }
+
+    .ua-row {
+      display: grid;
+      grid-template-columns: 1fr 110px;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .ua-field { position: relative; width: 100%; overflow: visible; }
+
+    .ua-input {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(5, 8, 15, 0.55);
+      padding: 14px 14px;
+      outline: none;
+      color: inherit;
+    }
+
+    .ua-btn {
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.20);
+      background: rgba(25, 40, 70, 0.35);
+      padding: 14px;
+      cursor: pointer;
+      font-weight: 900;
+      height: 52px;
+    }
+
+    .ua-footnote {
+      margin: 12px 0 0;
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+
+    /* Dropdown behavior and styling */
+    .ua-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 100%;
+      z-index: 9999;
+
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(5, 8, 15, 0.94);
+      backdrop-filter: blur(10px);
+
+      /* ~10 items visible, scroll inside */
+      max-height: 420px;
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+
+      padding: 10px;
+
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ua-ddItem {
+      display: block !important;
+      width: 100% !important;
+
+      border-radius: 12px;
+      border: 1px solid rgba(180, 210, 255, 0.10);
+      background: rgba(255, 255, 255, 0.04);
+      color: inherit;
+
+      cursor: pointer;
+
+      font-weight: 900;
+      font-size: 1.08rem;
+
+      text-align: center;
+      padding: 12px 12px;
+      margin: 0 !important;
+    }
+
+    .ua-ddItem:hover {
+      background: rgba(180, 210, 255, 0.10);
+      border-color: rgba(180, 210, 255, 0.22);
+    }
+
+    .ua-ddEmpty {
+      padding: 12px;
+      text-align: center;
+      opacity: 0.65;
+      font-weight: 800;
+    }
+
+    /* Info view */
+    .ua-infoWrap { padding-bottom: 72px; }
+    .ua-infoTitle { margin: 0 0 6px; font-size: 2.2rem; font-weight: 900; }
+    .ua-infoSub { margin: 0 0 18px; opacity: 0.85; }
+
+    .ua-panel {
+      border-radius: 18px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(10, 15, 25, 0.55);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+      overflow: visible;
+    }
+
+    .ua-panelRow {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .ua-label {
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      opacity: 0.9;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .ua-help {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      opacity: 0.65;
+      text-align: left;
+    }
+
+    .ua-imageBox {
+      border-radius: 16px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(5, 8, 15, 0.35);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      position: relative;
+      min-height: 220px;
+    }
+
+    .ua-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .ua-imageText {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      opacity: 0.7;
+      font-weight: 800;
+      pointer-events: none;
+    }
+
+    .ua-divider {
+      height: 1px;
+      background: rgba(180, 210, 255, 0.14);
+      margin: 18px 0;
+    }
+
+    .ua-stats4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .ua-stat {
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.14);
+      background: rgba(5, 8, 15, 0.35);
+      padding: 12px;
+    }
+
+    .ua-statK {
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      opacity: 0.75;
+    }
+
+    .ua-statV { margin-top: 8px; font-weight: 800; }
+
+    .ua-wide {
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.14);
+      background: rgba(5, 8, 15, 0.35);
+      padding: 14px;
+    }
+
+    .ua-wideK {
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      opacity: 0.75;
+      margin-bottom: 10px;
+    }
+
+    .ua-wideK2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .ua-wideRight { text-align: center; }
+    .ua-wideV { font-weight: 700; opacity: 0.9; }
+
+    /* Calculator area */
+    .ua-calc {
+      margin-top: 20px;
+    }
+
+    .ua-calcTitle {
+      margin: 18px 0 6px;
+      font-size: 1.6rem;
+      font-weight: 900;
+    }
+
+    .ua-calcSub {
+      margin: 0 0 12px;
+      opacity: 0.85;
+    }
+
+    .ua-calcPanel {
+      border-radius: 18px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(10, 15, 25, 0.55);
+      backdrop-filter: blur(10px);
+      padding: 18px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .ua-calcControls {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .ua-control {
+      display: grid;
+      gap: 8px;
+    }
+
+    .ua-controlK {
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      opacity: 0.8;
+    }
+
+    .ua-select {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.18);
+      background: rgba(5, 8, 15, 0.55);
+      padding: 12px 12px;
+      outline: none;
+      color: inherit;
+      font-weight: 800;
+    }
+
+    .ua-calcGrid {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .ua-calcStat {
+      border-radius: 14px;
+      border: 1px solid rgba(180, 210, 255, 0.14);
+      background: rgba(5, 8, 15, 0.35);
+      padding: 12px;
+      text-align: center;
+    }
+
+    .ua-calcK {
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      opacity: 0.75;
+    }
+
+    .ua-calcV {
+      margin-top: 8px;
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+
+    .ua-calcNote {
+      margin-top: 12px;
+      opacity: 0.7;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .ua-row { grid-template-columns: 1fr; }
+      .ua-panelRow { grid-template-columns: 1fr; }
+      .ua-stats4 { grid-template-columns: repeat(2, 1fr); }
+      .ua-calcControls { grid-template-columns: repeat(2, 1fr); }
+      .ua-calcGrid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</BaseLayout>
