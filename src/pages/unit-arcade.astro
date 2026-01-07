@@ -245,8 +245,8 @@ const pageTitle = "Unit Arcade";
         obtainability: "Bear5 presents.",
         abilityName: "Mimic",
         abilityDesc: "Mimics the highest DPS on your team with a 1.25x stat modifier.",
-        baseDamage: 555,
-        baseCooldown: 0.5,
+        baseDamage: 55,
+        baseCooldown: 0.055,
         baseRange: 20
       },
 
@@ -257,11 +257,11 @@ const pageTitle = "Unit Arcade";
         placementPrice: "$12,500",
         placements: "1",
         obtainability: "Summons.",
-        abilityName: "Detect Hidden",
-        abilityDesc: "Has a 30% slow and detects hidden (does not reveal).",
-        baseDamage: 100,
+        abilityName: "Dark Growth",
+        abilityDesc: "Gains +0.1% damage on every kill. Can detect hidden",
+        baseDamage: 30,
         baseCooldown: 0.1,
-        baseRange: 20
+        baseRange: 25
       },
 
       "The Amalgamation": {
@@ -273,9 +273,9 @@ const pageTitle = "Unit Arcade";
         obtainability: "Summons.",
         abilityName: "Team Buff",
         abilityDesc: "Every 60 seconds, boosts the DMG, RNG and CD of every unit in range by 10% each.",
-        baseDamage: 1250,
-        baseCooldown: 2,
-        baseRange: 30
+        baseDamage: 975,
+        baseCooldown: 1.5,
+        baseRange: 27
       },
 
       "Bunny6": {
@@ -287,8 +287,8 @@ const pageTitle = "Unit Arcade";
         obtainability: "Bear5 Presents.",
         abilityName: "Bleed",
         abilityDesc: "50% bleed (non-stacking, permanent).",
-        baseDamage: 1250,
-        baseCooldown: 2.75,
+        baseDamage: 620,
+        baseCooldown: 2,
         baseRange: 20,
         baseBleedPct: 0.50
       },
@@ -297,13 +297,13 @@ const pageTitle = "Unit Arcade";
         id: "big-band-bonnie",
         rarity: "Vengeful",
         attackType: "Shockwave",
-        placementPrice: "$2,500",
+        placementPrice: "$2,750",
         placements: "2",
         obtainability: "Season 0 Pass.",
         abilityName: "Shockwave",
-        abilityDesc: "Closer enemies take more damage, farther enemies take less damage. Stuns for 0.5 seconds.",
-        baseDamage: 1000,
-        baseCooldown: 2.5,
+        abilityDesc: "Closer enemies take more damage, farther enemies take less damage. Stuns for 1.5 seconds.",
+        baseDamage: 900,
+        baseCooldown: 5,
         baseRange: 22
       },
 
@@ -315,8 +315,8 @@ const pageTitle = "Unit Arcade";
         placements: "4",
         obtainability: "Bear5 Presents.",
         abilityName: "Stun",
-        abilityDesc: "0.3 second stun.",
-        baseDamage: 300,
+        abilityDesc: "0.5 second stun.",
+        baseDamage: 250,
         baseCooldown: 2,
         baseRange: 18
       },
@@ -325,29 +325,29 @@ const pageTitle = "Unit Arcade";
         id: "sparky-the-dog",
         rarity: "Mythic",
         attackType: "Pierce + Bleed",
-        placementPrice: "$2,750",
+        placementPrice: "$12,750",
         placements: "2",
         obtainability: "Aftons Shop.",
         abilityName: "Bleed",
-        abilityDesc: "20% bleed.",
-        baseDamage: 400,
+        abilityDesc: "25% bleed.",
+        baseDamage: 420,
         baseCooldown: 2,
         baseRange: 25,
-        baseBleedPct: 0.20
+        baseBleedPct: 0.25
       },
 
       "Endo 01": {
         id: "endo-01",
         rarity: "Legendary",
         attackType: "Beam",
-        placementPrice: "$2,500",
+        placementPrice: "$7,500",
         placements: "4",
-        obtainability: "Summons.",
-        abilityName: "Income",
-        abilityDesc: "+20% income on his attacks.",
-        baseDamage: 15,
-        baseCooldown: 0.15,
-        baseRange: 22
+        obtainability: "Summons",
+        abilityName: "Tank Shred",
+        abilityDesc: "+15% damage against bosses",
+        baseDamage: 25,
+        baseCooldown: 0.1,
+        baseRange: 25
       },
 
       "Golden Bonnie": {
@@ -358,25 +358,25 @@ const pageTitle = "Unit Arcade";
         placements: "2",
         obtainability: "Summons.",
         abilityName: "Poison",
-        abilityDesc: "Poison deals 681 damage per second once applied (until death).",
-        baseDamage: 300,
-        baseCooldown: 2.5,
+        abilityDesc: "Poison deals 400 damage per second once applied (until death).",
+        baseDamage: 30,
+        baseCooldown: 2,
         baseRange: 25,
-        basePoisonDps: 681
+        basePoisonDps: 400
       },
 
       "Phone Guy": {
         id: "phone-guy",
         rarity: "Legendary",
         attackType: "Full AOE + Stun",
-        placementPrice: "$3,000",
-        placements: "2",
+        placementPrice: "$10,000",
+        placements: "1",
         obtainability: "Summons.",
-        abilityName: "Stun",
-        abilityDesc: "0.05 second stun. Applies a 2 second stun to every enemy in range (1s elites, 0.5s bosses).",
-        baseDamage: 30,
+        abilityName: "Dial",
+        abilityDesc: "0.05 second stun. Applies a 2 second stun to every enemy on the map every 30 seconds (1s elites, 0.5s bosses).",
+        baseDamage: 65,
         baseCooldown: 0.25,
-        baseRange: 23
+        baseRange: 25
       },
 
       "Golden Freddy": {
@@ -384,12 +384,12 @@ const pageTitle = "Unit Arcade";
         rarity: "Mythic",
         attackType: "Full AOE + Stun",
         placementPrice: "$5,000",
-        placements: "2",
+        placements: "1",
         obtainability: "Summons.",
         abilityName: "Stun",
         abilityDesc: "Has a 1 second stun.",
-        baseDamage: 325,
-        baseCooldown: 3,
+        baseDamage: 400,
+        baseCooldown: 2.5,
         baseRange: 25
       },
 
@@ -412,12 +412,12 @@ const pageTitle = "Unit Arcade";
         id: "nightguard",
         rarity: "Legendary",
         attackType: "Cone AOE (50%)",
-        placementPrice: "$750",
+        placementPrice: "$1,250",
         placements: "3",
         obtainability: "Summons.",
         abilityName: "Debuffs",
-        abilityDesc: "Has 0.15% burn (bugged rn), 15% slow and reveals hidden enemies.",
-        baseDamage: 7.5,
+        abilityDesc: "Has 0.20% burn, 10% slow and reveals hidden enemies.",
+        baseDamage: 8,
         baseCooldown: 0.1,
         baseRange: 22
       },
@@ -431,8 +431,8 @@ const pageTitle = "Unit Arcade";
         obtainability: "Bear5 presents.",
         abilityName: "Boost",
         abilityDesc: "10% CD boost and 50 pierce speed.",
-        baseDamage: 90,
-        baseCooldown: 1,
+        baseDamage: 120,
+        baseCooldown: 0.8,
         baseRange: 25
       },
 
@@ -445,8 +445,8 @@ const pageTitle = "Unit Arcade";
         obtainability: "Summons.",
         abilityName: "Blast/Burn",
         abilityDesc: "20 blast radius and 1% burn.",
-        baseDamage: 200,
-        baseCooldown: 2,
+        baseDamage: 300,
+        baseCooldown: 1.5,
         baseRange: 21
       },
 
@@ -455,13 +455,13 @@ const pageTitle = "Unit Arcade";
         rarity: "Epic",
         attackType: "Cone AOE (50%)",
         placementPrice: "$750",
-        placements: "4",
+        placements: "3",
         obtainability: "Summons.",
         abilityName: "Slow",
-        abilityDesc: "20% slowing.",
-        baseDamage: 10,
+        abilityDesc: "25% slowing.",
+        baseDamage: 6,
         baseCooldown: 0.25,
-        baseRange: 24
+        baseRange: 22
       },
 
       "Chicken7": {
@@ -472,8 +472,8 @@ const pageTitle = "Unit Arcade";
         placements: "3",
         obtainability: "Bear5 Presents.",
         abilityName: "Dual + Income",
-        abilityDesc: "Dual attacks (every attack hits twice) and +15% income on her attacks.",
-        baseDamage: 5,
+        abilityDesc: "Dual attacks (every attack hits twice) and +20% income on her attacks.",
+        baseDamage: 9,
         baseCooldown: 0.1,
         baseRange: 22,
         hitMult: 2
@@ -482,27 +482,27 @@ const pageTitle = "Unit Arcade";
       "Lamp": {
         id: "lamp",
         rarity: "Epic",
-        attackType: "Cone AOE (50%)",
-        placementPrice: "$1,000",
-        placements: "4",
+        attackType: "Full AOE",
+        placementPrice: "$1,500",
+        placements: "2",
         obtainability: "Summons.",
         abilityName: "Burn + Reveal",
         abilityDesc: "0.5% burn and reveals hidden enemies.",
-        baseDamage: 10,
-        baseCooldown: 0.25,
-        baseRange: 15
+        baseDamage: 13,
+        baseCooldown: 0.2,
+        baseRange: 25
       },
 
       "Freddy": {
         id: "freddy",
         rarity: "Common",
         attackType: "Single",
-        placementPrice: "$100",
+        placementPrice: "$125",
         placements: "3",
-        obtainability: "Summons & Start.",
+        obtainability: "Summons & Start",
         abilityName: "None",
         abilityDesc: "None :(",
-        baseDamage: 30,
+        baseDamage: 50,
         baseCooldown: 1,
         baseRange: 20
       },
@@ -516,21 +516,21 @@ const pageTitle = "Unit Arcade";
         obtainability: "Summons.",
         abilityName: "Splash/Burn",
         abilityDesc: "Splash deals 35% of damage to nearby enemies and 0.45% burn.",
-        baseDamage: 54,
-        baseCooldown: 1.25,
-        baseRange: 20
+        baseDamage: 63,
+        baseCooldown: 1.2,
+        baseRange: 22
       },
 
       "Foxy": {
         id: "foxy",
         rarity: "Rare",
         attackType: "Single",
-        placementPrice: "$225",
+        placementPrice: "$250",
         placements: "2",
         obtainability: "Summons.",
         abilityName: "Bleed",
         abilityDesc: "25% bleed.",
-        baseDamage: 30,
+        baseDamage: 68,
         baseCooldown: 0.8,
         baseRange: 20,
         baseBleedPct: 0.25
@@ -540,14 +540,14 @@ const pageTitle = "Unit Arcade";
         id: "chica",
         rarity: "Common",
         attackType: "Dual",
-        placementPrice: "$200",
+        placementPrice: "$125",
         placements: "3",
         obtainability: "Summons & Start.",
         abilityName: "Dual",
         abilityDesc: "Dual attacks (every attack hits twice).",
-        baseDamage: 16,
-        baseCooldown: 1.25,
-        baseRange: 18,
+        baseDamage: 40,
+        baseCooldown: 1.6,
+        baseRange: 20,
         hitMult: 2
       },
 
@@ -555,23 +555,23 @@ const pageTitle = "Unit Arcade";
         id: "bonnie",
         rarity: "Common",
         attackType: "Cone AOE (25%)",
-        placementPrice: "$150",
+        placementPrice: "$125",
         placements: "2",
         obtainability: "Summons & Start.",
         abilityName: "None",
         abilityDesc: "None :(",
-        baseDamage: 8,
+        baseDamage: 13,
         baseCooldown: 0.5,
-        baseRange: 12
+        baseRange: 16
       },
 
       "Crying Soul": {
         id: "crying-soul",
-        rarity: "Mythic",
+        rarity: "Legendary",
         attackType: "Booster",
         placementPrice: "$999",
         placements: "3",
-        obtainability: "Endless 1.",
+        obtainability: "Endless 1",
         abilityName: "Damage Boost",
         abilityDesc: "Boosts all units damage in range by 15% (18.75% as shiny).",
         baseDamage: 0,
@@ -583,7 +583,7 @@ const pageTitle = "Unit Arcade";
 
       "Endo Plush": {
         id: "endo-plush",
-        rarity: "Epic",
+        rarity: "Legendary",
         attackType: "Booster",
         placementPrice: "$500",
         placements: "3",
