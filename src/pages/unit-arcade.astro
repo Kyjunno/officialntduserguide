@@ -209,7 +209,20 @@ const pageTitle = "Unit Arcade";
       "Shadow Freddy",
       "Endo Plush",
       "Crying Soul",
-      "Lamp"
+      "Lamp",
+
+      // NEW UNITS
+      "Fredrick Von Fazbear",
+      "Bouncer",
+      "Firework Foxy",
+      "Freddy Frostbear",
+      "Jolly Nightguard",
+      "Ebeneezer Afton",
+      "Red Nose Sparky",
+      "Carl The Snowcake",
+      "Terrance The Teacup",
+      "Elf Bonnie",
+      "Christmas Trica"
     ];
 
     // RULES LOCKED IN (per your clarifications):
@@ -582,6 +595,166 @@ const pageTitle = "Unit Arcade";
         baseRange: 15,
         boosterType: "range",
         baseBoostPct: 0.15
+      },
+
+      // =========================
+      // NEW UNITS (your drop)
+      // =========================
+
+      "Fredrick Von Fazbear": {
+        id: "fredrick-von-fazbear",
+        rarity: "Mythic",
+        attackType: "Single",
+        placementPrice: "$4,500",
+        placements: "2",
+        obtainability: "AFK presents.",
+        abilityName: "Distinguished Execution",
+        abilityDesc: "Every 5th attack deals +15% damage.",
+        baseDamage: 780,
+        baseCooldown: 2,
+        baseRange: 28
+      },
+
+      "Bouncer": {
+        id: "bouncer",
+        rarity: "Mythic",
+        attackType: "Single + Slow",
+        placementPrice: "$2,500",
+        placements: "4",
+        obtainability: "Bouncer present.",
+        abilityName: "Ice Bullets",
+        abilityDesc: "Every 50 seconds, doubles this unit's slow.",
+        baseDamage: 10,
+        baseCooldown: 0.05,
+        baseRange: 22
+      },
+
+      "Firework Foxy": {
+        id: "firework-foxy",
+        rarity: "Vengeful",
+        attackType: "Blast + Burn",
+        placementPrice: "$8,500",
+        placements: "2",
+        obtainability: "Firework Foxy present.",
+        abilityName: "Firework Array",
+        abilityDesc: "On Upgrade 1, spawns 1 shared turret system that fires every 30s, hitting 5 random enemies. Upgrades with the unit. Shiny affects array DMG and burn (not CD).",
+        baseDamage: 750,
+        baseCooldown: 2,
+        baseRange: 22
+      },
+
+      "Freddy Frostbear": {
+        id: "freddy-frostbear",
+        rarity: "Vengeful",
+        attackType: "Splash (35%) + Slow",
+        placementPrice: "$3,000",
+        placements: "3",
+        obtainability: "Christmas presents.",
+        abilityName: "Frosty Blade",
+        abilityDesc: "Every 60 seconds, applies 50% Slow and Cone AOE (50%) for 10 seconds.",
+        baseDamage: 200,
+        baseCooldown: 1,
+        baseRange: 25
+      },
+
+      "Jolly Nightguard": {
+        id: "jolly-nightguard",
+        rarity: "Legendary",
+        attackType: "Splash (40%) + Slow",
+        placementPrice: "$8,500",
+        placements: "3",
+        obtainability: "Christmas presents.",
+        abilityName: "Give Gifts",
+        abilityDesc: "Every 45 seconds, boosts all units' stats by 5% for 5 seconds.",
+        baseDamage: 115,
+        baseCooldown: 0.5,
+        baseRange: 21
+      },
+
+      "Ebeneezer Afton": {
+        id: "ebeneezer-afton",
+        rarity: "Mythic",
+        attackType: "Cone AOE (40%) + Burn + Reveal",
+        placementPrice: "$8,500",
+        placements: "2",
+        obtainability: "Christmas presents.",
+        abilityName: "Bah, humbug!",
+        abilityDesc: "Every 45 seconds, this unit's burn doubles for 5 seconds.",
+        baseDamage: 275,
+        baseCooldown: 1,
+        baseRange: 21
+      },
+
+      "Red Nose Sparky": {
+        id: "red-nose-sparky",
+        rarity: "Rare",
+        attackType: "Single + Stun",
+        placementPrice: "$2,000",
+        placements: "2",
+        obtainability: "Christmas presents.",
+        abilityName: "Santa's Light",
+        abilityDesc: "Every 45 seconds, slows all enemies in range by 15% for 5 seconds.",
+        baseDamage: 200,
+        baseCooldown: 1,
+        baseRange: 20
+      },
+
+      "Carl The Snowcake": {
+        id: "carl-the-snowcake",
+        rarity: "Mythic",
+        attackType: "Single + Slow",
+        placementPrice: "$250",
+        placements: "3",
+        obtainability: "Carl The Snowcake presents.",
+        abilityName: "Snowball Mayhem",
+        abilityDesc: "Every 30 seconds, stuns all enemies in range for 0.5 seconds.",
+        baseDamage: 70,
+        baseCooldown: 0.75,
+        baseRange: 22
+      },
+
+      "Terrance The Teacup": {
+        id: "terrance-the-teacup",
+        rarity: "Rare",
+        attackType: "Splash (30%) + Burn",
+        placementPrice: "$1,250",
+        placements: "3",
+        obtainability: "AFK presents.",
+        abilityName: "None",
+        abilityDesc: "No ability.",
+        baseDamage: 87,
+        baseCooldown: 1,
+        baseRange: 21
+      },
+
+      "Elf Bonnie": {
+        id: "elf-bonnie",
+        rarity: "Common",
+        attackType: "Single + Slow",
+        placementPrice: "$125",
+        placements: "2",
+        obtainability: "Christmas presents.",
+        abilityName: "Let It Snow",
+        abilityDesc: "Every 60 seconds, applies 15% slow for 5 seconds.",
+        baseDamage: 140,
+        baseCooldown: 2,
+        baseRange: 20
+      },
+
+      "Christmas Trica": {
+        id: "christmas-trica",
+        rarity: "Epic",
+        attackType: "Booster",
+        placementPrice: "$1,500",
+        placements: "3",
+        obtainability: "Christmas presents.",
+        abilityName: "O Christmas Tree",
+        abilityDesc: "Boosts CD by -15%. Every 35 seconds, slows all enemies in range for 5 seconds (15% slow if shiny).",
+        baseDamage: 0,
+        baseCooldown: 1,
+        baseRange: 17,
+        boosterType: "cooldown",
+        baseBoostPct: 0.15
       }
     };
 
@@ -770,8 +943,7 @@ const pageTitle = "Unit Arcade";
       if (k === "springlocked") { dmgMultObj.value *= 2.00; rngMultObj.value *= 1.35; cdMultObj.value *= 0.90; statusMultObj.stun *= 1.25; statusMultObj.bleed *= 1.15; }
     }
 
-    // Base per-placement power at base stats only (includes innate mechanics),
-    // used for boosters (enchants ignored for boosters).
+    // Per-placement POWER at base stats only (includes innate mechanics).
     function basePowerPerPlacement(unit) {
       if (!unit || unit.attackType === "Booster") return 0;
       if (!Number.isFinite(unit.baseDamage) || !Number.isFinite(unit.baseCooldown) || !Number.isFinite(unit.baseRange)) return 0;
@@ -789,6 +961,35 @@ const pageTitle = "Unit Arcade";
 
       const totalDps = (baseHitDps + baseBleedDps + basePoisonDps) * powerDamageMult;
       return (totalDps * unit.baseRange / 100);
+    }
+
+    // Recompute per-placement POWER if a booster modifies damage/range/cooldown.
+    function boostedPowerPerPlacement(target, boosterType, boostPct) {
+      if (!target || target.attackType === "Booster") return 0;
+      if (!Number.isFinite(target.baseDamage) || !Number.isFinite(target.baseCooldown) || !Number.isFinite(target.baseRange)) return 0;
+      if (target.baseCooldown <= 0) return 0;
+
+      let dmg = target.baseDamage;
+      let cd = target.baseCooldown;
+      let rng = target.baseRange;
+
+      if (boosterType === "damage") dmg = dmg * (1 + boostPct);
+      if (boosterType === "range") rng = rng * (1 + boostPct);
+      if (boosterType === "cooldown") cd = Math.max(0.01, cd * (1 - boostPct));
+
+      const hitMult = Number.isFinite(target.hitMult) ? target.hitMult : 1.0;
+      const powerDamageMult = Number.isFinite(target.powerDamageMult) ? target.powerDamageMult : 1.0;
+
+      const hitDps = (dmg * hitMult) / cd;
+
+      const baseBleedPct = Number.isFinite(target.baseBleedPct) ? target.baseBleedPct : 0;
+      const bleedDps = baseBleedPct > 0 ? (dmg * baseBleedPct) : 0;
+
+      const basePoisonDps = Number.isFinite(target.basePoisonDps) ? target.basePoisonDps : 0;
+      const poisonDps = basePoisonDps;
+
+      const totalDps = (hitDps + bleedDps + poisonDps) * powerDamageMult;
+      return (totalDps * rng / 100);
     }
 
     function computeAndRender() {
@@ -828,7 +1029,7 @@ const pageTitle = "Unit Arcade";
         }
 
         const baseP = basePowerPerPlacement(target);
-        const boostedP = baseP * (1 + boostPct);
+        const boostedP = boostedPowerPerPlacement(target, currentUnit.boosterType, boostPct);
         const addedPerPlacement = boostedP - baseP;
 
         calcDamageLabel.textContent = "BOOST %";
