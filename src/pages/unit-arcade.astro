@@ -621,7 +621,9 @@ const pageTitle = "Unit Arcade";
         abilityDesc: "Shadow Chica summons a Shadow Cupcake every 10 seconds that has 1500% of Shadow Chicas damage as HP",
         baseDamage: 200,
         baseCooldown: 2,
-        baseRange: 32
+        baseRange: 32,
+        summonEvery: 10,
+        summonHpFromDmgMult: 15
       },
 
       "Bouncer": {
@@ -916,6 +918,7 @@ const pageTitle = "Unit Arcade";
       return Number.isFinite(n) && n > 0 ? n : 1;
     }
 
+    // Shiny bonuses (mimic shiny boost removed)
     function applyShiny(isShiny, dmgMultObj, cdMultObj, rngMultObj, statusMultObj) {
       if (!isShiny) return;
 
@@ -1071,15 +1074,15 @@ const pageTitle = "Unit Arcade";
         poison: 1,
         slow: 1,
         stun: 1,
-        burn: 1,
+        burn: 1
       };
 
-      // Level scaling: each level gives 2% of Shiny bonuses
+      // Level scaling: each level gives 1% of Shiny bonuses
       dmgMult.value *= 1 + lvl * 0.003;
       rngMult.value *= 1 + lvl * 0.002;
       cdMult.value *= 1 - lvl * 0.001;
 
-      // Status scaling (multiplicative): multiply base status by (1 + lvl * perLevel)
+      // Status scaling: 1% of Shiny status bonuses per level (multiplicative)
       statusMult.boost *= 1 + lvl * 0.0025;
       statusMult.bleed *= 1 + lvl * 0.002;
       statusMult.poison *= 1 + lvl * 0.002;
@@ -1090,8 +1093,6 @@ const pageTitle = "Unit Arcade";
       applyShiny(isShiny, dmgMult, cdMult, rngMult, statusMult);
       applyEnchant(enchantSel.value, dmgMult, cdMult, rngMult, statusMult);
 
-      // Chips disabled: do nothing.
-
       const damage = currentUnit.baseDamage * dmgMult.value;
       const cooldown = Math.max(0.01, currentUnit.baseCooldown * cdMult.value);
       const range = (Number.isFinite(currentUnit.baseRange) ? currentUnit.baseRange : 0) * rngMult.value;
@@ -1099,19 +1100,26 @@ const pageTitle = "Unit Arcade";
       const hitMult = Number.isFinite(currentUnit.hitMult) ? currentUnit.hitMult : 1.0;
       const powerDamageMult = Number.isFinite(currentUnit.powerDamageMult) ? currentUnit.powerDamageMult : 1.0;
 
-      // Hit DPS
       const hitDps = (damage * hitMult) / cooldown;
 
-      // Bleed DPS: damage * (finalBleedPct) per second
       const baseBleedPct = Number.isFinite(currentUnit.baseBleedPct) ? currentUnit.baseBleedPct : 0;
       const finalBleedPct = baseBleedPct > 0 ? (baseBleedPct * statusMult.bleed) : 0;
       const bleedDps = finalBleedPct > 0 ? (damage * finalBleedPct) : 0;
 
-      // Poison DPS: flat per second, independent of damage/cooldown; scales only with poison multipliers
       const basePoisonDps = Number.isFinite(currentUnit.basePoisonDps) ? currentUnit.basePoisonDps : 0;
       const poisonDps = basePoisonDps > 0 ? (basePoisonDps * statusMult.poison) : 0;
 
-      const totalDps = (hitDps + bleedDps + poisonDps) * powerDamageMult;
+      // Summon DPS (optional):
+      // If the unit has summonEvery and summonHpFromDmgMult, assume summon contributes DPS = (damage * mult) / interval.
+      let summonDps = 0;
+      if (
+        Number.isFinite(currentUnit.summonEvery) && currentUnit.summonEvery > 0 &&
+        Number.isFinite(currentUnit.summonHpFromDmgMult) && currentUnit.summonHpFromDmgMult > 0
+      ) {
+        summonDps = (damage * currentUnit.summonHpFromDmgMult) / currentUnit.summonEvery;
+      }
+
+      const totalDps = (hitDps + bleedDps + poisonDps + summonDps) * powerDamageMult;
       const power = (totalDps * range / 100) * placements;
 
       calcDamageLabel.textContent = "DAMAGE";
@@ -1121,7 +1129,7 @@ const pageTitle = "Unit Arcade";
       calcRange.textContent = Number.isFinite(range) ? fmt(range, 1) : "-";
 
       calcNote.textContent =
-        "POWER = ((Hit DPS + Bleed DPS + Poison DPS) × RNG / 100) × placements. Chips disabled.";
+        "POWER = ((Hit DPS + Bleed DPS + Poison DPS + Summon DPS) × RNG / 100) × placements. Chips disabled.";
     }
 
     function loadUnitFromInput(value) {
