@@ -930,7 +930,6 @@ const pageTitle = "Unit Arcade";
       statusMultObj.slow *= 1.10;
       statusMultObj.stun *= 1.10;
       statusMultObj.burn *= 1.10;
-      statusMultObj.mimic *= 1.10;
     }
 
     function applyEnchant(key, dmgMultObj, cdMultObj, rngMultObj, statusMultObj) {
@@ -1073,22 +1072,20 @@ const pageTitle = "Unit Arcade";
         slow: 1,
         stun: 1,
         burn: 1,
-        mimic: 1
       };
 
       // Level scaling: each level gives 2% of Shiny bonuses
-      dmgMult.value *= 1 + lvl * 0.006;
-      rngMult.value *= 1 + lvl * 0.004;
-      cdMult.value *= 1 - lvl * 0.002;
+      dmgMult.value *= 1 + lvl * 0.003;
+      rngMult.value *= 1 + lvl * 0.002;
+      cdMult.value *= 1 - lvl * 0.001;
 
       // Status scaling (multiplicative): multiply base status by (1 + lvl * perLevel)
-      statusMult.boost *= 1 + lvl * 0.005;
-      statusMult.bleed *= 1 + lvl * 0.004;
-      statusMult.poison *= 1 + lvl * 0.004;
-      statusMult.slow *= 1 + lvl * 0.002;
-      statusMult.stun *= 1 + lvl * 0.002;
-      statusMult.burn *= 1 + lvl * 0.002;
-      statusMult.mimic *= 1 + lvl * 0.002;
+      statusMult.boost *= 1 + lvl * 0.0025;
+      statusMult.bleed *= 1 + lvl * 0.002;
+      statusMult.poison *= 1 + lvl * 0.002;
+      statusMult.slow *= 1 + lvl * 0.001;
+      statusMult.stun *= 1 + lvl * 0.001;
+      statusMult.burn *= 1 + lvl * 0.001;
 
       applyShiny(isShiny, dmgMult, cdMult, rngMult, statusMult);
       applyEnchant(enchantSel.value, dmgMult, cdMult, rngMult, statusMult);
